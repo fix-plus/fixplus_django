@@ -1,0 +1,157 @@
+version: "3.9"
+
+networks:
+  default:
+    name: web_net
+
+services:
+  db:
+    image: postgres:14.1
+    container_name: fixplus-postgres
+    restart: on-failure
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=fixplus
+      - POSTGRES_USER=fixplus
+      - POSTGRES_PASSWORD=1234@1234
+
+  rabbitmq:
+    image: "rabbitmq:alpine"
+    container_name: fixplus-rabbitmq
+    restart: on-failure
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+  redis:
+    image: redis:7
+    container_name: fixplus-redis
+    restart: on-failure
+    volumes:
+      - redis-data:/data
+
+  django:
+    build:
+      context: .
+      dockerfile: docker/production.Dockerfile
+    image: django-project:latest
+    container_name: django
+    command:
+      sh -c "python manage.py migrate &&
+        python manage.py collectstatic --no-input --clear &&
+        daphne -b 0.0.0.0 -p 8000 config.asgi:application"
+    environment:
+      - DATABASE_URL=psql://fixplus:1234@1234@db:5432/fixplus
+      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
+      - REDIS_LOCATION=redis://redis:6379
+      - ALLOWED_HOSTS=api.fixplus.org, localhost, 127.0.0.1
+      - STAGE_PROJECT=config.django.prod
+      #pass to out with command and then pass with github secret
+      - SECRET_KEY=${SECRET_KEY}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+      - SMS_API_KEY=${SMS_API_KEY}
+    volumes:
+      - static_volume:/app/backend/staticfiles
+      - media_volume:/app/backend/mediafiles
+    depends_on:
+      - db
+      - rabbitmq
+    restart: on-failure
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=web_net"
+      # HTTP
+      - "traefik.http.routers.backend.entrypoints=http"
+      - "traefik.http.routers.backend.rule=Host(`api.fixplus.org`)"
+      - "traefik.http.routers.backend.service=backend-secure"
+      - "traefik.http.routers.backend.middlewares=https-redirect"
+      # HTTPS
+      - "traefik.http.routers.backend-secure.entrypoints=https"
+      - "traefik.http.routers.backend-secure.rule=Host(`api.fixplus.org`)"
+      - "traefik.http.routers.backend-secure.tls=true"
+      - "traefik.http.routers.backend-secure.tls.options=default"
+      - "traefik.http.routers.backend-secure.tls.certresolver=mycert"
+      - "traefik.http.routers.backend-secure.service=backend-secure"
+      # ws
+      - "traefik.http.routers.ws-service-ws.rule=Host(`api.fixplus.org/ws/`)"
+      - "traefik.http.routers.ws-service-ws.entrypoints=ws"
+      # wss
+      - "traefik.http.routers.ws-service-wss.rule=Host(`api.fixplus.org/ws/`)"
+      - "traefik.http.routers.ws-service-wss.entrypoints=wss"
+      - "traefik.http.routers.ws-service-wss.tls=true"
+      - "traefik.http.routers.ws-service-wss.tls.certresolver=mycert"
+      # Backend port
+      - "traefik.http.services.backend-secure.loadbalancer.server.port=8000"
+
+  celery:
+    build:
+      context: .
+      dockerfile: docker/celery.Dockerfile
+    image: celery-project:latest
+    container_name: celery
+    command: bash -c "
+      chmod +x ./docker/celery_entrypoint.sh
+      && 
+      chmod +x ./wait-for-it.sh
+      &&
+      ./docker/celery_entrypoint.sh
+      "
+    environment:
+      - DATABASE_URL=psql://fixplus:1234@1234@db:5432/fixplus
+      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
+      - REDIS_LOCATION=redis://redis:6379
+      - ALLOWED_HOSTS=api.fixplus.org, localhost, 127.0.0.1
+      - STAGE_PROJECT=config.django.prod
+      #pass to out with command and then pass with github secret
+      - SECRET_KEY=${SECRET_KEY}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+      - SMS_API_KEY=${SMS_API_KEY}
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - rabbitmq
+    restart: on-failure
+
+  beats:
+    build:
+      context: .
+      dockerfile: docker/celery.Dockerfile
+    image: beats-project:latest
+    container_name: beats
+    command: bash -c "
+      chmod +x ./docker/beats_entrypoint.sh
+      &&
+      chmod +x ./wait-for-it.sh
+      &&
+      ./docker/beats_entrypoint.sh
+      "
+    environment:
+      - DATABASE_URL=psql://fixplus:1234@1234@db:5432/fixplus
+      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
+      - REDIS_LOCATION=redis://redis:6379
+      - ALLOWED_HOSTS=api.fixplus.org, localhost, 127.0.0.1
+      - STAGE_PROJECT=config.django.prod
+      #pass to out with command and then pass with github secret
+      - SECRET_KEY=${SECRET_KEY}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+      - SMS_API_KEY=${SMS_API_KEY}
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - rabbitmq
+    restart: on-failure
+
+
+volumes:
+    redis-data:
+    static_volume:
+    media_volume:
+    postgres-data:

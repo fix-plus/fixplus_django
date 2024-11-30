@@ -1,0 +1,51 @@
+version: "3.9"
+
+services:
+
+  db:
+    image: postgres:14.1
+    container_name: fixplus-postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=fixplus
+      - POSTGRES_USER=fixplus
+      - POSTGRES_PASSWORD=1234@1234
+    volumes:
+      - postgres-data:/var/lib/postgresql/data/
+
+  pgadmin:
+    container_name: fixplus-pgadmin4
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: 'pg_pass'
+    ports:
+      - "5050:80"
+
+  rabbitmq:
+    image: "rabbitmq:3.9-management"
+    ports:
+      - 5672:5672
+      - 15672:15672
+    container_name: fixplus-rabbitmq
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+  redis:
+    image: redis:7
+    container_name: fixplus-redis
+    ports:
+      - 6379:6379
+    volumes:
+      - redis-data:/data
+
+
+volumes:
+    postgres-data:
+    redis-data:
+
