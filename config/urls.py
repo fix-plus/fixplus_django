@@ -10,8 +10,8 @@ from drf_spectacular.views import (
 
 from ceo.view import robots_txt
 
-admin.site.site_header = "Posternow Admin"
-admin.site.site_title = "Posternow Admin"
+admin.site.site_header = "FixPlus Admin"
+admin.site.site_title = "FixPlus Admin"
 admin.site.index_title = "Panel v0.1"
 
 
