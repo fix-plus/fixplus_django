@@ -19,22 +19,34 @@ jobs:
   Clone:
     runs-on: ubuntu-latest
     steps:
-    - name: Clone
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.PRIVATE_KEY }}
-        port: ${{ secrets.PORT }}
-        script: |
-          mkdir -p ${{env.WORK_DIR}}
-          cd ${{env.WORK_DIR}}
-          git clone ${{env.REPOSITORY}}
-          cd ${{env.PROJECT_NAME}}
-          
-          git checkout master 
-          git pull origin master 
-          git status
+      - name: Clone Repository
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            # Clean up existing directory if it exists
+            if [ -d "${{env.WORK_DIR}}/${{env.PROJECT_NAME}}" ]; then
+              echo "Directory exists, removing it..."
+              rm -rf ${{env.WORK_DIR}}/${{env.PROJECT_NAME}}
+            fi
+            
+            # Clone the repository afresh
+            mkdir -p ${{env.WORK_DIR}}
+            cd ${{env.WORK_DIR}}
+            git clone ${{env.REPOSITORY}}
+            
+            # Change to the project directory
+            cd ${{env.PROJECT_NAME}}
+            
+            # Ensure we're on the latest master branch
+            git checkout master
+            git pull origin master
+            
+            # Check status after pulling
+            git status
     
 
   Build:
