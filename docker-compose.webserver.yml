@@ -76,6 +76,7 @@ services:
     volumes:
       - static_volume:/app/backend/staticfiles
       - media_volume:/app/backend/mediafiles
+
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=web_net"
