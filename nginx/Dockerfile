@@ -10,3 +10,5 @@ RUN mkdir -p /app/backend/staticfiles && \
 
 VOLUME /app/backend/staticfiles
 VOLUME /app/backend/mediafiles
+
+COPY build/web /usr/share/nginx/html
