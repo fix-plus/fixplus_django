@@ -27,7 +27,7 @@ urlpatterns = [
 
     path('user/', include('fixplus.user.routing.user')),
 
-    # path('upload/', include('fixplus.upload.urls')),
+    path('upload/', include('fixplus.upload.urls')),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

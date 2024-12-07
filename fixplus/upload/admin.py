@@ -1,6 +1,6 @@
-# from django.contrib import admin
-#
-# from fixplus.upload.models import UploadAvatarMedia
-#
-#
-# admin.site.register(UploadAvatarMedia)
+from django.contrib import admin
+
+from fixplus.upload.models import UploadIdentifyDocumentMedia
+
+
+admin.site.register(UploadIdentifyDocumentMedia)

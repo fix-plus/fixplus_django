@@ -1,9 +1,11 @@
-# from django.db.models import UUIDField
-#
-# from fixplus.upload.models import UploadAvatarMedia
-#
-#
-# # Database Business Logic ==============================================================================================
-# def get_upload_avatar_media(id:str) -> UploadAvatarMedia:
-#     if not UploadAvatarMedia.objects.filter(id=id).exists(): raise Exception(f"media with this id {id} not found.")
-#     return UploadAvatarMedia.objects.get(id=id)
+from django.core.exceptions import ObjectDoesNotExist
+
+from fixplus.upload.models import UploadIdentifyDocumentMedia
+
+
+# Database Business Logic ==============================================================================================
+def get_upload_identify_document_media(id: str) -> UploadIdentifyDocumentMedia:
+    try:
+        return UploadIdentifyDocumentMedia.objects.get(id=id)
+    except UploadIdentifyDocumentMedia.DoesNotExist:
+        raise ObjectDoesNotExist(f"Media with ID {id} not found.")

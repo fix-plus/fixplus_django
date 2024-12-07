@@ -13,6 +13,7 @@ from django.db import close_old_connections
 from channels.db import database_sync_to_async
 
 from fixplus.common.permissions import IsVerified, AllowAny
+from fixplus.user.permissions import IsVerifiedMobile
 
 # def enforce_csrf(get_response):
 #     def middleware(request):
@@ -115,6 +116,13 @@ class AllowAnyMixin:
        JWTAuthentication,
     ]
     permission_classes: PermissionClassesType = (AllowAny, )
+
+
+class IsVerifiedMobileMixin:
+    authentication_classes: Sequence[Type[BaseAuthentication]] = [
+        JWTAuthentication,
+    ]
+    permission_classes: PermissionClassesType = (IsAuthenticated, IsVerifiedMobile)
 
 
 class IsVerifiedMixin:
