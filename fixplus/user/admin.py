@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
+from django.contrib.auth.admin import GroupAdmin
 from django.contrib.auth.models import Group
 from django_celery_results.admin import TaskResult, GroupResult
 from django_celery_beat.models import (
@@ -10,20 +11,26 @@ from django_celery_beat.models import (
     PeriodicTask,
 )
 
+from .models import BaseUser
 from .models.profile import Profile, MobileNumber, LandLineNumber
 
 
-#Register your models here.
-@admin.register(get_user_model())
-class BaseUserAdmin(admin.ModelAdmin):
-    list_display = ('mobile', 'status', 'reason_for_rejected')
-    list_filter = ('status',)
-    search_fields = ('mobile',)
+# Customize Group admin to manage permissions
+class CustomGroupAdmin(GroupAdmin):
+    filter_horizontal = ['permissions']
 
-    def save_model(self, request, obj, form, change):
-        if obj.status == 'rejected' and not obj.reason_for_rejected:
-            raise ValueError("You must provide a reason when rejecting a user.")
-        super().save_model(request, obj, form, change)
+
+admin.site.unregister(Group)
+admin.site.register(Group, CustomGroupAdmin)
+
+
+# Register BaseUser model
+@admin.register(BaseUser)
+class BaseUserAdmin(admin.ModelAdmin):
+    list_display = ['mobile', 'is_active', 'is_verified_mobile', 'status']
+    list_filter = ['is_active', 'is_verified_mobile', 'status']
+    search_fields = ['mobile']
+    # ordering = ['-created_at']
 
 
 @admin.register(Profile)
@@ -44,4 +51,3 @@ admin.site.unregister(ClockedSchedule)
 admin.site.unregister(PeriodicTask)
 admin.site.unregister(IntervalSchedule)
 admin.site.unregister(CrontabSchedule)
-admin.site.unregister(Group)

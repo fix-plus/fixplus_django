@@ -3,6 +3,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.utils.translation import gettext_lazy as _
 
 from fixplus.user.selectors.user import is_exist_user, get_cache_verification_mobile_otp
 from fixplus.user.serializers.auth import InputReSendVerificationCodeSerializer
@@ -22,7 +23,7 @@ class ReSendOtpCodeApi(APIView):
         mobile = serializer.validated_data.get("mobile")
 
         if not is_exist_user(mobile=mobile):
-            return Response({'detail': 'User with this mobile not found.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': _('User with this mobile not found.')}, status=status.HTTP_400_BAD_REQUEST)
 
         if get_cache_verification_mobile_otp(mobile=mobile) is None:
             otp_code = generate_otp_code()
@@ -37,10 +38,10 @@ class ReSendOtpCodeApi(APIView):
             send_verification_sms.delay(data)
 
             set_cache_verification_mobile_otp(mobile=mobile, otp=otp_code)
-            return Response({'result': 'The user has been successfully created, please check mobile inbox.'}, status=status.HTTP_200_OK)
+            return Response({'result': _('A verification code has been send to your mobile number.')}, status=status.HTTP_200_OK)
 
         else:
-            return Response({'detail': '2 minutes must have passed since the last sms was sent.'},
+            return Response({'detail': _('2 minutes must have passed since the last sms was sent.')},
                             status=status.HTTP_408_REQUEST_TIMEOUT)
 
 

@@ -27,7 +27,7 @@ class UploadIdentifyDocumentMedia(BaseModel):
 
     class Meta:
         verbose_name = "Identify Document Medias"
-        verbose_name_plural = "Identify Document Avatar Medias"
+        verbose_name_plural = "Identify Document Medias"
 
     def __str__(self):
         return f"{self.id}"

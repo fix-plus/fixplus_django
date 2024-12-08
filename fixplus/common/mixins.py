@@ -12,8 +12,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.db import close_old_connections
 from channels.db import database_sync_to_async
 
-from fixplus.common.permissions import IsVerified, AllowAny
-from fixplus.user.permissions import IsVerifiedMobile
+from fixplus.common.permissions import IsVerifiedMobile, AllowAny, IsSuperAdmin, IsAdmin, IsSuperAdminOrAdmin, IsTechnician
 
 # def enforce_csrf(get_response):
 #     def middleware(request):
@@ -125,8 +124,29 @@ class IsVerifiedMobileMixin:
     permission_classes: PermissionClassesType = (IsAuthenticated, IsVerifiedMobile)
 
 
-class IsVerifiedMixin:
+class IsSuperAdminMixin:
     authentication_classes: Sequence[Type[BaseAuthentication]] = [
         JWTAuthentication,
     ]
-    permission_classes: PermissionClassesType = (IsAuthenticated, IsVerified)
+    permission_classes: PermissionClassesType = (IsAuthenticated, IsSuperAdmin)
+
+
+class IsAdminMixin:
+    authentication_classes: Sequence[Type[BaseAuthentication]] = [
+        JWTAuthentication,
+    ]
+    permission_classes: PermissionClassesType = (IsAuthenticated, IsAdmin)
+
+
+class IsSuperAdminOrAdminMixin:
+    authentication_classes: Sequence[Type[BaseAuthentication]] = [
+        JWTAuthentication,
+    ]
+    permission_classes: PermissionClassesType = (IsAuthenticated, IsSuperAdminOrAdmin)
+
+
+class IsTechnicianMixin:
+    authentication_classes: Sequence[Type[BaseAuthentication]] = [
+        JWTAuthentication,
+    ]
+    permission_classes: PermissionClassesType = (IsAuthenticated, IsTechnician)

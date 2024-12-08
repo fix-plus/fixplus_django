@@ -3,13 +3,13 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from fixplus.common.mixins import IsVerifiedMixin
+from fixplus.common.permissions import IsVerifiedMobile
 from fixplus.user.selectors.profile import get_profile
 from fixplus.user.serializers.profile import OutPutProfileSerializer, InputUpdateProfileSerializer
 from fixplus.user.services.profile import update_profile
 
 
-class ProfileApi(IsVerifiedMixin, APIView):
+class ProfileApi(IsVerifiedMobile, APIView):
     @extend_schema(
         summary="Get Profile",
         responses=OutPutProfileSerializer)

@@ -2,7 +2,7 @@ import random
 import string
 from django.core import signing
 from django.conf import settings
-from rest_framework.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 
 from fixplus.user.selectors.user import get_cache_verification_mobile_otp
 
@@ -33,5 +33,5 @@ def generate_one_time_token(email):
 def verify_otp(*, mobile, code):
     cache_otp_code = get_cache_verification_mobile_otp(mobile=mobile)
     if not cache_otp_code or str(cache_otp_code) != str(code):
-        raise Exception("Verification code is expired or invalid.")
+        raise Exception(_("Verification code is expired or invalid."))
     return True

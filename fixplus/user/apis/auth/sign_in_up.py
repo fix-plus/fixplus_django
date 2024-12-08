@@ -3,6 +3,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.utils.translation import gettext_lazy as _
 
 from fixplus.user.selectors.user import get_cache_verification_mobile_otp
 from fixplus.user.serializers.auth import InputSignInUpSerializer
@@ -41,11 +42,11 @@ class SignInUpApi(APIView):
 
                     set_cache_verification_mobile_otp(mobile=serializer.validated_data.get("mobile"), otp=otp_code)
 
-                    return Response({'result': 'The user has been successfully created, please check mobile inbox.'},
+                    return Response({'result': _('A verification code has been send to your mobile number.')},
                                     status=status.HTTP_200_OK)
 
                 else:
-                    return Response({'detail': '2 minutes must have passed since the last sms was sent.'},
+                    return Response({'detail': _('2 minutes must have passed since the last sms was sent.')},
                                     status=status.HTTP_408_REQUEST_TIMEOUT)
 
         except Exception as e:

@@ -16,9 +16,6 @@ class OutPutProfileSerializer(serializers.ModelSerializer):
     land_line_numbers = serializers.SerializerMethodField()
     mobile_numbers = serializers.SerializerMethodField()
     is_verified_mobile = serializers.SerializerMethodField()
-    is_admin = serializers.SerializerMethodField()
-    is_staff = serializers.SerializerMethodField()
-    is_technician = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
 
     class Meta:
@@ -30,15 +27,6 @@ class OutPutProfileSerializer(serializers.ModelSerializer):
 
     def get_is_verified_mobile(self, obj):
         return obj.user.is_verified_mobile if obj.user else None
-
-    def get_is_admin(self, obj):
-        return obj.user.is_admin if obj.user else None
-
-    def get_is_staff(self, obj):
-        return obj.user.is_staff if obj.user else None
-
-    def get_is_technician(self, obj):
-        return obj.user.is_technician if obj.user else None
 
     def get_status(self, obj):
         return obj.user.status if obj.user else None

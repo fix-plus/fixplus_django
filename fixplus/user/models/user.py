@@ -1,6 +1,6 @@
 import uuid
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, Permission
 from django.contrib.auth.models import BaseUserManager as BUM
 from django.contrib.auth.models import PermissionsMixin
 
@@ -32,6 +32,8 @@ class BaseUserManager(BUM):
         return user
 
     def create_superuser(self, mobile, password=None):
+        from fixplus.user.services.group import assign_groups_to_user
+
         user = self.create_user(
             mobile=mobile,
             is_active=True,
@@ -41,9 +43,16 @@ class BaseUserManager(BUM):
 
         user.is_superuser = True
         user.is_staff = True
-        user.status = 'verified'
+        user.status = 'registered'
         user.is_verified_mobile = True
         user.save(using=self._db)
+
+        # Explicitly assign all permissions
+        all_permissions = Permission.objects.all()
+        user.user_permissions.set(all_permissions)
+
+        # Assign to super_user group
+        assign_groups_to_user(user, ['super_admin'])
 
         return user
 
@@ -52,20 +61,19 @@ class BaseUser(BaseModel, AbstractBaseUser, PermissionsMixin):
     mobile = models.CharField(max_length=20, unique=True, blank=True, null=True)
     is_active = models.BooleanField(default=True)
     is_verified_mobile = models.BooleanField(default=False)
-    is_technician = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     STATUS_CHOICES = [
-        ('not_verified', 'Not Verified'),
+        ('not_registered', 'Not Registered'),
         ('checking', 'Checking Identity'),
-        ('verified', 'Verified'),
+        ('registered', 'Registered'),
         ('rejected', 'Rejected'),
     ]
 
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
-        default='not_verified',
+        default='not_registered',
     )
 
     reason_for_rejected = models.TextField(

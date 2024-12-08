@@ -1,7 +1,5 @@
-from django.contrib.auth import get_user_model
-from django.contrib.auth import authenticate
 from django.core.cache import cache
-from django.core.exceptions import ObjectDoesNotExist
+from django.utils.translation import gettext_lazy as _
 
 from fixplus.user.models import BaseUser
 
@@ -18,7 +16,7 @@ def get_user(id: str = None, mobile: str=None) -> BaseUser:
 
     if mobile is not None: return BaseUser.objects.get(mobile=mobile)
     if id is not None: return BaseUser.objects.get(id=id)
-    else: raise Exception("User not found.")
+    else: raise Exception(_("User not found."))
 
 
 def is_exist_user(
@@ -41,17 +39,19 @@ def get_tokens_user(*, mobile:str=None, user:BaseUser=None) -> dict:
 
     if mobile: db_user = BaseUser.objects.filter(mobile=mobile)
     if user:db_user = user
-    if not user and not db_user.exists(): raise Exception("User not found.")
+    if not user and not db_user.exists(): raise Exception(_("User not found."))
 
     db_user = db_user.first() if user is None else db_user
-    if mobile and not is_verified_mobile(mobile=mobile): raise Exception("User not verified, please verified mobile first.")
-    if user and not user.is_verified_mobile: raise Exception( "User not verified, please verified mobile first.")
+    if mobile and not is_verified_mobile(mobile=mobile): raise Exception(_("User not verified, please verified mobile first."))
+    if user and not user.is_verified_mobile: raise Exception(_("User not verified, please verified mobile first."))
 
+    tokens = db_user.get_tokens()
+    groups = list(db_user.groups.values_list('name', flat=True))
+    permissions = list(db_user.user_permissions.values_list('codename', flat=True))
     return {
-        "tokens": db_user.get_tokens(),
+        "tokens": tokens,
+        "groups": groups,
+        "permissions": permissions,
         "is_verified_mobile": db_user.is_verified_mobile,
-        "is_admin": db_user.is_admin,
-        "is_staff": db_user.is_staff,
-        "is_technician": db_user.is_technician,
         "status": db_user.status,
     }

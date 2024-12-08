@@ -1,3 +1,5 @@
+from django.conf.urls.i18n import i18n_patterns
+from django.utils.translation import gettext_lazy as _
 from django.contrib import admin
 from django.conf import settings
 from django.urls import path, include
@@ -21,13 +23,14 @@ urlpatterns = [
     path("redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
     path('robots.txt', robots_txt),
 
-    path('admin/', admin.site.urls),
-
     path('auth/', include('fixplus.user.routing.auth')),
 
-    path('user/', include('fixplus.user.routing.user')),
+    path('user/', include('fixplus.user.routing.users')),
 
     path('upload/', include('fixplus.upload.urls')),
 ]
+urlpatterns += i18n_patterns(
+    path(_('admin/'), admin.site.urls),
+)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

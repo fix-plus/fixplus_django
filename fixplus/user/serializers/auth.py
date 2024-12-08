@@ -1,13 +1,7 @@
 import re
 
-from django.contrib.auth import authenticate
-from django.core.validators import MinLengthValidator, MaxLengthValidator
 from rest_framework import serializers
-from rest_framework import status
-
-
-from fixplus.user.models import BaseUser
-from fixplus.user.selectors.user import is_exist_user, get_cache_verification_mobile_otp
+from django.utils.translation import gettext_lazy as _
 
 
 class InputSignInUpSerializer(serializers.Serializer):
@@ -21,7 +15,7 @@ class InputSignInUpSerializer(serializers.Serializer):
         pattern = r'^(00|\+)\d+$'
 
         if not re.match(pattern, mobile):
-            raise serializers.ValidationError({"detail": "Mobile number must start with '00' or '+' and contain only digits after that."})
+            raise serializers.ValidationError({"detail": _("Mobile number must start with '00' or '+' and contain only digits after that.")})
 
         # Replace '00' with '+'
         if mobile.startswith('00'):
@@ -42,7 +36,7 @@ class InputReSendVerificationCodeSerializer(serializers.Serializer):
 
         if not re.match(pattern, mobile):
             raise serializers.ValidationError(
-                {"detail": "Mobile number must start with '00' or '+' and contain only digits after that."})
+                {"detail": _("Mobile number must start with '00' or '+' and contain only digits after that.")})
 
         # Replace '00' with '+'
         if mobile.startswith('00'):
@@ -63,7 +57,7 @@ class InputConfirmVerificationCodeSerializer(serializers.Serializer):
         pattern = r'^(00|\+)\d+$'
 
         if not re.match(pattern, mobile):
-            raise serializers.ValidationError({"detail": "Mobile number must start with '00' or '+' and contain only digits after that."})
+            raise serializers.ValidationError({"detail": _("Mobile number must start with '00' or '+' and contain only digits after that.")})
 
         # Replace '00' with '+'
         if mobile.startswith('00'):
@@ -72,14 +66,9 @@ class InputConfirmVerificationCodeSerializer(serializers.Serializer):
         return mobile
 
 
-class OutputTokensUserSerializer(serializers.Serializer):
-    class TokenSerializers(serializers.Serializer):
-        access = serializers.CharField()
-        refresh = serializers.CharField()
-
-    tokens = TokenSerializers()
+class OutPutTokensUserSerializer(serializers.Serializer):
+    tokens = serializers.DictField()
+    groups = serializers.ListField(child=serializers.CharField())
+    permissions = serializers.ListField(child=serializers.CharField())
     is_verified_mobile = serializers.BooleanField()
-    is_admin = serializers.BooleanField()
-    is_staff = serializers.BooleanField()
-    is_technician = serializers.BooleanField()
     status = serializers.CharField()

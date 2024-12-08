@@ -1,4 +1,5 @@
 from django.core.cache import cache
+from django.utils.translation import gettext_lazy as _
 
 from fixplus.user.models import BaseUser
 from fixplus.user.selectors.user import is_verified_mobile
@@ -25,7 +26,7 @@ def update_verified(*, mobile:str, code:str) -> BaseUser:
     db_user = BaseUser.objects.filter(mobile=mobile)
 
     if not db_user.exists(): raise Exception("User not found.")
-    if mobile and is_verified_mobile(mobile=mobile): raise Exception("User was verified, please login.")
+    if mobile and is_verified_mobile(mobile=mobile): raise Exception(_("User was verified, please login."))
 
     if verify_otp(mobile=mobile, code=code):
         db_user = db_user.first()

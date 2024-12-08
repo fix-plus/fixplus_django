@@ -1,0 +1,103 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-12-08 17:29+0330\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: .\config\settings\language.py:20
+msgid "English"
+msgstr ""
+
+#: .\config\settings\language.py:21
+msgid "Persian"
+msgstr ""
+
+#: .\config\urls.py:33
+msgid "admin/"
+msgstr ""
+
+#: .\fixplus\common\permissions.py:12
+msgid "You not allowed to use this method, should be verified mobile."
+msgstr "شما دسترسی لازم را ندارید، ابتدا شماره موبایل خود را وریفای کنید."
+
+#: .\fixplus\common\permissions.py:19 .\fixplus\common\permissions.py:25
+#: .\fixplus\common\permissions.py:31 .\fixplus\common\permissions.py:40
+msgid "You not allowed to use this method."
+msgstr "شما دسترسی لازم را ندارید."
+
+#: .\fixplus\user\apis\auth\resend_otp_code.py:26
+msgid "User with this mobile not found."
+msgstr "کاربری با این شماره موبایل پیدا نشد"
+
+#: .\fixplus\user\apis\auth\resend_otp_code.py:41
+#: .\fixplus\user\apis\auth\sign_in_up.py:45
+msgid "A verification code has been send to your mobile number."
+msgstr "یک کد اعتبارسنجی به شماره موبایل شما پیامک شد."
+
+#: .\fixplus\user\apis\auth\resend_otp_code.py:44
+#: .\fixplus\user\apis\auth\sign_in_up.py:49
+msgid "2 minutes must have passed since the last sms was sent."
+msgstr "دو دقیقه باید از ارسال کد اعتبارسنحی قبلی بگذرد."
+
+#: .\fixplus\user\selectors\profile.py:12
+msgid "Profile does not exist"
+msgstr "پروفایل پیدا نشد."
+
+#: .\fixplus\user\selectors\user.py:19 .\fixplus\user\selectors\user.py:42
+msgid "User not found."
+msgstr "کاربر پیدا نشد."
+
+#: .\fixplus\user\selectors\user.py:45 .\fixplus\user\selectors\user.py:46
+msgid "User not verified, please verified mobile first."
+msgstr "حساب کاربری شما وریفای نشده، لطفا ابتدا شماره موبایل خود را وریفای کنید."
+
+#: .\fixplus\user\serializers\auth.py:18 .\fixplus\user\serializers\auth.py:39
+#: .\fixplus\user\serializers\auth.py:60
+msgid ""
+"Mobile number must start with '00' or '+' and contain only digits after that."
+msgstr "شماره موبایل باید با 00 یا + شروع شود."
+
+#: .\fixplus\user\services\group.py:10 .\fixplus\user\services\group.py:18
+msgid "One or more groups do not exist."
+msgstr "یک یا چند گروه یافت نشد."
+
+#: .\fixplus\user\services\permission.py:9
+#: .\fixplus\user\services\permission.py:17
+#: .\fixplus\user\services\permission.py:25
+#: .\fixplus\user\services\permission.py:33
+msgid "One or more permissions do not exist."
+msgstr "یک یا چند مجوز پیدا نشد."
+
+#: .\fixplus\user\services\user.py:29
+msgid "User was verified, please login."
+msgstr "حساب شما وریفای شده است. لطفا وارد شوید."
+
+#: .\fixplus\user\utils.py:36
+msgid "Verification code is expired or invalid."
+msgstr "کد اعتبارسنجی منقضی شده یا نامعتبر است."
+
+#: .\fixplus\user\validators.py:11
+msgid "password must include number"
+msgstr "پسورد باید حتما شامل هدد باشد."
+
+#: .\fixplus\user\validators.py:20
+msgid "password must include letter"
+msgstr "پسورد باید حتما شامل حروف باشد."
+
+#: .\fixplus\user\validators.py:29
+msgid "password must include special char"
+msgstr "پسورد باید حتما شامل کارکترهای خاص باشد."

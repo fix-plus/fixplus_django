@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from fixplus.user.selectors.user import get_tokens_user, get_user
-from fixplus.user.serializers.auth import InputConfirmVerificationCodeSerializer,  OutputTokensUserSerializer
+from fixplus.user.serializers.auth import InputConfirmVerificationCodeSerializer, OutPutTokensUserSerializer
 from fixplus.user.services.user import update_verified
 from fixplus.user.utils import verify_otp
 
@@ -13,7 +13,7 @@ class ConfirmOtpCodeApi(APIView):
     @extend_schema(
         summary="Confirm Verification Code",
         request=InputConfirmVerificationCodeSerializer,
-        responses=OutputTokensUserSerializer)
+        responses=OutPutTokensUserSerializer)
     def post(self, request):
         serializer = InputConfirmVerificationCodeSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -40,7 +40,7 @@ class ConfirmOtpCodeApi(APIView):
             )
 
         else:
-            return Response(OutputTokensUserSerializer(tokens_data).data, status=status.HTTP_200_OK)
+            return Response(OutPutTokensUserSerializer(tokens_data).data, status=status.HTTP_200_OK)
 
 
 
