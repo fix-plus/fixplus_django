@@ -4,6 +4,7 @@ from django.core.validators import FileExtensionValidator
 from django.db import models
 
 from fixplus.common.models import BaseModel
+from fixplus.upload.models import UploadIdentifyDocumentMedia
 from fixplus.upload.validators import FileSizeValidator, ImageSizeValidator
 from fixplus.user.models import BaseUser
 from fixplus.user.utils import generate_referral_code
@@ -36,6 +37,8 @@ class Profile(BaseModel):
         null=True,
         blank=True,
     )
+    identify_document_photo = models.ForeignKey(UploadIdentifyDocumentMedia, blank=True, null=True, related_name="identify_document_medias", on_delete=models.SET_NULL)
+    other_identify_document_photos = models.ManyToManyField(UploadIdentifyDocumentMedia, blank=True, related_name="other_identify_document_medias")
 
     def __str__(self):
         return f"{self.user.mobile}"

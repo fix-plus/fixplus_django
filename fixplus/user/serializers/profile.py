@@ -1,6 +1,7 @@
 from django.core.validators import FileExtensionValidator
 from rest_framework import serializers
 
+from fixplus.upload.serializers import IdentifyDocumentMediaSerializer
 from fixplus.upload.validators import FileSizeValidator, ImageSizeValidator
 from fixplus.user.models import Profile
 from fixplus.user.selectors.profile import get_land_line_numbers, get_mobile_numbers
@@ -15,8 +16,12 @@ class OutPutProfileSerializer(serializers.ModelSerializer):
     avatar = serializers.SerializerMethodField()
     land_line_numbers = serializers.SerializerMethodField()
     mobile_numbers = serializers.SerializerMethodField()
-    is_verified_mobile = serializers.SerializerMethodField()
+    identify_document_photo = IdentifyDocumentMediaSerializer()
+    other_identify_document_photos = IdentifyDocumentMediaSerializer(many=True)
     status = serializers.SerializerMethodField()
+    is_verified_mobile = serializers.SerializerMethodField()
+    groups = serializers.SerializerMethodField()
+    permissions = serializers.SerializerMethodField()
 
     class Meta:
         model = Profile
@@ -24,12 +29,6 @@ class OutPutProfileSerializer(serializers.ModelSerializer):
 
     def get_mobile(self, obj):
         return obj.user.mobile if obj.user else None
-
-    def get_is_verified_mobile(self, obj):
-        return obj.user.is_verified_mobile if obj.user else None
-
-    def get_status(self, obj):
-        return obj.user.status if obj.user else None
 
     def get_avatar(self, obj):
         request = self.context.get('request')
@@ -42,6 +41,20 @@ class OutPutProfileSerializer(serializers.ModelSerializer):
 
     def get_mobile_numbers(self, obj):
         return [number['number'] for number in OutPutNumbersSerializer(get_mobile_numbers(obj.user), many=True).data]
+
+    def get_status(self, obj):
+        return obj.user.status if obj.user else None
+
+    def get_is_verified_mobile(self, obj):
+        return obj.user.is_verified_mobile if obj.user else None
+
+    def get_groups(self, obj):
+        groups = list(obj.user.groups.values_list('name', flat=True))
+        return groups
+
+    def get_permissions(self, obj):
+        permissions = list(obj.user.user_permissions.values_list('codename', flat=True))
+        return permissions
 
 
 class InputUpdateProfileSerializer(serializers.Serializer):
@@ -59,5 +72,7 @@ class InputUpdateProfileSerializer(serializers.Serializer):
     ])
     land_line_numbers = serializers.ListField(required=False, child=serializers.CharField(), default=None)
     mobile_numbers = serializers.ListField(required=False, child=serializers.CharField(), default=None)
+    identify_document_photo_id = serializers.UUIDField(required=False, default=None)
+    other_identify_document_photos_id = serializers.ListField(required=False, default=None, child=serializers.CharField())
 
 

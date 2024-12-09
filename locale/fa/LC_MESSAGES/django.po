@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-08 17:29+0330\n"
+"POT-Creation-Date: 2024-12-09 11:35+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,6 +39,10 @@ msgstr "شما دسترسی لازم را ندارید، ابتدا شماره �
 msgid "You not allowed to use this method."
 msgstr "شما دسترسی لازم را ندارید."
 
+#: .\fixplus\upload\selectors.py:11
+msgid "Media file not found."
+msgstr "فایل مدیا پیدا نشد، ایدی ارسالی اشتباه است."
+
 #: .\fixplus\user\apis\auth\resend_otp_code.py:26
 msgid "User with this mobile not found."
 msgstr "کاربری با این شماره موبایل پیدا نشد"
@@ -53,6 +57,10 @@ msgstr "یک کد اعتبارسنجی به شماره موبایل شما پی�
 msgid "2 minutes must have passed since the last sms was sent."
 msgstr "دو دقیقه باید از ارسال کد اعتبارسنحی قبلی بگذرد."
 
+#: .\fixplus\user\apis\user\register.py:21
+msgid "The request was sent successfully."
+msgstr "درخواست با موفقیت ارسال شد."
+
 #: .\fixplus\user\selectors\profile.py:12
 msgid "Profile does not exist"
 msgstr "پروفایل پیدا نشد."
@@ -63,7 +71,8 @@ msgstr "کاربر پیدا نشد."
 
 #: .\fixplus\user\selectors\user.py:45 .\fixplus\user\selectors\user.py:46
 msgid "User not verified, please verified mobile first."
-msgstr "حساب کاربری شما وریفای نشده، لطفا ابتدا شماره موبایل خود را وریفای کنید."
+msgstr ""
+"حساب کاربری شما وریفای نشده، لطفا ابتدا شماره موبایل خود را وریفای کنید."
 
 #: .\fixplus\user\serializers\auth.py:18 .\fixplus\user\serializers\auth.py:39
 #: .\fixplus\user\serializers\auth.py:60
@@ -81,6 +90,42 @@ msgstr "یک یا چند گروه یافت نشد."
 #: .\fixplus\user\services\permission.py:33
 msgid "One or more permissions do not exist."
 msgstr "یک یا چند مجوز پیدا نشد."
+
+#: .\fixplus\user\services\register.py:9
+msgid "You don't need to register."
+msgstr "شما نیازی به ثبت نام مجدد ندارید."
+
+#: .\fixplus\user\services\register.py:10
+msgid "You have already registered."
+msgstr "شما قبلا ثبت نام کرده اید."
+
+#: .\fixplus\user\services\register.py:14
+msgid "full_name"
+msgstr "نام و نام خانوادگی"
+
+#: .\fixplus\user\services\register.py:15
+msgid "national_code"
+msgstr "کد ملی"
+
+#: .\fixplus\user\services\register.py:16
+msgid "gender"
+msgstr "جنسیت"
+
+#: .\fixplus\user\services\register.py:17
+msgid "address"
+msgstr "آدرس"
+
+#: .\fixplus\user\services\register.py:18
+msgid "avatar"
+msgstr "عکس پروفایل"
+
+#: .\fixplus\user\services\register.py:19
+msgid "identify_document_photo"
+msgstr "تصویر کارت ملی/پاسپورت"
+
+#: .\fixplus\user\services\register.py:24
+msgid " cannot be None or empty."
+msgstr " نمیتواند خالی باشد."
 
 #: .\fixplus\user\services\user.py:29
 msgid "User was verified, please login."
@@ -101,3 +146,12 @@ msgstr "پسورد باید حتما شامل حروف باشد."
 #: .\fixplus\user\validators.py:29
 msgid "password must include special char"
 msgstr "پسورد باید حتما شامل کارکترهای خاص باشد."
+
+#~ msgid "Uploading an avatar photo is required."
+#~ msgstr "آپلود عکس آواتار الزامی است."
+
+#, fuzzy
+#~| msgid "Uploading an avatar photo is required."
+#~ msgid ""
+#~ "Uploading a picture of your national ID card or passport is required."
+#~ msgstr "آپلود تصویر کارت ملی یا پاسپورت الزامی است."
