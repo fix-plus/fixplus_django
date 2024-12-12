@@ -3,6 +3,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser
 
 from fixplus.common.mixins import IsVerifiedMobileMixin
 from fixplus.upload.serializers import InputParamsUploadSerializer, InputUploadSerializer, OutPutUploadSerializer
@@ -10,6 +11,8 @@ from fixplus.upload.services import create_upload_identify_document_media
 
 
 class UploadCenterApi(IsVerifiedMobileMixin, APIView):
+    parser_classes = [MultiPartParser]
+    
     @extend_schema(
         summary="Upload Center",
         parameters=[InputParamsUploadSerializer],
