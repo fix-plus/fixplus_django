@@ -140,18 +140,10 @@ msgid "password must include number"
 msgstr "پسورد باید حتما شامل هدد باشد."
 
 #: .\fixplus\user\validators.py:20
+#: .\fixplus\user\validators.py:20
 msgid "password must include letter"
 msgstr "پسورد باید حتما شامل حروف باشد."
 
 #: .\fixplus\user\validators.py:29
 msgid "password must include special char"
 msgstr "پسورد باید حتما شامل کارکترهای خاص باشد."
-
-#~ msgid "Uploading an avatar photo is required."
-#~ msgstr "آپلود عکس آواتار الزامی است."
-
-#, fuzzy
-#~| msgid "Uploading an avatar photo is required."
-#~ msgid ""
-#~ "Uploading a picture of your national ID card or passport is required."
-#~ msgstr "آپلود تصویر کارت ملی یا پاسپورت الزامی است."
