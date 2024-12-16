@@ -17,21 +17,21 @@ class AssignGroupAPIView(IsSuperAdminOrAdminMixin, APIView):
     API view to assign or remove groups from a user.
     """
 
-    @extend_schema(
-        summary="Assign Groups to a User",
-        description="Assign one or more groups to a specific user. Accessible by Super Admin or Admins.",
-        parameters=[
-            OpenApiParameter(name='user_id', description='UUID of the user', required=True, type='uuid')
-        ],
-        request={
-            'application/json': {
-                'schema': serializers.Serializer,  # Dynamic schema based on input
-                'example': {
-                    'groups': ['admin', 'technician']
-                }
-            }
-        },
-    )
+    # @extend_schema(
+    #     summary="Assign Groups to a User",
+    #     description="Assign one or more groups to a specific user. Accessible by Super Admin or Admins.",
+    #     parameters=[
+    #         OpenApiParameter(name='user_id', description='UUID of the user', required=True, type='uuid')
+    #     ],
+    #     request={
+    #         'application/json': {
+    #             'schema': serializers.Serializer,  # Dynamic schema based on input
+    #             'example': {
+    #                 'groups': ['admin', 'technician']
+    #             }
+    #         }
+    #     },
+    # )
     def post(self, request, user_id):
         """
         Assign groups to a user.
@@ -54,21 +54,21 @@ class AssignGroupAPIView(IsSuperAdminOrAdminMixin, APIView):
         serializer = OutPutUserSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @extend_schema(
-        summary="Remove Groups from a User",
-        description="Remove one or more groups from a specific user. Accessible by Super Admin or Admins.",
-        parameters=[
-            OpenApiParameter(name='user_id', description='UUID of the user', required=True, type='uuid')
-        ],
-        request={
-            'application/json': {
-                'schema': serializers.Serializer,  # Dynamic schema based on input
-                'example': {
-                    'groups': ['admin', 'technician']
-                }
-            }
-        },
-    )
+    # @extend_schema(
+    #     summary="Remove Groups from a User",
+    #     description="Remove one or more groups from a specific user. Accessible by Super Admin or Admins.",
+    #     parameters=[
+    #         OpenApiParameter(name='user_id', description='UUID of the user', required=True, type='uuid')
+    #     ],
+    #     request={
+    #         'application/json': {
+    #             'schema': serializers.Serializer,  # Dynamic schema based on input
+    #             'example': {
+    #                 'groups': ['admin', 'technician']
+    #             }
+    #         }
+    #     },
+    # )
     def delete(self, request, user_id):
         """
         Remove groups from a user.

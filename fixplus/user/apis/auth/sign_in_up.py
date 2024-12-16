@@ -21,9 +21,9 @@ class SignInUpApi(APIView):
         serializer = InputSignInUpSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        try:
-            with transaction.atomic():
-                if get_cache_verification_mobile_otp(mobile=serializer.validated_data.get("mobile")) is None:
+        # try:
+        #     with transaction.atomic():
+        if get_cache_verification_mobile_otp(mobile=serializer.validated_data.get("mobile")) is None:
                     user = create_user(
                         mobile=serializer.validated_data.get("mobile"),
                     )
@@ -45,12 +45,12 @@ class SignInUpApi(APIView):
                     return Response({'result': _('A verification code has been send to your mobile number.')},
                                     status=status.HTTP_200_OK)
 
-                else:
+        else:
                     return Response({'detail': _('2 minutes must have passed since the last sms was sent.')},
                                     status=status.HTTP_408_REQUEST_TIMEOUT)
 
-        except Exception as e:
-            return Response(
-                {'detail': f"{e}"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        # except Exception as e:
+        #     return Response(
+        #         {'detail': f"{e}"},
+        #         status=status.HTTP_400_BAD_REQUEST
+        #     )

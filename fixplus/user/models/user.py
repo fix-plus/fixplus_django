@@ -1,9 +1,8 @@
-import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, Permission
 from django.contrib.auth.models import BaseUserManager as BUM
 from django.contrib.auth.models import PermissionsMixin
-
+from django.utils import timezone
 from fixplus.common.models import BaseModel
 
 
@@ -14,7 +13,6 @@ class BaseUserManager(BUM):
                     is_admin=False,
                     password=None,
                     ):
-
         user = self.model(
             mobile=mobile,
             is_active=is_active,
@@ -63,6 +61,11 @@ class BaseUser(BaseModel, AbstractBaseUser, PermissionsMixin):
     is_verified_mobile = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
+    request_register_datetime = models.DateTimeField(blank=True, null=True)
+
+    # New field to track last online time
+    last_online = models.DateTimeField(null=True, blank=True)
+
     STATUS_CHOICES = [
         ('not_registered', 'Not Registered'),
         ('checking', 'Checking Identity'),
@@ -91,7 +94,7 @@ class BaseUser(BaseModel, AbstractBaseUser, PermissionsMixin):
         return self.mobile
 
     class Meta:
-        verbose_name = "User"
+        verbose_name = "User "
 
     def get_tokens(self):
         from rest_framework_simplejwt.tokens import RefreshToken
@@ -112,3 +115,7 @@ class BaseUser(BaseModel, AbstractBaseUser, PermissionsMixin):
         # Ensure a Profile exists for this user
         from fixplus.user.models import Profile
         Profile.objects.get_or_create(user=self)
+
+    def update_last_online(self):
+        self.last_online = timezone.now()
+        self.save(update_fields=['last_online'])

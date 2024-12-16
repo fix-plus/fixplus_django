@@ -18,26 +18,26 @@ class AssignPermissionAPIView(IsSuperAdminOrAdminMixin, APIView):
     API view to assign or remove permissions to/from groups or users.
     """
 
-    @extend_schema(
-        summary="Assign Permissions to a Group or User",
-        description="""
-        Assign one or more permissions to a specific group or user.
-
-        **Permissions can be managed for:**
-        - **Groups:** Assigning permissions to groups affects all users within the group.
-        - **Users:** Assigning permissions directly to users for more granular control.
-        """,
-        request={
-            'application/json': {
-                'schema': serializers.Serializer,  # Dynamic schema based on target_type
-                'example': {
-                    'target_type': 'group',
-                    'target_id': 'group_uuid',
-                    'permissions': ['can_approve_tasks', 'can_access_chat']
-                }
-            }
-        },
-    )
+    # @extend_schema(
+    #     summary="Assign Permissions to a Group or User",
+    #     description="""
+    #     Assign one or more permissions to a specific group or user.
+    #
+    #     **Permissions can be managed for:**
+    #     - **Groups:** Assigning permissions to groups affects all users within the group.
+    #     - **Users:** Assigning permissions directly to users for more granular control.
+    #     """,
+    #     request={
+    #         'application/json': {
+    #             'schema': serializers.Serializer,  # Dynamic schema based on target_type
+    #             'example': {
+    #                 'target_type': 'group',
+    #                 'target_id': 'group_uuid',
+    #                 'permissions': ['can_approve_tasks', 'can_access_chat']
+    #             }
+    #         }
+    #     },
+    # )
     def post(self, request):
         """
         Assign permissions to a group or a user.
@@ -92,26 +92,26 @@ class AssignPermissionAPIView(IsSuperAdminOrAdminMixin, APIView):
             serializer = OutPutPermissionSerializer(permissions_assigned, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @extend_schema(
-        summary="Remove Permissions from a Group or User",
-        description="""
-        Remove one or more permissions from a specific group or user.
-
-        **Permissions can be managed for:**
-        - **Groups:** Removing permissions from groups affects all users within the group.
-        - **Users:** Removing permissions directly from users for more granular control.
-        """,
-        request={
-            'application/json': {
-                'schema': serializers.Serializer,  # Dynamic schema based on target_type
-                'example': {
-                    'target_type': 'user',
-                    'target_id': 'user_uuid',
-                    'permissions': ['can_access_chat']
-                }
-            }
-        },
-    )
+    # @extend_schema(
+    #     summary="Remove Permissions from a Group or User",
+    #     description="""
+    #     Remove one or more permissions from a specific group or user.
+    #
+    #     **Permissions can be managed for:**
+    #     - **Groups:** Removing permissions from groups affects all users within the group.
+    #     - **Users:** Removing permissions directly from users for more granular control.
+    #     """,
+    #     request={
+    #         'application/json': {
+    #             'schema': serializers.Serializer,  # Dynamic schema based on target_type
+    #             'example': {
+    #                 'target_type': 'user',
+    #                 'target_id': 'user_uuid',
+    #                 'permissions': ['can_access_chat']
+    #             }
+    #         }
+    #     },
+    # )
     def delete(self, request):
         """
         Remove permissions from a group or a user.

@@ -16,6 +16,14 @@ def create_user(*, mobile:str=None) -> BaseUser:
     return BaseUser.objects.create_user(mobile=mobile)
 
 
+def update_user(instance: BaseUser, *args, **kwargs):
+    for key, value in kwargs.items():
+        setattr(instance, key, value)
+    instance.save()
+
+    return instance
+
+
 def set_cache_verification_mobile_otp(mobile: str, otp:str):
     cache_key = mobile + "_verification_mobile_otp"
     cache.delete(cache_key)

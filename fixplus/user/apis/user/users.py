@@ -1,86 +1,78 @@
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
+from drf_spectacular.utils import extend_schema
 
 from fixplus.common.mixins import IsSuperAdminMixin
-from fixplus.user.models import BaseUser
-from fixplus.user.serializers.user import OutPutUserSerializer, InputUserSerializer
+from fixplus.common.pagination import LimitOffsetPagination, get_paginated_response_context
+from fixplus.user.selectors.user import get_user_list, get_user
+from fixplus.user.serializers.user import OutPutUserSerializer, InputUserSerializer, InputUserParamsSerializer, \
+    OutPutUserDetailSerializer
+from fixplus.user.services.user import update_user
 
 
-class UserListCreateAPIView(IsSuperAdminMixin, APIView):
-    """
-    API view to list all users and create a new user.
-    """
+class UserListApi(IsSuperAdminMixin, APIView):
+    class Pagination(LimitOffsetPagination):
+        default_limit = 10
 
     @extend_schema(
-        summary="List All Users",
-        description="Retrieve a list of all registered users. Only accessible by Super Admin.",
-    )
+        summary="Search User",
+        parameters=[InputUserParamsSerializer],
+        responses=OutPutUserSerializer)
     def get(self, request):
-        users = BaseUser.objects.all()
-        serializer = OutPutUserSerializer(users, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        query_serializer = InputUserParamsSerializer(data=request.query_params)
+        query_serializer.is_valid(raise_exception=True)
+        try:
+            db_user_list = get_user_list(
+                **query_serializer.validated_data
+            )
 
-    @extend_schema(
-        summary="Create a New User",
-        description="Register a new user by providing necessary details. Only accessible by Super Admin.",
-        request=InputUserSerializer,
-    )
-    def post(self, request):
-        serializer = InputUserSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-        output_serializer = OutPutUserSerializer(user)
-        return Response(output_serializer.data, status=status.HTTP_201_CREATED)
+        except Exception as ex:
+            return Response(
+                {'error': str(ex)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        return get_paginated_response_context(
+            pagination_class=self.Pagination,
+            serializer_class=OutPutUserSerializer,
+            queryset=db_user_list,
+            request=request,
+            view=self,
+        )
 
 
 class UserDetailAPIView(IsSuperAdminMixin, APIView):
-    """
-    API view to retrieve, update, or delete a specific user.
-    """
+    @extend_schema(
+        summary="Get User Detail",
+        responses=OutPutUserDetailSerializer)
+    def get(self, request, uuid):
+        try:
+            queryset = get_user(id=uuid)
 
-    def get_object(self, pk):
-        return get_object_or_404(BaseUser, pk=pk)
+        except Exception as ex:
+            return Response(
+                {'error': str(ex)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        return Response(OutPutUserDetailSerializer(queryset).data)
 
     @extend_schema(
-        summary="Retrieve User Details",
-        description="Get detailed information of a specific user by their ID. Only accessible by Super Admin.",
-        parameters=[
-            OpenApiParameter(name='pk', description='UUID of the user', required=True, type='uuid')
-        ],
-    )
-    def get(self, request, pk):
-        user = self.get_object(pk)
-        serializer = OutPutUserSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    @extend_schema(
-        summary="Update User Information",
-        description="Update the details of a specific user by their ID. Only accessible by Super Admin.",
-        parameters=[
-            OpenApiParameter(name='pk', description='UUID of the user', required=True, type='uuid')
-        ],
+        summary="Update User",
         request=InputUserSerializer,
-    )
-    def put(self, request, pk):
-        user = self.get_object(pk)
-        serializer = InputUserSerializer(user, data=request.data, partial=True)
+        responses=OutPutUserDetailSerializer)
+    def patch(self, request, uuid):
+        serializer = InputUserSerializer(data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-        output_serializer = OutPutUserSerializer(user)
-        return Response(output_serializer.data, status=status.HTTP_200_OK)
+        try:
+            db_user = update_user(
+                instance=get_user(id=uuid),
+                **serializer.validated_data
+            )
 
-    @extend_schema(
-        summary="Delete a User",
-        description="Delete a specific user by their ID. Only accessible by Super Admin.",
-        parameters=[
-            OpenApiParameter(name='pk', description='UUID of the user', required=True, type='uuid')
-        ],
-    )
-    def delete(self, request, pk):
-        user = self.get_object(pk)
-        user.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        except Exception as ex:
+            return Response(
+                {'error': str(ex)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        return Response(OutPutUserDetailSerializer(db_user).data)

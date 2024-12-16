@@ -19,6 +19,7 @@ class OutPutProfileSerializer(serializers.ModelSerializer):
     identify_document_photo = IdentifyDocumentMediaSerializer()
     other_identify_document_photos = IdentifyDocumentMediaSerializer(many=True)
     status = serializers.SerializerMethodField()
+    reason_for_rejected = serializers.SerializerMethodField()
     is_verified_mobile = serializers.SerializerMethodField()
     groups = serializers.SerializerMethodField()
     permissions = serializers.SerializerMethodField()
@@ -44,6 +45,9 @@ class OutPutProfileSerializer(serializers.ModelSerializer):
 
     def get_status(self, obj):
         return obj.user.status if obj.user else None
+
+    def get_reason_for_rejected(self, obj):
+        return obj.user.reason_for_rejected if obj.user else None
 
     def get_is_verified_mobile(self, obj):
         return obj.user.is_verified_mobile if obj.user else None
