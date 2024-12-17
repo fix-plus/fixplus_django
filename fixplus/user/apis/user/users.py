@@ -55,14 +55,14 @@ class UserDetailAPIView(IsSuperAdminMixin, APIView):
                 {'error': str(ex)},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        return Response(OutPutUserDetailSerializer(queryset).data)
+        return Response(OutPutUserDetailSerializer(queryset, context={"request": request}).data)
 
     @extend_schema(
         summary="Update User",
         request=InputUserSerializer,
         responses=OutPutUserDetailSerializer)
     def patch(self, request, uuid):
-        serializer = InputUserSerializer(data=request.data, partial=True)
+        serializer = InputUserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         try:
             db_user = update_user(
