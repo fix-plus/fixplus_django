@@ -48,8 +48,11 @@ class OutPutUserSerializer(serializers.ModelSerializer):
 
 
 class OutPutUserDetailSerializer(serializers.ModelSerializer):
-    profile = OutPutProfileSerializer()
+    profile = serializers.SerializerMethodField()
 
     class Meta:
         model = BaseUser
         fields = ['mobile', 'id', 'status', 'is_active', 'is_verified_mobile', 'profile', 'last_login', 'last_online', 'created_at', 'updated_at', 'request_register_datetime']
+
+    def get_profile(self, obj):
+        return OutPutProfileSerializer(obj.profile, context=self.context).data
