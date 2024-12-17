@@ -41,10 +41,21 @@ class InputUserSerializer(serializers.Serializer):
 
 class OutPutUserSerializer(serializers.ModelSerializer):
     groups = serializers.StringRelatedField(many=True)
+    full_name = serializers.SerializerMethodField()
+    avatar = serializers.SerializerMethodField()
 
     class Meta:
         model = BaseUser
-        fields = ['mobile', 'id', 'groups', 'status', 'is_active', 'is_verified_mobile', 'last_login', 'last_online', 'created_at', 'updated_at', 'request_register_datetime', 'reason_for_rejected']
+        fields = ['mobile', 'id', 'full_name', 'groups', 'status', 'is_active', 'is_verified_mobile', 'avatar', 'last_login', 'last_online', 'created_at', 'updated_at', 'request_register_datetime', 'reason_for_rejected']
+
+    def get_full_name(self, obj):
+        return obj.profile.full_name
+
+    def get_avatar(self, obj):
+        request = self.context.get('request')
+        if obj.profile.avatar:
+            return request.build_absolute_uri(obj.profile.avatar.url) if request else obj.profile.avatar.url
+        return None
 
 
 class OutPutUserDetailSerializer(serializers.ModelSerializer):
