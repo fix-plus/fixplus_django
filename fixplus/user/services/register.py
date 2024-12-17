@@ -1,4 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from fixplus.user.models import Profile, BaseUser
@@ -25,4 +26,5 @@ def update_register(user: BaseUser):
 
     assign_groups_to_user(user=user, group_names=['technician'])
     user.status = 'checking'
+    user.request_register_datetime = timezone.now()
     user.save()

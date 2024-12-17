@@ -75,4 +75,4 @@ class UserDetailAPIView(IsSuperAdminMixin, APIView):
                 {'error': str(ex)},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        return Response(OutPutUserDetailSerializer(db_user).data)
+        return Response(OutPutUserDetailSerializer(db_user, context={"request": request}).data)
