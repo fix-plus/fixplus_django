@@ -52,7 +52,7 @@ class UserDetailAPIView(IsSuperAdminMixin, APIView):
 
         except Exception as ex:
             return Response(
-                {'error': str(ex)},
+                {'detail': str(ex)},
                 status=status.HTTP_400_BAD_REQUEST
             )
         return Response(OutPutUserDetailSerializer(queryset, context={"request": request}).data)
@@ -72,7 +72,7 @@ class UserDetailAPIView(IsSuperAdminMixin, APIView):
 
         except Exception as ex:
             return Response(
-                {'error': str(ex)},
+                {'detail': str(ex)},
                 status=status.HTTP_400_BAD_REQUEST
             )
         return Response(OutPutUserDetailSerializer(db_user, context={"request": request}).data)

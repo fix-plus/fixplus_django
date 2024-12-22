@@ -7,10 +7,10 @@ from fixplus.user.services.group import assign_groups_to_user
 
 
 def update_register(user: BaseUser):
-    if user.groups.all().exists(): raise Exception(_("You don't need to register."))
     if user.status == 'registered': raise Exception(_("You have already registered."))
-    # if user.profile.avatar is None: raise Exception(_("Uploading an avatar photo is required."))
-    # if user.profile.identify_document_photo is None: raise Exception(_("Uploading a picture of your national ID card or passport is required."))
+    if user.status == 'rejected': raise Exception(_("Your request has already been rejected by the admin."))
+    if user.status == 'checking': raise Exception(_("Your request has already been submitted. Please refrain from resubmitting it."))
+
     fields_to_check = [
         (_('full_name'), user.profile.full_name),
         (_('national_code'), user.profile.national_code),
@@ -24,7 +24,6 @@ def update_register(user: BaseUser):
         if field_value is None or (isinstance(field_value, str) and field_value.strip() == ''):
             raise Exception(field_name + _(" cannot be None or empty."))
 
-    assign_groups_to_user(user=user, group_names=['technician'])
     user.status = 'checking'
     user.request_register_datetime = timezone.now()
     user.save()

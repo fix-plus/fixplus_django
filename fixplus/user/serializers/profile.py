@@ -63,7 +63,7 @@ class OutPutProfileSerializer(serializers.ModelSerializer):
 
 class InputUpdateProfileSerializer(serializers.Serializer):
     full_name = serializers.CharField(required=False, allow_null=True, default=None, max_length=200)
-    national_code = serializers.IntegerField(required=False, allow_null=True, default=None)
+    national_code = serializers.CharField(required=False, allow_null=True, default=None)
     gender = serializers.ChoiceField(required=False, allow_null=True, default=None, choices=['female', 'male'])
     address = serializers.CharField(required=False, allow_null=True, default=None)
     latitude = serializers.FloatField(required=False, allow_null=True, default=None)

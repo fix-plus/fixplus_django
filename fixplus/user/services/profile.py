@@ -10,14 +10,14 @@ def create_profile(*args, **kwargs):
 
 
 def create_land_line_numbers(*, user: BaseUser, number: str):
-    return LandLineNumber.objects.create(
+    return LandLineNumber.objects.get_or_create(
         user=user,
         number=number
     )
 
 
 def create_mobile_numbers(*, user: BaseUser, number: str):
-    return MobileNumber.objects.create(
+    return MobileNumber.objects.get_or_create(
         user=user,
         number=number
     )

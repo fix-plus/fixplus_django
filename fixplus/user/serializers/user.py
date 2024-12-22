@@ -35,8 +35,9 @@ class InputUserParamsSerializer(serializers.Serializer):
 
 
 class InputUserSerializer(serializers.Serializer):
-    status = serializers.ChoiceField(required=False, default=None, choices=['not_registered', 'checking', 'registered', 'rejected'])
-    reason_for_rejected = serializers.CharField(required=False, default=None)
+    status = serializers.ChoiceField(required=False, default=None, allow_null=True, choices=['not_registered', 'checking', 'registered', 'rejected'])
+    reason_for_rejected = serializers.CharField(required=False, default=None, allow_null=True)
+    group = serializers.ListField(required=False, default=None, child=serializers.CharField())
 
 
 class OutPutUserSerializer(serializers.ModelSerializer):

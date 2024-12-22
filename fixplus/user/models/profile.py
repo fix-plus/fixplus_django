@@ -21,7 +21,7 @@ class Profile(BaseModel):
     ]
     user = models.OneToOneField(BaseUser, on_delete=models.PROTECT)
     full_name = models.CharField(max_length=200, blank=True, null=True)
-    national_code = models.IntegerField(blank=True, null=True)
+    national_code = models.CharField(blank=True, null=True)
     gender = models.CharField(max_length=20, choices=GENDER_CHOICES)
     address = models.TextField(blank=True)
     latitude = models.FloatField(blank=True, null=True)
@@ -46,7 +46,10 @@ class Profile(BaseModel):
 
 class LandLineNumber(BaseModel):
     user = models.ForeignKey(BaseUser, on_delete=models.CASCADE)
-    number = models.CharField(max_length=20, unique=True, blank=True, null=True)
+    number = models.CharField(max_length=20, blank=True, null=True)
+
+    class Meta:
+        unique_together = ('user', 'number',)
 
     def save(self, *args, **kwargs):
         self.ref_code = generate_referral_code(length=6)
@@ -59,7 +62,10 @@ class LandLineNumber(BaseModel):
 
 class MobileNumber(BaseModel):
     user = models.ForeignKey(BaseUser, on_delete=models.CASCADE)
-    number = models.CharField(max_length=20, unique=True, blank=True, null=True)
+    number = models.CharField(max_length=20, blank=True, null=True)
+
+    class Meta:
+        unique_together = ('user', 'number',)
 
     def save(self, *args, **kwargs):
         self.ref_code = generate_referral_code(length=6)

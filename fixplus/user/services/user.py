@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 
 from fixplus.user.models import BaseUser
 from fixplus.user.selectors.user import is_verified_mobile
+from fixplus.user.services.group import assign_groups_to_user
 from fixplus.user.utils import verify_otp
 
 
@@ -18,7 +19,11 @@ def create_user(*, mobile:str=None) -> BaseUser:
 
 def update_user(instance: BaseUser, *args, **kwargs):
     for key, value in kwargs.items():
-        setattr(instance, key, value)
+        if key == 'group' and value is not None:
+            instance.groups.clear()
+            assign_groups_to_user(user=instance, group_names=value)
+        else:
+            setattr(instance, key, value)
     instance.save()
 
     return instance

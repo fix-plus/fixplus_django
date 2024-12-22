@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-09 11:35+0330\n"
+"POT-Creation-Date: 2024-12-22 09:22+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -65,17 +65,17 @@ msgstr "درخواست با موفقیت ارسال شد."
 msgid "Profile does not exist"
 msgstr "پروفایل پیدا نشد."
 
-#: .\fixplus\user\selectors\user.py:19 .\fixplus\user\selectors\user.py:42
+#: .\fixplus\user\selectors\user.py:21 .\fixplus\user\selectors\user.py:92
 msgid "User not found."
 msgstr "کاربر پیدا نشد."
 
-#: .\fixplus\user\selectors\user.py:45 .\fixplus\user\selectors\user.py:46
+#: .\fixplus\user\selectors\user.py:95 .\fixplus\user\selectors\user.py:96
 msgid "User not verified, please verified mobile first."
 msgstr ""
 "حساب کاربری شما وریفای نشده، لطفا ابتدا شماره موبایل خود را وریفای کنید."
 
 #: .\fixplus\user\serializers\auth.py:18 .\fixplus\user\serializers\auth.py:39
-#: .\fixplus\user\serializers\auth.py:60
+#: .\fixplus\user\serializers\auth.py:60 .\fixplus\user\serializers\user.py:28
 msgid ""
 "Mobile number must start with '00' or '+' and contain only digits after that."
 msgstr "شماره موبایل باید با 00 یا + شروع شود."
@@ -91,43 +91,48 @@ msgstr "یک یا چند گروه یافت نشد."
 msgid "One or more permissions do not exist."
 msgstr "یک یا چند مجوز پیدا نشد."
 
-#: .\fixplus\user\services\register.py:9
-msgid "You don't need to register."
-msgstr "شما نیازی به ثبت نام مجدد ندارید."
-
 #: .\fixplus\user\services\register.py:10
 msgid "You have already registered."
 msgstr "شما قبلا ثبت نام کرده اید."
 
-#: .\fixplus\user\services\register.py:14
+#: .\fixplus\user\services\register.py:11
+msgid "Your request has already been rejected by the admin."
+msgstr "درخواست شما قبلا توسط مدیر رد شده است."
+
+#: .\fixplus\user\services\register.py:12
+msgid ""
+"Your request has already been submitted. Please refrain from resubmitting it."
+msgstr "درخواست شما قبلا ثبت شده است لطفا از ارسال مجدد آن خودداری کنید."
+
+#: .\fixplus\user\services\register.py:15
 msgid "full_name"
 msgstr "نام و نام خانوادگی"
 
-#: .\fixplus\user\services\register.py:15
+#: .\fixplus\user\services\register.py:16
 msgid "national_code"
 msgstr "کد ملی"
 
-#: .\fixplus\user\services\register.py:16
+#: .\fixplus\user\services\register.py:17
 msgid "gender"
 msgstr "جنسیت"
 
-#: .\fixplus\user\services\register.py:17
+#: .\fixplus\user\services\register.py:18
 msgid "address"
 msgstr "آدرس"
 
-#: .\fixplus\user\services\register.py:18
+#: .\fixplus\user\services\register.py:19
 msgid "avatar"
 msgstr "عکس پروفایل"
 
-#: .\fixplus\user\services\register.py:19
+#: .\fixplus\user\services\register.py:20
 msgid "identify_document_photo"
 msgstr "تصویر کارت ملی/پاسپورت"
 
-#: .\fixplus\user\services\register.py:24
+#: .\fixplus\user\services\register.py:25
 msgid " cannot be None or empty."
 msgstr " نمیتواند خالی باشد."
 
-#: .\fixplus\user\services\user.py:29
+#: .\fixplus\user\services\user.py:37
 msgid "User was verified, please login."
 msgstr "حساب شما وریفای شده است. لطفا وارد شوید."
 
@@ -140,10 +145,12 @@ msgid "password must include number"
 msgstr "پسورد باید حتما شامل هدد باشد."
 
 #: .\fixplus\user\validators.py:20
-#: .\fixplus\user\validators.py:20
 msgid "password must include letter"
 msgstr "پسورد باید حتما شامل حروف باشد."
 
 #: .\fixplus\user\validators.py:29
 msgid "password must include special char"
 msgstr "پسورد باید حتما شامل کارکترهای خاص باشد."
+
+#~ msgid "You don't need to register."
+#~ msgstr "شما نیازی به ثبت نام مجدد ندارید."
