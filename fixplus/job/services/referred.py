@@ -1,7 +1,7 @@
 from django.utils import timezone
 
 from fixplus.job.models import Job, ReferredJob
-from fixplus.job.selectors.selectors import get_job
+from fixplus.job.selectors.job import get_job
 from fixplus.user.models import BaseUser
 from fixplus.user.selectors.user import get_user
 

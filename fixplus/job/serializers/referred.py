@@ -55,7 +55,7 @@ class OutPutTechnicianReferredJobSerializer(serializers.ModelSerializer):
         ]
 
     def get_job(self, obj):
-        if obj.status == 'accept_by_technician':
+        if obj.status == 'in_processing':
             return OutPutJobSerializer(obj.job).data
 
         else:

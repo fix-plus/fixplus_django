@@ -27,6 +27,7 @@ class Profile(BaseModel):
     latitude = models.FloatField(blank=True, null=True)
     longitude = models.FloatField(blank=True, null=True)
     description = models.TextField(blank=True)
+    is_in_holiday = models.BooleanField(default=False)
     avatar = models.ImageField(
         upload_to=upload_image_avatar,
         validators=[

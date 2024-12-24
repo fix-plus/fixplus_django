@@ -33,11 +33,12 @@ class Job(SoftDeleteBaseModel):
 class ReferredJob(SoftDeleteBaseModel):
     STATUS_CHOICES = [
         ('wait_determine_by_technician', 'Wait Determine By Technician'),
-        ('accept_by_technician', 'Accept By Technician'),
+        ('in_processing', 'In Processing'),
         ('canceled_by_admin', 'Canceled By Admin'),
         ('changed_technician_by_admin', 'Changed Technician By Admin'),
         ('rejected_by_technician', 'Rejected By Technician'),
         ('expired', 'Expired'),
+        ('done', 'Done'),
     ]
     status = models.CharField(max_length=30, choices=STATUS_CHOICES, default='wait_determine_by_technician', )
     job = models.ForeignKey(Job, null=False, blank=False, on_delete=models.CASCADE)

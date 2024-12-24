@@ -7,13 +7,13 @@ from fixplus.common.apis import BasePermissionAPIView
 from fixplus.common.mixins import IsSuperAdminMixin, IsAdminMixin, IsSuperAdminOrAdminMixin
 from fixplus.common.pagination import LimitOffsetPagination, get_paginated_response_context
 from fixplus.common.permissions import MultiPermission
-from fixplus.user.selectors.user import get_user_list, get_user
+from fixplus.user.selectors.user import search_user_list, get_user
 from fixplus.user.serializers.user import OutPutUserSerializer, InputUserSerializer, InputUserParamsSerializer, \
     OutPutUserDetailSerializer
 from fixplus.user.services.user import update_user
 
 
-class UserListApi(IsSuperAdminOrAdminMixin, APIView):
+class UserListApi(IsSuperAdminMixin, APIView):
     class Pagination(LimitOffsetPagination):
         default_limit = 10
 
@@ -25,7 +25,7 @@ class UserListApi(IsSuperAdminOrAdminMixin, APIView):
         query_serializer = InputUserParamsSerializer(data=request.query_params)
         query_serializer.is_valid(raise_exception=True)
         try:
-            db_user_list = get_user_list(
+            db_user_list = search_user_list(
                 **query_serializer.validated_data
             )
 
@@ -44,7 +44,7 @@ class UserListApi(IsSuperAdminOrAdminMixin, APIView):
         )
 
 
-class UserDetailAPIView(IsSuperAdminOrAdminMixin, BasePermissionAPIView):
+class UserDetailAPIView(IsSuperAdminMixin, BasePermissionAPIView):
     @extend_schema(
         summary="Get User Detail",
         responses=OutPutUserDetailSerializer)

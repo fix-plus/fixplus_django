@@ -77,7 +77,7 @@ class OutPutPublicProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ['full_name', 'gender', 'avatar', 'groups']
+        fields = ['full_name', 'gender', 'avatar', 'groups', 'is_in_holiday']
 
     def get_avatar(self, obj):
         request = self.context.get('request')
@@ -98,6 +98,7 @@ class InputUpdateProfileSerializer(serializers.Serializer):
     latitude = serializers.FloatField(required=False, allow_null=True, default=None)
     longitude = serializers.FloatField(required=False, allow_null=True, default=None)
     description = serializers.CharField(required=False, allow_null=True, default=None)
+    is_in_holiday = serializers.BooleanField(required=False, allow_null=True, default=None)
     avatar = serializers.ImageField(required=False, allow_null=True, default=None, validators=[
         FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png']),
         FileSizeValidator(min_size=1, max_size=10 * 1024 * 1024),

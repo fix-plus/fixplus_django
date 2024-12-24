@@ -21,7 +21,7 @@ def get_user(id: str = None, mobile: str=None) -> BaseUser:
     else: raise Exception(_("User not found."))
 
 
-def get_user_list(
+def search_user_list(
     mobile: str = None,
     status: list | None = None,
     full_name: str | None = None,

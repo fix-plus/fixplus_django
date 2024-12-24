@@ -2,7 +2,7 @@ from django.utils import timezone
 from rest_framework.fields import DateTimeField
 from django.utils.translation import gettext_lazy as _
 
-from fixplus.job.selectors.selectors import get_assigned_job
+from fixplus.job.selectors.referred import get_referred_job
 from fixplus.user.models import BaseUser
 
 
@@ -13,7 +13,7 @@ def update_determine_referred_job_with_technician(
         estimated_arrival_at: DateTimeField | None = None,
         rejected_reason_by_technician: str | None = None,
 ):
-    referred_job = get_assigned_job(id=referred_job_id)
+    referred_job = get_referred_job(id=referred_job_id)
     job = referred_job.job
 
     if referred_job.technician != technician: raise Exception(_("You do not have access to do this."))

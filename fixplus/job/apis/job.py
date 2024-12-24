@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 
 from fixplus.common.mixins import IsSuperAdminOrAdminMixin
 from fixplus.common.pagination import LimitOffsetPagination, get_paginated_response_context
-from fixplus.job.selectors.selectors import search_job_list
+from fixplus.job.selectors.job import search_job_list
 from fixplus.job.serializers.job import InputJobSerializer, OutPutJobSerializer, InputJobParamsSerializer
 from fixplus.job.services.job import create_job
 

@@ -4,6 +4,10 @@ from fixplus.job.models import ReferredJob
 from fixplus.user.selectors.user import get_user
 
 
+def get_referred_job(*, id:str) -> ReferredJob:
+    return ReferredJob.objects.get(id=id)
+
+
 def search_referred_job_list(
     technician_id: str | None = None,
     referred_by_id: str | None = None,

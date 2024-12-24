@@ -58,5 +58,3 @@ def get_job(*, id:str) -> Job:
     return  Job.objects.get(id=id)
 
 
-def get_assigned_job(*, id:str) -> ReferredJob:
-    return ReferredJob.objects.get(id=id)
