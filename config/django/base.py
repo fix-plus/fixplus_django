@@ -18,6 +18,8 @@ LOCAL_APPS = [
     'fixplus.common.apps.CommonConfig',
     'fixplus.user.apps.UserConfig',
     'fixplus.upload.apps.UploadConfig',
+    'fixplus.customer.apps.CustomerConfig',
+    'fixplus.job.apps.JobConfig',
 ]
 
 THIRD_PARTY_APPS = [

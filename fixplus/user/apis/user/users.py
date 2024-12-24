@@ -3,15 +3,17 @@ from rest_framework import status
 from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema
 
-from fixplus.common.mixins import IsSuperAdminMixin
+from fixplus.common.apis import BasePermissionAPIView
+from fixplus.common.mixins import IsSuperAdminMixin, IsAdminMixin, IsSuperAdminOrAdminMixin
 from fixplus.common.pagination import LimitOffsetPagination, get_paginated_response_context
+from fixplus.common.permissions import MultiPermission
 from fixplus.user.selectors.user import get_user_list, get_user
 from fixplus.user.serializers.user import OutPutUserSerializer, InputUserSerializer, InputUserParamsSerializer, \
     OutPutUserDetailSerializer
 from fixplus.user.services.user import update_user
 
 
-class UserListApi(IsSuperAdminMixin, APIView):
+class UserListApi(IsSuperAdminOrAdminMixin, APIView):
     class Pagination(LimitOffsetPagination):
         default_limit = 10
 
@@ -42,7 +44,7 @@ class UserListApi(IsSuperAdminMixin, APIView):
         )
 
 
-class UserDetailAPIView(IsSuperAdminMixin, APIView):
+class UserDetailAPIView(IsSuperAdminOrAdminMixin, BasePermissionAPIView):
     @extend_schema(
         summary="Get User Detail",
         responses=OutPutUserDetailSerializer)
@@ -62,6 +64,10 @@ class UserDetailAPIView(IsSuperAdminMixin, APIView):
         request=InputUserSerializer,
         responses=OutPutUserDetailSerializer)
     def patch(self, request, uuid):
+        permission_check = self.check_permissions('user.change_another')
+        if permission_check:
+            return permission_check
+
         serializer = InputUserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         try:

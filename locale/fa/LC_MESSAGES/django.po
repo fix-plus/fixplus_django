@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-22 09:22+0330\n"
+"POT-Creation-Date: 2024-12-24 17:20+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,18 +26,72 @@ msgstr ""
 msgid "Persian"
 msgstr ""
 
-#: .\config\urls.py:33
+#: .\config\urls.py:37
 msgid "admin/"
 msgstr ""
 
-#: .\fixplus\common\permissions.py:12
+#: .\fixplus\common\apis.py:24
+msgid "Invalid permission."
+msgstr "دسترسی به درستی تنظیم نشده است."
+
+#: .\fixplus\common\apis.py:31
+msgid "You do not have permission to perform this action."
+msgstr "دسترسی لازم را ندارید."
+
+#: .\fixplus\common\permissions.py:13
 msgid "You not allowed to use this method, should be verified mobile."
 msgstr "شما دسترسی لازم را ندارید، ابتدا شماره موبایل خود را وریفای کنید."
 
-#: .\fixplus\common\permissions.py:19 .\fixplus\common\permissions.py:25
-#: .\fixplus\common\permissions.py:31 .\fixplus\common\permissions.py:40
+#: .\fixplus\common\permissions.py:20 .\fixplus\common\permissions.py:27
+#: .\fixplus\common\permissions.py:33 .\fixplus\common\permissions.py:39
+#: .\fixplus\common\permissions.py:48
 msgid "You not allowed to use this method."
 msgstr "شما دسترسی لازم را ندارید."
+
+#: .\fixplus\customer\serializers\serializers.py:48
+#: .\fixplus\user\serializers\auth.py:18 .\fixplus\user\serializers\auth.py:39
+#: .\fixplus\user\serializers\auth.py:60 .\fixplus\user\serializers\user.py:29
+msgid ""
+"Mobile number must start with '00' or '+' and contain only digits after that."
+msgstr "شماره موبایل باید با 00 یا + شروع شود."
+
+#: .\fixplus\job\apis\determine.py:34
+msgid "The status of the referred job was successfully determined."
+msgstr "وضعیت کار ارحاع شده با موفقیت تغییر کرد."
+
+#: .\fixplus\job\apis\job.py:65
+msgid "Successfully placed in the assign queue."
+msgstr "با موفقیت در صف ارحاع قرار گرفت."
+
+#: .\fixplus\job\apis\referred.py:58 .\fixplus\job\apis\referred.py:68
+#, fuzzy
+#| msgid "You not allowed to use this method."
+msgid "You are not allowed to use this method."
+msgstr "شما دسترسی لازم را ندارید."
+
+#: .\fixplus\job\apis\referred.py:85
+msgid "Successfully referred to technician."
+msgstr "با موفقیت به تکنسین ارجاع داده شد."
+
+#: .\fixplus\job\serializers\job.py:58 .\fixplus\job\serializers\referred.py:86
+#: .\fixplus\job\serializers\referred.py:113
+#, fuzzy
+#| msgid ""
+#| "Mobile number must start with '00' or '+' and contain only digits after "
+#| "that."
+msgid ""
+"Phone number must start with '00' or '+' and contain only digits after that."
+msgstr "شماره موبایل باید با 00 یا + شروع شود."
+
+#: .\fixplus\job\services\determine.py:19
+#: .\fixplus\job\services\determine.py:20
+#: .\fixplus\job\services\determine.py:24
+msgid "You do not have access to do this."
+msgstr "شما دسترسی لازم را ندارید."
+
+#: .\fixplus\job\services\determine.py:21
+msgid "You must enter the reason for rejection."
+msgstr "دلیل رد کردن را باید وارد کنید."
 
 #: .\fixplus\upload\selectors.py:11
 msgid "Media file not found."
@@ -73,12 +127,6 @@ msgstr "کاربر پیدا نشد."
 msgid "User not verified, please verified mobile first."
 msgstr ""
 "حساب کاربری شما وریفای نشده، لطفا ابتدا شماره موبایل خود را وریفای کنید."
-
-#: .\fixplus\user\serializers\auth.py:18 .\fixplus\user\serializers\auth.py:39
-#: .\fixplus\user\serializers\auth.py:60 .\fixplus\user\serializers\user.py:28
-msgid ""
-"Mobile number must start with '00' or '+' and contain only digits after that."
-msgstr "شماره موبایل باید با 00 یا + شروع شود."
 
 #: .\fixplus\user\services\group.py:10 .\fixplus\user\services\group.py:18
 msgid "One or more groups do not exist."
@@ -132,7 +180,7 @@ msgstr "تصویر کارت ملی/پاسپورت"
 msgid " cannot be None or empty."
 msgstr " نمیتواند خالی باشد."
 
-#: .\fixplus\user\services\user.py:37
+#: .\fixplus\user\services\user.py:46
 msgid "User was verified, please login."
 msgstr "حساب شما وریفای شده است. لطفا وارد شوید."
 

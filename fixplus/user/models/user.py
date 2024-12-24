@@ -94,6 +94,9 @@ class BaseUser(BaseModel, AbstractBaseUser, PermissionsMixin):
         return self.mobile
 
     class Meta:
+        permissions = [
+            ("change_another", "Can change another user"),
+        ]
         verbose_name = "User "
 
     def get_tokens(self):

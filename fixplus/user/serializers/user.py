@@ -6,7 +6,8 @@ from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 
 from fixplus.user.models import BaseUser
-from fixplus.user.serializers.profile import OutPutProfileSerializer
+from fixplus.user.serializers.profile import OutPutProfileSerializer, InputUpdateProfileSerializer, \
+    OutPutPublicProfileSerializer
 
 
 class InputUserParamsSerializer(serializers.Serializer):
@@ -38,6 +39,7 @@ class InputUserSerializer(serializers.Serializer):
     status = serializers.ChoiceField(required=False, default=None, allow_null=True, choices=['not_registered', 'checking', 'registered', 'rejected'])
     reason_for_rejected = serializers.CharField(required=False, default=None, allow_null=True)
     group = serializers.ListField(required=False, default=None, child=serializers.CharField())
+    profile = InputUpdateProfileSerializer(required=False, allow_null=True, default=None)
 
 
 class OutPutUserSerializer(serializers.ModelSerializer):
@@ -68,3 +70,14 @@ class OutPutUserDetailSerializer(serializers.ModelSerializer):
 
     def get_profile(self, obj):
         return OutPutProfileSerializer(obj.profile, context=self.context).data
+
+
+class OutPutPublicUserDetailSerializer(serializers.ModelSerializer):
+    profile = serializers.SerializerMethodField()
+
+    class Meta:
+        model = BaseUser
+        fields = ['id', 'profile', 'last_online',]
+
+    def get_profile(self, obj):
+        return OutPutPublicProfileSerializer(obj.profile, context=self.context).data

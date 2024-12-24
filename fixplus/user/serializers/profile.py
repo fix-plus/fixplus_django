@@ -57,8 +57,37 @@ class OutPutProfileSerializer(serializers.ModelSerializer):
         return groups
 
     def get_permissions(self, obj):
-        permissions = list(obj.user.user_permissions.values_list('codename', flat=True))
-        return permissions
+        # Get user-specific permissions
+        user_permissions = set(obj.user.user_permissions.values_list('codename', flat=True))
+
+        # Get group permissions
+        group_permissions = set()
+        for group in obj.user.groups.all():
+            group_permissions.update(group.permissions.values_list('codename', flat=True))
+
+        # Combine both sets of permissions
+        all_permissions = user_permissions.union(group_permissions)
+
+        return list(all_permissions)
+
+
+class OutPutPublicProfileSerializer(serializers.ModelSerializer):
+    avatar = serializers.SerializerMethodField()
+    groups = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Profile
+        fields = ['full_name', 'gender', 'avatar', 'groups']
+
+    def get_avatar(self, obj):
+        request = self.context.get('request')
+        if obj.avatar:
+            return request.build_absolute_uri(obj.avatar.url) if request else obj.avatar.url
+        return None
+
+    def get_groups(self, obj):
+        groups = list(obj.user.groups.values_list('name', flat=True))
+        return groups
 
 
 class InputUpdateProfileSerializer(serializers.Serializer):

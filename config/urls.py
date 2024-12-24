@@ -28,6 +28,10 @@ urlpatterns = [
     path('user/', include('fixplus.user.routing.users')),
 
     path('upload/', include('fixplus.upload.urls')),
+
+    path('job/', include('fixplus.job.urls')),
+
+    path('customer/', include('fixplus.customer.urls')),
 ]
 urlpatterns += i18n_patterns(
     path(_('admin/'), admin.site.urls),
