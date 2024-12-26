@@ -1,0 +1,67 @@
+[
+    {
+        "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+        "title": "refrigerator",
+        "fa_title": "یخچال"
+    },
+    {
+        "id": "c56a4180-65aa-42ec-a945-5fd21dec0538",
+        "title": "side_by_side",
+        "fa_title": "ساید بای ساید"
+    },
+    {
+        "id": "9c56a4180-65aa-42ec-a945-5fd21dec0538",
+        "title": "washing_machine",
+        "fa_title": "ماشین لباسشویی"
+    },
+    {
+        "id": "7c56a4180-65aa-42ec-a945-5fd21dec0538",
+        "title": "dishwasher",
+        "fa_title": "ظرفشویی"
+    },
+    {
+        "id": "1a56a4180-65aa-42ec-a945-5fd21dec0538",
+        "title": "television",
+        "fa_title": "تلویزیون"
+    },
+    {
+        "id": "2b56a4180-65aa-42ec-a945-5fd21dec0538",
+        "title": "air_conditioner",
+        "fa_title": "کولرگازی"
+    },
+    {
+        "id": "3c56a4180-65aa-42ec-a945-5fd21dec0538",
+        "title": "microwave",
+        "fa_title": "مایکروفر"
+    },
+    {
+        "id": "4d56a4180-65aa-42ec-a945-5fd21dec0538",
+        "title": "vacuum_cleaner",
+        "fa_title": "جاروبرقی"
+    },
+    {
+        "id": "5e56a4180-65aa-42ec-a945-5fd21dec0538",
+        "title": "package",
+        "fa_title": "پکیج"
+    },
+    {
+        "id": "6f56a4180-65aa-42ec-a945-5fd21dec0538",
+        "title": "chiller",
+        "fa_title": "چیلر"
+    },
+    {
+        "id": "7g56a4180-65aa-42ec-a945-5fd21dec0538",
+        "title": "coffee_maker",
+        "fa_title": "قهوه ساز"
+    },
+    {
+        "id": "8h56a4180-65aa-42ec-a945-5fd21dec0538",
+        "title": "stove",
+        "fa_title": "گاز"
+    },
+    {
+        "id": "9i56a4180-65aa-42ec-a945-5fd21dec0538",
+        "title": "vrf",
+        "fa_title": "VRF"
+    }
+]

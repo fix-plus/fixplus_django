@@ -2,14 +2,15 @@ from django.db import models
 
 from fixplus.common.models import SoftDeleteBaseModel
 from fixplus.customer.models import Customer
+from fixplus.parametric.models import DeviceTypeParametric, BrandNameParametric
 from fixplus.user.models import BaseUser
 
 
 class Job(SoftDeleteBaseModel):
     STATUS_CHOICES = [
         ('draft', 'Draft'),
-        ('in_assign_queue', 'In Assign Queue'),
-        ('wait_assign_by_technician', 'Wait Assign By Technician'),
+        ('in_referred_queue', 'In Referred Queue'),
+        ('wait_determine_by_technician', 'Wait determine By Technician'),
         ('in_processing', 'In Processing'),
         ('canceled', 'Canceled'),
         ('rejected_by_technician', 'Rejected By Technician'),
@@ -17,8 +18,8 @@ class Job(SoftDeleteBaseModel):
     ]
     status = models.CharField(max_length=30, choices=STATUS_CHOICES, default='draft', )
     customer = models.ForeignKey(Customer, null=False, blank=False, related_name="job_customer", on_delete=models.CASCADE)
-    device_type = models.CharField(max_length=100, blank=False, null=False)
-    brand_name = models.CharField(max_length=100, blank=False, null=False)
+    device_type = models.ForeignKey(DeviceTypeParametric, null=False, blank=False, on_delete=models.PROTECT, related_name='job_device_type')
+    brand_name = models.ForeignKey(BrandNameParametric, null=False, blank=False, on_delete=models.PROTECT, related_name='job_brand_name')
     customer_description = models.TextField(blank=True, null=True)
     description_for_technician = models.TextField(blank=True, null=True)
     address = models.TextField(blank=False, null=False)

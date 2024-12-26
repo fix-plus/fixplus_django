@@ -13,6 +13,7 @@ from django_celery_beat.models import (
 
 from .models import BaseUser
 from .models.profile import Profile, MobileNumber, LandLineNumber
+from .models.skill import TechnicianSkill
 
 
 # Customize Group admin to manage permissions
@@ -41,6 +42,7 @@ class ProfileAdmin(admin.ModelAdmin):
 
 admin.site.register(MobileNumber)
 admin.site.register(LandLineNumber)
+admin.site.register(TechnicianSkill)
 
 
 # UnRegister

@@ -6,10 +6,14 @@ from django.utils.translation import gettext_lazy as _
 from fixplus.customer.serializers.serializers import OutPutCustomerSerializer, InputCustomerSerializer, \
     OutPutPublicCustomerSerializer
 from fixplus.job.models import Job
+from fixplus.parametric.serializers.serializers import OutPutBrandNameParametricSerializer, \
+    OutPutDeviceTypeParametricSerializer
 
 
 class OutPutJobSerializer(serializers.ModelSerializer):
     customer = OutPutCustomerSerializer()
+    brand_name = OutPutBrandNameParametricSerializer()
+    device_type = OutPutDeviceTypeParametricSerializer()
 
     class Meta:
         model = Job
@@ -18,6 +22,8 @@ class OutPutJobSerializer(serializers.ModelSerializer):
 
 class OutPutPublicJobSerializer(serializers.ModelSerializer):
     customer = OutPutPublicCustomerSerializer()
+    brand_name = OutPutBrandNameParametricSerializer()
+    device_type = OutPutDeviceTypeParametricSerializer()
 
     class Meta:
         model = Job

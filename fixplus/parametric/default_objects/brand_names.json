@@ -1,0 +1,87 @@
+[
+    {
+        "id": "b1e1c1b0-1c2d-4e3f-8b1e-1c2d4e3f8b1",
+        "title": "samsung",
+        "fa_title": "سامسونگ"
+    },
+    {
+        "id": "c2f2d2b1-2d3e-4f4f-9c2f-2d3e4f4f9c2f",
+        "title": "sam",
+        "fa_title": "سام"
+    },
+    {
+        "id": "d3g3e3c2-3e4f-5g5g-0d3g-3e4f5g5g0d3g",
+        "title": "lg",
+        "fa_title": "ال جی"
+    },
+    {
+        "id": "e4h4f4d3-4f5g-6h6h-1e4h-4f5g6h6h1e4h",
+        "title": "daewoo",
+        "fa_title": "دوو"
+    },
+    {
+        "id": "f5i5g5e4-5g6h-7i7i-2f5i-5g6h7i7i2f5i",
+        "title": "snowa",
+        "fa_title": "اسنوا"
+    },
+    {
+        "id": "g6j6h6f5-6h7i-8j8j-3g6j-6h7i8j8j3g6j",
+        "title": "kenwood",
+        "fa_title": "کنوود"
+    },
+    {
+        "id": "h7k7i7g6-7i8j-9k9k-4h7k-7i8j9k9k4h7k",
+        "title": "bosch",
+        "fa_title": "بوش"
+    },
+    {
+        "id": "i8l8j8h7-8j9k-0l0l-5i8l-8j9k0l0l5i8l",
+        "title": "electrolux",
+        "fa_title": "الکترولوکس"
+    },
+    {
+        "id": "j9m9k9i8-9k0l-1m1m-6j9m-9k0l1m1m6j9m",
+        "title": "panasonic",
+        "fa_title": "پاناسونیک"
+    },
+    {
+        "id": "k0n0l0j9-0l1m-2n2n-7k0n-0l1m2n2n7k0n",
+        "title": "beko",
+        "fa_title": "بکو"
+    },
+    {
+        "id": "l1o1m1k0-1m2n-3o3o-8l1o-1m2n3o3o8l1o",
+        "title": "aeg",
+        "fa_title": "آ اِ گ"
+    },
+    {
+        "id": "m2p2n2l1-2n3o-4p4p-9m2p-2n3o4p4p9m2p",
+        "title": "ariston",
+        "fa_title": "آریستون"
+    },
+    {
+        "id": "n3q3o3m2-3o4p-5q5q-0n3q-3o4p5q5q0n3q",
+        "title": "indesit",
+        "fa_title": "ایندزیت"
+    },
+    {
+        "id": "o4r4p4n3-4p5q-6r6r-1o4r-4p5q6r6r1o4r",
+        "title": "absal",
+        "fa_title": "ابسال"
+    },
+    {
+        "id": "p5s5q5o4-5q6r-7s7s-2p5s-5q6r7s7s2p5s",
+        "title": "electrosteel",
+        "fa_title": "الکترواستیل"
+    },
+    {
+        "id": "q6t6r6p5 -6r7s-8t8t-3q6t-6r7s8t8t3q6t",
+        "title": "gplus",
+        "fa_title": "جی پلاس"
+    },
+    {
+        "id": "0a56a4180-65aa-42ec-a945-5fd21dec0538",
+        "title": "other",
+        "fa_title": "متفرقه"
+    }
+]

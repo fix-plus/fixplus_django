@@ -32,6 +32,8 @@ urlpatterns = [
     path('job/', include('fixplus.job.urls')),
 
     path('customer/', include('fixplus.customer.urls')),
+
+    path('parametric/', include('fixplus.parametric.urls')),
 ]
 urlpatterns += i18n_patterns(
     path(_('admin/'), admin.site.urls),

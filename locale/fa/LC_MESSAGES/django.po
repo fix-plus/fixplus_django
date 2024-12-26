@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-24 17:20+0330\n"
+"POT-Creation-Date: 2024-12-26 19:21+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,7 +26,7 @@ msgstr ""
 msgid "Persian"
 msgstr ""
 
-#: .\config\urls.py:37
+#: .\config\urls.py:39
 msgid "admin/"
 msgstr ""
 
@@ -49,6 +49,7 @@ msgid "You not allowed to use this method."
 msgstr "شما دسترسی لازم را ندارید."
 
 #: .\fixplus\customer\serializers\serializers.py:48
+#: .\fixplus\job\serializers\technician_for_job.py:26
 #: .\fixplus\user\serializers\auth.py:18 .\fixplus\user\serializers\auth.py:39
 #: .\fixplus\user\serializers\auth.py:60 .\fixplus\user\serializers\user.py:29
 msgid ""
@@ -64,6 +65,8 @@ msgid "Successfully placed in the assign queue."
 msgstr "با موفقیت در صف ارحاع قرار گرفت."
 
 #: .\fixplus\job\apis\referred.py:58 .\fixplus\job\apis\referred.py:68
+#: .\fixplus\parametric\apis\apis.py:53 .\fixplus\parametric\apis\apis.py:114
+#: .\fixplus\parametric\apis\apis.py:165
 #, fuzzy
 #| msgid "You not allowed to use this method."
 msgid "You are not allowed to use this method."
@@ -73,7 +76,7 @@ msgstr "شما دسترسی لازم را ندارید."
 msgid "Successfully referred to technician."
 msgstr "با موفقیت به تکنسین ارجاع داده شد."
 
-#: .\fixplus\job\serializers\job.py:58 .\fixplus\job\serializers\referred.py:86
+#: .\fixplus\job\serializers\job.py:64 .\fixplus\job\serializers\referred.py:86
 #: .\fixplus\job\serializers\referred.py:113
 #, fuzzy
 #| msgid ""
@@ -92,6 +95,14 @@ msgstr "شما دسترسی لازم را ندارید."
 #: .\fixplus\job\services\determine.py:21
 msgid "You must enter the reason for rejection."
 msgstr "دلیل رد کردن را باید وارد کنید."
+
+#: .\fixplus\job\services\referred.py:20
+msgid "This job has already been referred."
+msgstr "این کار قبلا ارجاع داده شده است."
+
+#: .\fixplus\parametric\selectors\selectors.py:11
+msgid "The configuration parameter was not found, please contact the admin."
+msgstr "پارامتر تنظیمات پیدا نشد، لطفا با ادمین تماس بگیرید."
 
 #: .\fixplus\upload\selectors.py:11
 msgid "Media file not found."
@@ -115,7 +126,7 @@ msgstr "دو دقیقه باید از ارسال کد اعتبارسنحی قب�
 msgid "The request was sent successfully."
 msgstr "درخواست با موفقیت ارسال شد."
 
-#: .\fixplus\user\selectors\profile.py:12
+#: .\fixplus\user\selectors\profile.py:13
 msgid "Profile does not exist"
 msgstr "پروفایل پیدا نشد."
 
@@ -179,6 +190,22 @@ msgstr "تصویر کارت ملی/پاسپورت"
 #: .\fixplus\user\services\register.py:25
 msgid " cannot be None or empty."
 msgstr " نمیتواند خالی باشد."
+
+#: .\fixplus\user\services\skill.py:17
+msgid "Skills can only be assigned to technician users."
+msgstr "مهارت ها فقط می تواند به کاربران تکنسین اختصاص داده شود."
+
+#: .\fixplus\user\services\skill.py:36
+msgid "Error creating technician skill."
+msgstr "ایجاد مهارت برای تکنسین با خطا مواحه شد."
+
+#: .\fixplus\user\services\skill.py:58
+msgid "Error update technician skill."
+msgstr "بروزرسانی مهارت برای تکنسین با خطا مواحه شد."
+
+#: .\fixplus\user\services\skill.py:70
+msgid "Error delete technician skill."
+msgstr "پاک کردن مهارت برای تکنسین با خطا مواحه شد."
 
 #: .\fixplus\user\services\user.py:46
 msgid "User was verified, please login."

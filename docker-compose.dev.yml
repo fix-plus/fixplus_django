@@ -20,7 +20,21 @@ services:
     restart: always
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: 'pg_pass'
+      PGADMIN_DEFAULT_PASSWORD: '1234@1234'
+      PGADMIN_CONFIG_SERVER_MODE: 'False'  # Allow server configuration
+      PGADMIN_CONFIG_SERVERS: |       
+        {      
+          "Servers": {        
+            "1": {        
+              "Name": "Postgres Server",        
+              "Port": 5432,        
+              "Host": "db",        
+              "Username": "fixplus",        
+              "Password": "1234@1234",        
+              "SSLMode": "prefer"
+            }
+          }
+        }
     ports:
       - "5050:80"
 

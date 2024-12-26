@@ -25,7 +25,7 @@ class ReferredJobToTechnicianListApi(IsRegisteredMixin, APIView):
         user_groups = request.user.groups.values_list('name', flat=True)
 
         if 'super_admin' in user_groups or 'admin' in user_groups:
-            serializer = InputReferredJobParamsSerializer(data=request.data)
+            serializer = InputReferredJobParamsSerializer(data=request.query_params)
             serializer.is_valid(raise_exception=True)
 
             query_set = search_referred_job_list(
@@ -40,7 +40,7 @@ class ReferredJobToTechnicianListApi(IsRegisteredMixin, APIView):
             )
 
         if 'technician' in user_groups:
-            serializer = InputReferredJobParamsSerializer(data=request.data)
+            serializer = InputPublicReferredJobParamsSerializer(data=request.query_params)
             serializer.is_valid(raise_exception=True)
 
             query_set = search_referred_job_list(

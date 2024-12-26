@@ -1,6 +1,7 @@
 from fixplus.customer.selectors.selectors import get_customer
 from fixplus.customer.services.services import create_customer_phone_number, create_customer
 from fixplus.job.models import Job, ReferredJob
+from fixplus.parametric.models import DeviceTypeParametric, BrandNameParametric
 from fixplus.user.models import BaseUser
 
 
@@ -29,9 +30,14 @@ def create_job(*, added_by: BaseUser, customer_data=None, devices_data=None):
         for device in devices_data:
             job = Job(customer=customer)
             for key, value in device.items():
-                setattr(job, key, value)
+                if key == 'device_type' and value is not None:
+                    job.device_type = DeviceTypeParametric.objects.get(title=value)
+                elif key == 'brand_name' and value is not None:
+                    job.brand_name = BrandNameParametric.objects.get(title=value)
+                else:
+                    setattr(job, key, value)
 
-            job.status = 'in_assign_queue'
+            job.status = 'in_referred_queue'
             job.save()
             job_instances.append(job)
 

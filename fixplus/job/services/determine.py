@@ -27,5 +27,4 @@ def update_determine_referred_job_with_technician(
     referred_job.estimated_arrival_at = estimated_arrival_at
     referred_job.rejected_reason_by_technician = rejected_reason_by_technician
 
-
     referred_job.save()

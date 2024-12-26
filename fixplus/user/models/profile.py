@@ -3,7 +3,8 @@ import uuid
 from django.core.validators import FileExtensionValidator
 from django.db import models
 
-from fixplus.common.models import BaseModel
+from fixplus.common.models import BaseModel, SoftDeleteBaseModel
+from fixplus.parametric.models import DeviceTypeParametric, BrandNameParametric
 from fixplus.upload.models import UploadIdentifyDocumentMedia
 from fixplus.upload.validators import FileSizeValidator, ImageSizeValidator
 from fixplus.user.models import BaseUser
@@ -43,6 +44,7 @@ class Profile(BaseModel):
 
     def __str__(self):
         return f"{self.user.mobile}"
+
 
 
 class LandLineNumber(BaseModel):

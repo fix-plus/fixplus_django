@@ -1,5 +1,3 @@
-from django.core.exceptions import ObjectDoesNotExist
-
 from fixplus.upload.selectors import get_upload_identify_document_media
 from fixplus.user.models import Profile, BaseUser
 from fixplus.user.models.profile import LandLineNumber, MobileNumber
