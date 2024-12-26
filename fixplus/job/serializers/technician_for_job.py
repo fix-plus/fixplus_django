@@ -10,6 +10,7 @@ from fixplus.user.serializers.profile import OutPutNumbersSerializer
 
 
 class InputTechnicianForJobParamsSerializer(serializers.Serializer):
+    job_id = serializers.UUIDField(required=False, default=None, allow_null=True)
     mobile = serializers.CharField(required=False, default=None)
     full_name = serializers.CharField(required=False, default=None)
     sort_by = serializers.ChoiceField(required=False, default=None, choices=['created_at', 'last_online',])
