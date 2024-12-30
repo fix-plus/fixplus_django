@@ -7,7 +7,9 @@ from fixplus.job.models import ReferredJob
 @receiver(post_save, sender=ReferredJob)
 def update_job_status(sender, instance, created, **kwargs):
     # Check the status of the ReferredJob instance
-    if instance.status == 'in_processing':
+    if instance.status == 'wait_determine_by_technician':
+        instance.job.status = 'wait_determine_by_technician'
+    elif instance.status == 'in_processing':
         instance.job.status = 'in_processing'
     elif instance.status == 'rejected_by_technician':
         instance.job.status = 'rejected_by_technician'
