@@ -11,7 +11,7 @@ class OutPutNumbersSerializer(serializers.Serializer):
     number = serializers.CharField()
 
 
-class OutPutProfileSerializer(serializers.ModelSerializer):
+class OutPutSuperAdminProfileSerializer(serializers.ModelSerializer):
     mobile = serializers.SerializerMethodField()
     avatar = serializers.SerializerMethodField()
     land_line_numbers = serializers.SerializerMethodField()
@@ -69,6 +69,41 @@ class OutPutProfileSerializer(serializers.ModelSerializer):
         all_permissions = user_permissions.union(group_permissions)
 
         return list(all_permissions)
+
+
+class OutPutAdminProfileSerializer(serializers.ModelSerializer):
+    mobile = serializers.SerializerMethodField()
+    avatar = serializers.SerializerMethodField()
+    land_line_numbers = serializers.SerializerMethodField()
+    mobile_numbers = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
+    groups = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Profile
+        fields = ['mobile', 'avatar', 'status', 'full_name', 'groups', 'address', 'latitude', 'longitude', 'is_in_holiday', 'land_line_numbers', 'mobile_numbers',]
+
+    def get_mobile(self, obj):
+        return obj.user.mobile if obj.user else None
+
+    def get_avatar(self, obj):
+        request = self.context.get('request')
+        if obj.avatar:
+            return request.build_absolute_uri(obj.avatar.url) if request else obj.avatar.url
+        return None
+
+    def get_land_line_numbers(self, obj):
+        return [number['number'] for number in OutPutNumbersSerializer(get_land_line_numbers(obj.user), many=True).data]
+
+    def get_mobile_numbers(self, obj):
+        return [number['number'] for number in OutPutNumbersSerializer(get_mobile_numbers(obj.user), many=True).data]
+
+    def get_status(self, obj):
+        return obj.user.status if obj.user else None
+
+    def get_groups(self, obj):
+        groups = list(obj.user.groups.values_list('name', flat=True))
+        return groups
 
 
 class OutPutPublicProfileSerializer(serializers.ModelSerializer):

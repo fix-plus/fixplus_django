@@ -6,8 +6,8 @@ from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 
 from fixplus.user.models import BaseUser
-from fixplus.user.serializers.profile import OutPutProfileSerializer, InputUpdateProfileSerializer, \
-    OutPutPublicProfileSerializer
+from fixplus.user.serializers.profile import OutPutSuperAdminProfileSerializer, InputUpdateProfileSerializer, \
+    OutPutPublicProfileSerializer, OutPutAdminProfileSerializer
 
 
 class InputUserParamsSerializer(serializers.Serializer):
@@ -61,7 +61,7 @@ class OutPutUserSerializer(serializers.ModelSerializer):
         return None
 
 
-class OutPutUserDetailSerializer(serializers.ModelSerializer):
+class OutPutSuperAdminUserDetailSerializer(serializers.ModelSerializer):
     profile = serializers.SerializerMethodField()
 
     class Meta:
@@ -69,7 +69,18 @@ class OutPutUserDetailSerializer(serializers.ModelSerializer):
         fields = ['mobile', 'id', 'status', 'is_active', 'is_verified_mobile', 'profile', 'last_login', 'last_online', 'created_at', 'updated_at', 'request_register_datetime']
 
     def get_profile(self, obj):
-        return OutPutProfileSerializer(obj.profile, context=self.context).data
+        return OutPutSuperAdminProfileSerializer(obj.profile, context=self.context).data
+
+
+class OutPutAdminUserDetailSerializer(serializers.ModelSerializer):
+    profile = serializers.SerializerMethodField()
+
+    class Meta:
+        model = BaseUser
+        fields = ['id', 'mobile', 'profile', 'last_login', 'last_online', 'created_at', ]
+
+    def get_profile(self, obj):
+        return OutPutAdminProfileSerializer(obj.profile, context=self.context).data
 
 
 class OutPutPublicUserDetailSerializer(serializers.ModelSerializer):

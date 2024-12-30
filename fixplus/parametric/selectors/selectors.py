@@ -11,11 +11,11 @@ def get_timing_setting() -> TimingSettingParametric:
         raise ObjectDoesNotExist(_("The configuration parameter was not found, please contact the admin."))
 
 
-def get_brand_name(
-    *,
-    id:str
-):
-    return
+# def get_brand_name(
+#     *,
+#     id:str
+# ):
+#     return
 
 
 def search_brand_name_list(

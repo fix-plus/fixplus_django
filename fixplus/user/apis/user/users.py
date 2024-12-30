@@ -9,7 +9,7 @@ from fixplus.common.pagination import LimitOffsetPagination, get_paginated_respo
 from fixplus.common.permissions import MultiPermission
 from fixplus.user.selectors.user import search_user_list, get_user
 from fixplus.user.serializers.user import OutPutUserSerializer, InputUserSerializer, InputUserParamsSerializer, \
-    OutPutUserDetailSerializer
+    OutPutSuperAdminUserDetailSerializer
 from fixplus.user.services.user import update_user
 
 
@@ -47,7 +47,7 @@ class UserListApi(IsSuperAdminMixin, APIView):
 class UserDetailAPIView(IsSuperAdminMixin, BasePermissionAPIView):
     @extend_schema(
         summary="Get User Detail",
-        responses=OutPutUserDetailSerializer)
+        responses=OutPutSuperAdminUserDetailSerializer)
     def get(self, request, uuid):
         try:
             queryset = get_user(id=uuid)
@@ -57,12 +57,12 @@ class UserDetailAPIView(IsSuperAdminMixin, BasePermissionAPIView):
                 {'detail': str(ex)},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        return Response(OutPutUserDetailSerializer(queryset, context={"request": request}).data)
+        return Response(OutPutSuperAdminUserDetailSerializer(queryset, context={"request": request}).data)
 
     @extend_schema(
         summary="Update User",
         request=InputUserSerializer,
-        responses=OutPutUserDetailSerializer)
+        responses=OutPutSuperAdminUserDetailSerializer)
     def patch(self, request, uuid):
         permission_check = self.check_permissions('user.change_another')
         if permission_check:
@@ -81,4 +81,4 @@ class UserDetailAPIView(IsSuperAdminMixin, BasePermissionAPIView):
                 {'detail': str(ex)},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        return Response(OutPutUserDetailSerializer(db_user, context={"request": request}).data)
+        return Response(OutPutSuperAdminUserDetailSerializer(db_user, context={"request": request}).data)

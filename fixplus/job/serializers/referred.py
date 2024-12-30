@@ -5,7 +5,8 @@ from django.utils.translation import gettext_lazy as _
 
 from fixplus.job.models import ReferredJob
 from fixplus.job.serializers.job import OutPutJobSerializer, OutPutPublicJobSerializer
-from fixplus.user.serializers.user import OutPutUserDetailSerializer, OutPutPublicUserDetailSerializer
+from fixplus.user.serializers.user import OutPutSuperAdminUserDetailSerializer, OutPutPublicUserDetailSerializer, \
+    OutPutAdminUserDetailSerializer
 
 
 class InputReferredJobToTechnicianSerializer(serializers.Serializer):
@@ -14,9 +15,9 @@ class InputReferredJobToTechnicianSerializer(serializers.Serializer):
 
 
 class OutPutAdminReferredJobSerializer(serializers.ModelSerializer):
-    technician = OutPutUserDetailSerializer()
-    referred_by = OutPutUserDetailSerializer()
-    updated_by = OutPutUserDetailSerializer()
+    technician = OutPutAdminUserDetailSerializer()
+    referred_by = OutPutAdminUserDetailSerializer()
+    updated_by = OutPutAdminUserDetailSerializer()
     job = OutPutJobSerializer()
 
     class Meta:
