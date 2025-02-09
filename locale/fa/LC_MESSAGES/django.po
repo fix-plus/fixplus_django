@@ -57,7 +57,7 @@ msgid ""
 msgstr "شماره موبایل باید با 00 یا + شروع شود."
 
 #: .\fixplus\job\apis\determine.py:34
-msgid "The status of the referred job was successfully determined."
+msgid "The status of the referred service was successfully determined."
 msgstr "وضعیت کار ارحاع شده با موفقیت تغییر کرد."
 
 #: .\fixplus\job\apis\job.py:65
@@ -97,7 +97,7 @@ msgid "You must enter the reason for rejection."
 msgstr "دلیل رد کردن را باید وارد کنید."
 
 #: .\fixplus\job\services\referred.py:20
-msgid "This job has already been referred."
+msgid "This service has already been referred."
 msgstr "این کار قبلا ارجاع داده شده است."
 
 #: .\fixplus\parametric\selectors\selectors.py:11

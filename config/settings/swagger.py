@@ -1,5 +1,5 @@
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'fixplus API',
+    'TITLE': 'FixPlus API',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }

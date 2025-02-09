@@ -14,13 +14,17 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
 
 # Application definition
 LOCAL_APPS = [
-    'fixplus.core.apps.CoreConfig',
-    'fixplus.common.apps.CommonConfig',
-    'fixplus.user.apps.UserConfig',
-    'fixplus.upload.apps.UploadConfig',
-    'fixplus.customer.apps.CustomerConfig',
-    'fixplus.job.apps.JobConfig',
-    'fixplus.parametric.apps.ParametricConfig',
+    'src.common.apps.CommonConfig',
+    'src.authentication.apps.AuthConfig',
+    'src.account.apps.UserConfig',
+    'src.media.apps.UploadConfig',
+    'src.customer.apps.CustomerConfig',
+    'src.service.apps.JobConfig',
+    'src.parametric.apps.ParametricConfig',
+    'src.repair_shop.apps.RepairShopConfig',
+    'src.wallet.apps.WalletConfig',
+    'src.payment.apps.PaymentConfig',
+    'src.geo.apps.GeoConfig',
 ]
 
 THIRD_PARTY_APPS = [
@@ -37,13 +41,22 @@ THIRD_PARTY_APPS = [
 INSTALLED_APPS = [
     'channels',
     'daphne',
+
+    "unfold",  # before django.contrib.admin
+    "unfold.contrib.filters",  # optional, if special filters are needed
+    "unfold.contrib.forms",  # optional, if special form elements are needed
+    "unfold.contrib.inlines",  # optional, if special inlines are needed
+    "unfold.contrib.import_export",  # optional, if django-import-export package is used
+    "unfold.contrib.guardian",  # optional, if django-guardian package is used
+    "unfold.contrib.simple_history",
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     # http://whitenoise.evans.io/en/stable/django.html#using-whitenoise-in-development
-    #'whitenoise.runserver_nostatic',       #it Can handeled static file with django only
+    #'whitenoise.runserver_nostatic',       #it Can handle static file with django only
     'django.contrib.staticfiles',
     *THIRD_PARTY_APPS,
     *LOCAL_APPS,
@@ -52,7 +65,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    # 'whitenoise.middleware.WhiteNoiseMiddleware',         #it Can handeled static file with django only
+    # 'whitenoise.middleware.WhiteNoiseMiddleware',         #it Can handle static file with django only
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -60,7 +73,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
-    'fixplus.user.middleware.UpdateLastOnlineMiddleware',
+    'src.account.middleware.UpdateLastOnlineMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -69,7 +82,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, "fixplus/templates/"),
+            os.path.join(BASE_DIR, "src/templates/"),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -125,7 +138,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-AUTH_USER_MODEL = 'user.BaseUser'
+AUTH_USER_MODEL = 'authentication.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
@@ -160,7 +173,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ),
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-    'EXCEPTION_HANDLER': 'fixplus.common.exception_handlers.drf_default_with_modifications_exception_handler',
+    'EXCEPTION_HANDLER': 'src.common.exception_handlers.custom_exception_handler',
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',
     ),
@@ -182,14 +195,6 @@ APP_DOMAIN = env("APP_DOMAIN", default="http://localhost:8000")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# E-mail Service
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtpout.secureserver.net'
-# EMAIL_USE_SSL = False
-# EMAIL_USE_TLS = True
-# EMAIL_PORT = 587
-# EMAIL_HOST_USER = env("EMAIL_HOST_USER")
-# EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 
 # SMS SERVICE
 SMS_API_KEY = env("SMS_API_KEY")
@@ -201,5 +206,4 @@ from config.settings.celery import *  # noqa
 from config.settings.swagger import *  # noqa
 from config.settings.thumbnails import *
 from config.settings.language import *
-#from config.settings.sentry import *  # noqa
-#from config.settings.email_sending import *  # noqa
+from config.settings.unfold import *

@@ -18,22 +18,23 @@ admin.site.index_title = "Panel v0.1"
 
 
 urlpatterns = [
+    path("i18n/", include("django.conf.urls.i18n")),
     path("schema/", SpectacularAPIView.as_view(api_version="v1"), name="schema"),
     path("", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
     path("redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
     path('robots.txt', robots_txt),
 
-    path('auth/', include('fixplus.user.routing.auth')),
+    path('authentication/', include('src.authentication.urls')),
 
-    path('user/', include('fixplus.user.routing.users')),
+    path('account/', include('src.account.routing.users')),
 
-    path('upload/', include('fixplus.upload.urls')),
+    path('media/', include('src.media.urls')),
 
-    path('job/', include('fixplus.job.urls')),
+    path('service/', include('src.service.urls')),
 
-    path('customer/', include('fixplus.customer.urls')),
+    path('customer/', include('src.customer.urls')),
 
-    path('parametric/', include('fixplus.parametric.urls')),
+    path('parametric/', include('src.parametric.urls')),
 ]
 urlpatterns += i18n_patterns(
     path(_('admin/'), admin.site.urls),
