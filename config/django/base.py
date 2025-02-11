@@ -22,9 +22,10 @@ LOCAL_APPS = [
     'src.service.apps.JobConfig',
     'src.parametric.apps.ParametricConfig',
     'src.repair_shop.apps.RepairShopConfig',
-    'src.wallet.apps.WalletConfig',
+    'src.financial.apps.FinancialConfig',
     'src.payment.apps.PaymentConfig',
     'src.geo.apps.GeoConfig',
+    'src.communication.apps.CommunicationConfig',
 ]
 
 THIRD_PARTY_APPS = [

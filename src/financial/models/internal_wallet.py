@@ -1,0 +1,11 @@
+from django.db import models
+
+from src.authentication.models import User
+from src.common.models import BaseModel, SoftDeleteBaseModel
+
+
+class InternalWallet(BaseModel, SoftDeleteBaseModel):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='internal_wallet')
+    balance = models.BigIntegerField(default=0)
+    frozen_balance = models.BigIntegerField(default=0)
+    is_frozen = models.BooleanField(default=False)

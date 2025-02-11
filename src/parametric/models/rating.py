@@ -1,0 +1,11 @@
+from django.db import models
+
+from src.common.models import BaseModel, SoftDeleteBaseModel
+
+
+class Rating(BaseModel, SoftDeleteBaseModel):
+    title = models.CharField(max_length=100, null=False)
+    description = models.TextField(null=False)
+
+    def __str__(self):
+        return f"{self.title}"

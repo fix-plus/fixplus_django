@@ -78,6 +78,16 @@ UNFOLD = {
                             "icon": "style",
                             "link": reverse_lazy("admin:account_technicianservicecard_changelist"),
                         },
+                        {
+                            "title": _("Technician Ratings"),
+                            "icon": "star",
+                            "link": reverse_lazy("admin:account_technicianrating_changelist"),
+                        },
+                        {
+                            "title": _("Technician Statuses"),
+                            "icon": "nest_hello_doorbell",
+                            "link": reverse_lazy("admin:account_technicianstatus_changelist"),
+                        },
                     ],
                 },
                 {
@@ -89,6 +99,74 @@ UNFOLD = {
                             "title": _("Services Card"),
                             "icon": "image",
                             "link": reverse_lazy("admin:media_uploadservicecardmedia_changelist"),
+                        },
+                    ],
+                },
+                {
+                    "title": _("Parametrics"),
+                    "separator": True,  # Top border
+                    "collapsible": True,  # Collapsible group of links
+                    "items": [
+                        {
+                            "title": _("Ratings"),
+                            "icon": "star",
+                            "link": reverse_lazy("admin:parametric_rating_changelist"),
+                        },
+                        {
+                            "title": _("Device Types"),
+                            "icon": "usb",
+                            "link": reverse_lazy("admin:parametric_devicetype_changelist"),
+                        },
+                        {
+                            "title": _("Brands"),
+                            "icon": "brand_family",
+                            "link": reverse_lazy("admin:parametric_brand_changelist"),
+                        },
+                        {
+                            "title": _("Timing Settings"),
+                            "icon": "schedule",
+                            "link": reverse_lazy("admin:parametric_timingsetting_changelist"),
+                        },
+                    ],
+                },
+                {
+                    "title": _("Geo"),
+                    "separator": True,  # Top border
+                    "collapsible": True,  # Collapsible group of links
+                    "items": [
+                        {
+                            "title": _("Addresses"),
+                            "icon": "map",
+                            "link": reverse_lazy("admin:geo_address_changelist"),
+                        },
+                        {
+                            "title": _("User Locations Tracker"),
+                            "icon": "person_pin_circle",
+                            "link": reverse_lazy("admin:geo_userlocationtracker_changelist"),
+                        },
+                    ],
+                },
+                {
+                    "title": _("Financial"),
+                    "separator": True,  # Top border
+                    "collapsible": True,  # Collapsible group of links
+                    "items": [
+                        {
+                            "title": _("Internal Wallets"),
+                            "icon": "money_bag",
+                            "link": reverse_lazy("admin:financial_internalwallet_changelist"),
+                        },
+                    ],
+                },
+                {
+                    "title": _("Customers"),
+                    "separator": True,  # Top border
+                    "collapsible": True,  # Collapsible group of links
+                    "items": [
+                        {
+                            "title": _("Customers"),
+                            "icon": "money_bag",
+                            "link": reverse_lazy("admin:customer_customer_changelist"),
                         },
                     ],
                 },
