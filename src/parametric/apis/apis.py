@@ -16,6 +16,8 @@ from src.parametric.serializers.serializers import (
     InputTimingSettingParametricSerializer,
     InputDeviceTypeParametricSerializer
 )
+from src.parametric.services.brand import create_brand
+from src.parametric.services.device_type import create_device_type
 
 
 class BrandNameParametricApi(IsRegisteredMixin, APIView):
@@ -49,6 +51,8 @@ class BrandNameParametricApi(IsRegisteredMixin, APIView):
 
         serializer = InputBrandNameParametricSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
+        create_brand(**serializer.validated_data)
 
         query_set = search_brand_name_list()
         return get_paginated_response_context(
@@ -97,7 +101,8 @@ class DeviceTypeParametricApi(IsRegisteredMixin, APIView):
         serializer = InputDeviceTypeParametricSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        serializer.save()
+        create_device_type(**serializer.validated_data)
+
         query_set = search_device_type_list()
 
         return get_paginated_response_context(
@@ -109,7 +114,7 @@ class DeviceTypeParametricApi(IsRegisteredMixin, APIView):
         )
 
 
-class DeviceTypeParametricDetailApi(generics.RetrieveUpdateDestroyAPIView):
+class DeviceTypeParametricDetailApi(IsSuperAdminMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = search_device_type_list()
     serializer_class = OutPutDeviceTypeParametricSerializer
 

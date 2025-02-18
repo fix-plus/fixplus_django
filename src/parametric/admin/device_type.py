@@ -11,6 +11,4 @@ class DeviceTypeAdmin(ModelAdmin):
     list_display = [
         "title",
         "fa_title",
-        "description",
-        "fa_description",
     ]

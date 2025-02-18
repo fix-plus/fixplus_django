@@ -19,7 +19,7 @@ class IsVerifiedMobile(BasePermission):
 class IsRegistered(BasePermission):
     message = _('You not allowed to use this method.')
     def has_permission(self, request, view):
-        if request.user.is_verified_mobile and request.user.status == 'registered':
+        if request.user.is_admin or request.user.is_verified_mobile and request.user.registry_requests.exists and request.user.registry_requests.filter(status='approved').exists():
             return True
 
 
