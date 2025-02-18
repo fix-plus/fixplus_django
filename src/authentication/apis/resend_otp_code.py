@@ -1,16 +1,15 @@
-from django.utils.crypto import get_random_string
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.utils.translation import gettext_lazy as _
 
+from src.authentication.serializers.auth import InputReSendVerificationCodeSerializer
 from src.common.custom_exception import CustomAPIException
-from src.account.selectors.user import is_exist_user, get_cache_verification_mobile_otp
-from src.account.serializers.auth import InputReSendVerificationCodeSerializer
-from src.account.services.user import set_cache_verification_mobile_otp
-from src.account.utils import generate_otp_code
-from src.account.tasks import send_verification_sms
+from src.authentication.selectors.auth import is_exist_user, get_cache_verification_mobile_otp
+from src.authentication.services.auth import set_cache_verification_mobile_otp
+from src.authentication.utils import generate_otp_code
+from src.authentication.tasks import send_verification_sms
 
 
 class ReSendOtpCodeApi(APIView):

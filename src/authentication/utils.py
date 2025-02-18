@@ -4,7 +4,7 @@ from django.core import signing
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
-from src.account.selectors.user import get_cache_verification_mobile_otp
+from src.authentication.selectors.auth import get_cache_verification_mobile_otp
 
 
 def generate_otp_code():

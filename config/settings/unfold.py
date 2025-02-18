@@ -96,6 +96,11 @@ UNFOLD = {
                     "collapsible": True,  # Collapsible group of links
                     "items": [
                         {
+                            "title": _("Identify Documents"),
+                            "icon": "image",
+                            "link": reverse_lazy("admin:media_uploadidentifydocumentmedia_changelist"),
+                        },
+                        {
                             "title": _("Services Card"),
                             "icon": "image",
                             "link": reverse_lazy("admin:media_uploadservicecardmedia_changelist"),

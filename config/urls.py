@@ -24,9 +24,9 @@ urlpatterns = [
     path("redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
     path('robots.txt', robots_txt),
 
-    path('authentication/', include('src.authentication.urls')),
+    path('auth/', include('src.authentication.urls')),
 
-    path('account/', include('src.account.routing.users')),
+    path('account/', include('src.account.urls')),
 
     path('media/', include('src.media.urls')),
 

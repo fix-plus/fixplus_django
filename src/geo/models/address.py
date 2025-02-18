@@ -6,7 +6,7 @@ from src.common.models import BaseModel, SoftDeleteBaseModel
 
 class Address(BaseModel, SoftDeleteBaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='addresses', null=True, blank=True)
-    address = models.TextField(null=False, blank=False)
+    address = models.TextField(null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
 

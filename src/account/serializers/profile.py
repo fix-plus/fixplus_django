@@ -1,6 +1,8 @@
 from django.core.validators import FileExtensionValidator
 from rest_framework import serializers
 
+from src.account.serializers.contact_number import OutPutContactNumberSerializer, InputContactNumbersSerializer
+from src.geo.serializers.address import OutPutAddressSerializer
 from src.media.serializers import IdentifyDocumentMediaSerializer
 from src.media.validators import FileSizeValidator, ImageSizeValidator
 from src.account.models import Profile
@@ -10,15 +12,16 @@ class OutPutNumbersSerializer(serializers.Serializer):
     number = serializers.CharField()
 
 
-class OutPutSuperAdminProfileSerializer(serializers.ModelSerializer):
+class OutPutProfileSerializer(serializers.ModelSerializer):
+    user_id = serializers.SerializerMethodField()
     mobile = serializers.SerializerMethodField()
     avatar = serializers.SerializerMethodField()
-    land_line_numbers = serializers.SerializerMethodField()
-    mobile_numbers = serializers.SerializerMethodField()
-    identify_document_photo = IdentifyDocumentMediaSerializer()
-    other_identify_document_photos = IdentifyDocumentMediaSerializer(many=True)
+    contact_numbers = serializers.SerializerMethodField()
+    address = OutPutAddressSerializer()
+    identify_document_photo = serializers.SerializerMethodField()
+    other_identify_document_photos = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
-    reason_for_rejected = serializers.SerializerMethodField()
+    rejected_reason = serializers.SerializerMethodField()
     is_verified_mobile = serializers.SerializerMethodField()
     groups = serializers.SerializerMethodField()
     permissions = serializers.SerializerMethodField()
@@ -26,6 +29,38 @@ class OutPutSuperAdminProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        user_type = kwargs.pop('user_type', None)
+        super().__init__(*args, **kwargs)
+
+        # BaseFields
+        base_fields = ['user_id', 'full_name', 'gender', 'avatar', 'groups',]
+
+        if user_type == "super_admin" or user_type == "me":
+            allowed_fields = base_fields + [
+                "national_code", "mobile", "address","status", "rejected_reason", "is_verified_mobile",
+                "identify_document_photo", "other_identify_document_photos",
+                "contact_numbers", "permissions"
+            ]
+        elif user_type == "admin":
+            allowed_fields = base_fields + [
+                "mobile", "status", "contact_numbers", "address"
+            ]
+        elif user_type == "admin_list":
+            allowed_fields = base_fields + [
+                "mobile", "address",
+            ]
+        else:  # Public User
+            allowed_fields = base_fields
+
+        # Execute Final Fields
+        for field_name in list(self.fields.keys()):
+            if field_name not in allowed_fields:
+                self.fields.pop(field_name)
+
+    def get_user_id(self, obj):
+        return obj.user.id
 
     def get_mobile(self, obj):
         return obj.user.mobile if obj.user else None
@@ -36,17 +71,39 @@ class OutPutSuperAdminProfileSerializer(serializers.ModelSerializer):
             return request.build_absolute_uri(obj.avatar.url) if request else obj.avatar.url
         return None
 
-    def get_land_line_numbers(self, obj):
-        return [number['number'] for number in OutPutNumbersSerializer(get_land_line_numbers(obj.user), many=True).data]
+    def get_contact_numbers(self, obj):
+        return OutPutContactNumberSerializer(obj.user.contact_numbers, many=True).data
 
-    def get_mobile_numbers(self, obj):
-        return [number['number'] for number in OutPutNumbersSerializer(get_mobile_numbers(obj.user), many=True).data]
+    def get_identify_document_photo(self, obj):
+        request = self.context.get('request')
+        if obj.user.registry_requests.exists():
+            identify_doc = obj.user.registry_requests.latest('created_at').identify_document_photo
+            if identify_doc and request:
+                return request.build_absolute_uri(identify_doc.image.url)
+            return identify_doc.file.url if identify_doc else None
+        return None
+
+    def get_other_identify_document_photos(self, obj):
+        request = self.context.get('request')
+
+        if obj.user.registry_requests.exists():
+            identify_docs = obj.user.registry_requests.latest('created_at').other_identify_document_photos.all()
+            for i in identify_docs:
+                print(i.image)
+
+            if request:
+                result = []
+                for doc in identify_docs:
+                    if doc.image != "":
+                        result.append(request.build_absolute_uri(doc.image.url))
+                return result
+        return []
 
     def get_status(self, obj):
-        return obj.user.status if obj.user else None
+        return obj.user.registry_requests.latest('created_at').status if obj.user.registry_requests.exists() else None
 
-    def get_reason_for_rejected(self, obj):
-        return obj.user.reason_for_rejected if obj.user else None
+    def get_rejected_reason(self, obj):
+        return obj.user.registry_requests.latest('created_at').rejected_reason if obj.user.registry_requests.exists() else None
 
     def get_is_verified_mobile(self, obj):
         return obj.user.is_verified_mobile if obj.user else None
@@ -70,60 +127,6 @@ class OutPutSuperAdminProfileSerializer(serializers.ModelSerializer):
         return list(all_permissions)
 
 
-class OutPutAdminProfileSerializer(serializers.ModelSerializer):
-    mobile = serializers.SerializerMethodField()
-    avatar = serializers.SerializerMethodField()
-    land_line_numbers = serializers.SerializerMethodField()
-    mobile_numbers = serializers.SerializerMethodField()
-    status = serializers.SerializerMethodField()
-    groups = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Profile
-        fields = ['mobile', 'avatar', 'status', 'full_name', 'groups', 'address', 'latitude', 'longitude', 'is_in_holiday', 'land_line_numbers', 'mobile_numbers',]
-
-    def get_mobile(self, obj):
-        return obj.user.mobile if obj.user else None
-
-    def get_avatar(self, obj):
-        request = self.context.get('request')
-        if obj.avatar:
-            return request.build_absolute_uri(obj.avatar.url) if request else obj.avatar.url
-        return None
-
-    # def get_land_line_numbers(self, obj):
-    #     return [number['number'] for number in OutPutNumbersSerializer(get_land_line_numbers(obj.user), many=True).data]
-    #
-    # def get_mobile_numbers(self, obj):
-    #     return [number['number'] for number in OutPutNumbersSerializer(get_mobile_numbers(obj.user), many=True).data]
-
-    def get_status(self, obj):
-        return obj.user.status if obj.user else None
-
-    def get_groups(self, obj):
-        groups = list(obj.user.groups.values_list('name', flat=True))
-        return groups
-
-
-class OutPutPublicProfileSerializer(serializers.ModelSerializer):
-    avatar = serializers.SerializerMethodField()
-    groups = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Profile
-        fields = ['full_name', 'gender', 'avatar', 'groups', 'is_in_holiday']
-
-    def get_avatar(self, obj):
-        request = self.context.get('request')
-        if obj.avatar:
-            return request.build_absolute_uri(obj.avatar.url) if request else obj.avatar.url
-        return None
-
-    def get_groups(self, obj):
-        groups = list(obj.user.groups.values_list('name', flat=True))
-        return groups
-
-
 class InputUpdateProfileSerializer(serializers.Serializer):
     full_name = serializers.CharField(required=False, allow_null=True, default=None, max_length=200)
     national_code = serializers.CharField(required=False, allow_null=True, default=None)
@@ -138,8 +141,7 @@ class InputUpdateProfileSerializer(serializers.Serializer):
         FileSizeValidator(min_size=1, max_size=10 * 1024 * 1024),
         ImageSizeValidator(max_height=4000, min_height=1, max_width=3000, min_width=1)
     ])
-    land_line_numbers = serializers.ListField(required=False, child=serializers.CharField(), default=None)
-    mobile_numbers = serializers.ListField(required=False, child=serializers.CharField(), default=None)
+    contact_numbers = serializers.ListField(required=False, child=InputContactNumbersSerializer(), default=None)
     identify_document_photo_id = serializers.UUIDField(required=False, default=None)
     other_identify_document_photos_id = serializers.ListField(required=False, default=None, child=serializers.CharField())
 

@@ -22,7 +22,7 @@ class UserRegistryRequest(BaseModel, SoftDeleteBaseModel):
         choices=STATUS_CHOICES,
         default='draft',
     )
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='registry_requests')
     identify_document_photo = models.ForeignKey(UploadIdentifyDocumentMedia, blank=True, null=True, on_delete=models.CASCADE, related_name='identify_document_photo')
     other_identify_document_photos = models.ManyToManyField(UploadIdentifyDocumentMedia, blank=True, related_name='other_identify_document_photos')
     rejected_reason = models.TextField(null=True, blank=True)

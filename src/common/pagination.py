@@ -17,16 +17,22 @@ def get_paginated_response(*, pagination_class, serializer_class, queryset, requ
     return Response(data=serializer.data)
 
 
-def get_paginated_response_context(*, pagination_class, serializer_class, queryset, request, view):
+def get_paginated_response_context(*, pagination_class, serializer_class, queryset, request, view, user_type=None):
     paginator = pagination_class()
 
     page = paginator.paginate_queryset(queryset, request, view=view)
 
     if page is not None:
-        serializer = serializer_class(page, many=True, context={'request': request, 'is_authenticated': request.user.is_authenticated})
+        if user_type:
+            serializer = serializer_class(page, many=True, user_type=user_type, context={'request': request, 'is_authenticated': request.user.is_authenticated})
+        else:
+            serializer = serializer_class(page, many=True,context={'request': request, 'is_authenticated': request.user.is_authenticated})
         return paginator.get_paginated_response(serializer.data)
 
-    serializer = serializer_class(queryset, many=True, context={'request': request, 'is_authenticated': request.user.is_authenticated})
+    if user_type:
+        serializer = serializer_class(queryset, many=True, user_type=user_type, context={'request': request, 'is_authenticated': request.user.is_authenticated})
+    else:
+        serializer = serializer_class(queryset, many=True, context={'request': request, 'is_authenticated': request.user.is_authenticated})
 
     return Response(data=serializer.data)
 

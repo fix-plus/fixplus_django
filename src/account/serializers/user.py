@@ -6,9 +6,7 @@ from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 
 from src.authentication.models import User
-from src.account.serializers.profile import OutPutSuperAdminProfileSerializer, InputUpdateProfileSerializer, \
-    OutPutPublicProfileSerializer, OutPutAdminProfileSerializer
-
+from src.account.serializers.profile import OutPutProfileSerializer, InputUpdateProfileSerializer
 
 class InputUserParamsSerializer(serializers.Serializer):
     mobile = serializers.CharField(required=False, default=None)
@@ -36,59 +34,49 @@ class InputUserParamsSerializer(serializers.Serializer):
 
 
 class InputUserSerializer(serializers.Serializer):
-    status = serializers.ChoiceField(required=False, default=None, allow_null=True, choices=['not_registered', 'checking', 'registered', 'rejected'])
+    status = serializers.ChoiceField(required=False, default=None, allow_null=True, choices=['draft', 'checking', 'approved', 'rejected'])
     reason_for_rejected = serializers.CharField(required=False, default=None, allow_null=True)
     group = serializers.ListField(required=False, default=None, child=serializers.CharField())
     profile = InputUpdateProfileSerializer(required=False, allow_null=True, default=None)
 
 
 class OutPutUserSerializer(serializers.ModelSerializer):
-    groups = serializers.StringRelatedField(many=True)
-    full_name = serializers.SerializerMethodField()
-    avatar = serializers.SerializerMethodField()
+    def __init__(self, *args, **kwargs):
+        self.user_type = kwargs.pop('user_type', None)
+        super().__init__(*args, **kwargs)
 
-    class Meta:
-        model = User
-        fields = ['mobile', 'id', 'full_name', 'groups', 'status', 'is_active', 'is_verified_mobile', 'avatar', 'last_login', 'last_online', 'created_at', 'updated_at', 'request_register_datetime', 'reason_for_rejected']
-
-    def get_full_name(self, obj):
-        return obj.profile.full_name
-
-    def get_avatar(self, obj):
-        request = self.context.get('request')
-        if obj.profile.avatar:
-            return request.build_absolute_uri(obj.profile.avatar.url) if request else obj.profile.avatar.url
-        return None
+    def to_representation(self, instance):
+        return OutPutProfileSerializer(instance.profile, context=self.context, user_type=self.user_type).data
 
 
-class OutPutSuperAdminUserDetailSerializer(serializers.ModelSerializer):
-    profile = serializers.SerializerMethodField()
-
-    class Meta:
-        model = User
-        fields = ['mobile', 'id', 'status', 'is_active', 'is_verified_mobile', 'profile', 'last_login', 'last_online', 'created_at', 'updated_at', 'request_register_datetime']
-
-    def get_profile(self, obj):
-        return OutPutSuperAdminProfileSerializer(obj.profile, context=self.context).data
-
-
-class OutPutAdminUserDetailSerializer(serializers.ModelSerializer):
-    profile = serializers.SerializerMethodField()
-
-    class Meta:
-        model = User
-        fields = ['id', 'mobile', 'profile', 'last_login', 'last_online', 'created_at', ]
-
-    def get_profile(self, obj):
-        return OutPutAdminProfileSerializer(obj.profile, context=self.context).data
-
-
-class OutPutPublicUserDetailSerializer(serializers.ModelSerializer):
-    profile = serializers.SerializerMethodField()
-
-    class Meta:
-        model = User
-        fields = ['id', 'profile', 'last_online',]
-
-    def get_profile(self, obj):
-        return OutPutPublicProfileSerializer(obj.profile, context=self.context).data
+# class OutPutSuperAdminUserDetailSerializer(serializers.ModelSerializer):
+#     profile = serializers.SerializerMethodField()
+#
+#     class Meta:
+#         model = User
+#         fields = ['mobile', 'id', 'status', 'is_active', 'is_verified_mobile', 'profile', 'last_login', 'last_online', 'created_at', 'updated_at', 'request_register_datetime']
+#
+#     def get_profile(self, obj):
+#         return OutPutProfileSerializer(obj.profile, context=self.context, user_type='super_admin').data
+#
+#
+# class OutPutAdminUserDetailSerializer(serializers.ModelSerializer):
+#     profile = serializers.SerializerMethodField()
+#
+#     class Meta:
+#         model = User
+#         fields = ['id', 'mobile', 'profile', 'last_login', 'last_online', 'created_at', ]
+#
+#     def get_profile(self, obj):
+#         return OutPutProfileSerializer(obj.profile, context=self.context, user_type='admin').data
+#
+#
+# class OutPutPublicUserDetailSerializer(serializers.ModelSerializer):
+#     profile = serializers.SerializerMethodField()
+#
+#     class Meta:
+#         model = User
+#         fields = ['id', 'profile', 'last_online',]
+#
+#     def get_profile(self, obj):
+#         return OutPutProfileSerializer(obj.profile, context=self.context, user_type='public').data

@@ -1,9 +1,9 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 
-from src.authentication.apis.auth.confirm_otp_code import ConfirmOtpCodeApi
-from src.authentication.apis.auth.resend_otp_code import ReSendOtpCodeApi
-from src.authentication.apis.auth.sign_in_up import SignInUpApi
+from src.authentication.apis.confirm_otp_code import ConfirmOtpCodeApi
+from src.authentication.apis.resend_otp_code import ReSendOtpCodeApi
+from src.authentication.apis.sign_in_up import SignInUpApi
 
 urlpatterns = [
     path('refresh-jwt/', TokenRefreshView.as_view(), name="refresh"),

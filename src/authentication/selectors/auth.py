@@ -1,5 +1,8 @@
+from typing import Optional
+
 from django.contrib.auth.models import Group
 from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count, Q
 from django.utils.translation import gettext_lazy as _
 
@@ -15,11 +18,14 @@ def get_cache_verification_mobile_otp(mobile: str) -> bool|None:
 
 
 # Db -------------------------------------------------------------------------------------------------------------------
-def get_user(id: str = None, mobile: str=None) -> User:
-
-    if mobile is not None: return User.objects.get(mobile=mobile)
-    if id is not None: return User.objects.get(id=id)
-    else: raise CustomAPIException(_("User not found."))
+def get_user(id: Optional[str] = None, mobile: Optional[str] = None) -> User:
+    try:
+        if mobile:
+            return User.objects.get(mobile=mobile)
+        if id:
+            return User.objects.get(id=id)
+    except ObjectDoesNotExist:
+        raise CustomAPIException(_("User not found."))
 
 
 def search_user_list(
@@ -104,5 +110,5 @@ def get_tokens_user(*, mobile:str=None, user:User=None) -> dict:
         "groups": groups,
         "permissions": permissions,
         "is_verified_mobile": db_user.is_verified_mobile,
-        "status": db_user.status,
+        "status": db_user.registry_requests.latest('created_at').status if db_user.registry_requests.exists() else None,
     }

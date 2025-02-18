@@ -3,7 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from src.common.custom_exception import CustomAPIException
 from src.parametric.models import DeviceType, Brand
 from src.account.models import TechnicianSkill
-from src.account.selectors.user import get_user
+from src.authentication.selectors.auth import get_user
 
 
 def create_technician_skill(
@@ -21,7 +21,7 @@ def create_technician_skill(
 
         # Create the TechnicianSkill instance
         technician_skill = TechnicianSkill.objects.create(
-            technician=technician,
+            user=technician,
             device_type=device_type_instance
         )
 

@@ -1,24 +1,21 @@
 from rest_framework.views import APIView
-from rest_framework import status
 from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema
 
 from src.common.apis import BasePermissionAPIView
-from src.common.mixins import IsSuperAdminMixin, IsAdminMixin, IsSuperAdminOrAdminMixin
+from src.common.mixins import IsSuperAdminMixin
 from src.common.pagination import LimitOffsetPagination, get_paginated_response_context
-from src.common.permissions import MultiPermission
-from src.account.selectors.user import search_user_list, get_user
-from src.account.serializers.user import OutPutUserSerializer, InputUserSerializer, InputUserParamsSerializer, \
-    OutPutSuperAdminUserDetailSerializer
-from src.account.services.user import update_user
+from src.authentication.selectors.auth import search_user_list, get_user
+from src.account.serializers.user import OutPutUserSerializer, InputUserSerializer, InputUserParamsSerializer
+from src.authentication.services.auth import update_user
 
 
-class UserListApi(IsSuperAdminMixin, APIView):
+class UsersListApi(IsSuperAdminMixin, APIView):
     class Pagination(LimitOffsetPagination):
         default_limit = 10
 
     @extend_schema(
-        summary="Search User",
+        summary="Search Users",
         parameters=[InputUserParamsSerializer],
         responses=OutPutUserSerializer)
     def get(self, request):
@@ -32,6 +29,7 @@ class UserListApi(IsSuperAdminMixin, APIView):
         return get_paginated_response_context(
             pagination_class=self.Pagination,
             serializer_class=OutPutUserSerializer,
+            user_type="admin_list",
             queryset=db_user_list,
             request=request,
             view=self,
@@ -41,18 +39,18 @@ class UserListApi(IsSuperAdminMixin, APIView):
 class UserDetailAPIView(IsSuperAdminMixin, BasePermissionAPIView):
     @extend_schema(
         summary="Get User Detail",
-        responses=OutPutSuperAdminUserDetailSerializer)
+        responses=OutPutUserSerializer)
     def get(self, request, uuid):
         queryset = get_user(id=uuid)
 
-        return Response(OutPutSuperAdminUserDetailSerializer(queryset, context={"request": request}).data)
+        return Response(OutPutUserSerializer(queryset, context={"request": request}, user_type="super_admin").data)
 
     @extend_schema(
         summary="Update User",
         request=InputUserSerializer,
-        responses=OutPutSuperAdminUserDetailSerializer)
+        responses=OutPutUserSerializer)
     def patch(self, request, uuid):
-        permission_check = self.check_permissions('account.change_another')
+        permission_check = self.check_permissions('authentication.change_another')
         if permission_check:
             return permission_check
 
@@ -64,4 +62,4 @@ class UserDetailAPIView(IsSuperAdminMixin, BasePermissionAPIView):
             **serializer.validated_data
         )
 
-        return Response(OutPutSuperAdminUserDetailSerializer(db_user, context={"request": request}).data)
+        return Response(OutPutUserSerializer(db_user, context={"request": request}, user_type="super_admin").data)

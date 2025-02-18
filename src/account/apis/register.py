@@ -17,5 +17,4 @@ class RegisterApi(IsVerifiedMobileMixin, APIView):
         with transaction.atomic():
             update_register(user=request.user)
 
-        return Response({'result': _('The request was sent successfully.')},
-                        status=status.HTTP_200_OK)
+        return Response({'result': _('The request was sent successfully.')}, status=status.HTTP_200_OK)

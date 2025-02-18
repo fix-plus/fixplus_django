@@ -1,22 +1,23 @@
 from django.core.cache import cache
 from django.utils.translation import gettext_lazy as _
 
+from src.account.models import UserRegistryRequest
 from src.common.custom_exception import CustomAPIException
 from src.authentication.models import User
-from src.account.selectors.user import is_verified_mobile
+from src.authentication.selectors.auth import is_verified_mobile
 from src.account.services.group import assign_groups_to_user
 from src.account.services.profile import update_profile
-from src.account.utils import verify_otp
+from src.authentication.utils import verify_otp
 
 
-def create_user(*, mobile:str=None) -> User:
+def get_or_create_user(*, mobile:str=None) -> User:
     db_user = User.objects.filter(mobile=mobile)
 
     if db_user.exists():
         db_user = db_user.first()
         return db_user
 
-    return User.objects.create_user(mobile=mobile)
+    return User.objects.create(mobile=mobile)
 
 
 def update_user(instance: User, *args, **kwargs):
@@ -24,7 +25,13 @@ def update_user(instance: User, *args, **kwargs):
         if key == 'group' and value is not None:
             instance.groups.clear()
             assign_groups_to_user(user=instance, group_names=value)
-        if key == 'profile' and value is not None:
+        elif key == 'status' and value is not None:
+            db_registry_req = UserRegistryRequest.objects.filter(user=instance)
+            if not db_registry_req.exists(): raise CustomAPIException(_("User not was send request registry yet."))
+            db_registry_req = db_registry_req.latest('created_at')
+            db_registry_req.status = value
+            db_registry_req.save()
+        elif key == 'profile' and value is not None:
             update_profile(instance.profile, **value)
         else:
             if value is not None:

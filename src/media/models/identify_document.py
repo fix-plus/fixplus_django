@@ -21,8 +21,8 @@ class UploadIdentifyDocumentMedia(BaseModel, SoftDeleteBaseModel):
             FileSizeValidator(min_size=1, max_size=5 * 1024 * 1024),
             ImageSizeValidator(max_height=4000, min_height=300, max_width=3000, min_width=300)
         ],
-        null=True,
-        blank=True,
+        null=False,
+        blank=False,
     )
 
     class Meta:

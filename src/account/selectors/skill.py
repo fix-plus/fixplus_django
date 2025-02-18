@@ -1,6 +1,6 @@
 from src.parametric.models import Brand
 from src.account.models import TechnicianSkill
-from src.account.selectors.user import get_user
+from src.authentication.selectors.auth import get_user
 
 
 def search_technician_skill(
@@ -13,9 +13,8 @@ def search_technician_skill(
 ):
 
     queryset = TechnicianSkill.objects.all()
-
     if technician_id:
-        queryset = queryset.filter(technician=get_user(id=technician_id))
+        queryset = queryset.filter(user=get_user(id=technician_id))
 
     if device_type:
         queryset = queryset.filter(device_type=device_type)

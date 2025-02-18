@@ -4,12 +4,12 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from src.authentication.selectors.auth import get_cache_verification_mobile_otp
 from src.common.custom_exception import CustomAPIException
-from src.account.selectors.user import get_cache_verification_mobile_otp
-from src.account.serializers.auth import InputSignInUpSerializer
-from src.account.services.user import create_user, set_cache_verification_mobile_otp
-from src.account.tasks import send_verification_sms
-from src.account.utils import generate_otp_code
+from src.authentication.serializers.auth import InputSignInUpSerializer
+from src.authentication.services.auth import get_or_create_user, set_cache_verification_mobile_otp
+from src.authentication.tasks import send_verification_sms
+from src.authentication.utils import generate_otp_code
 
 
 class SignInUpApi(APIView):
@@ -21,7 +21,7 @@ class SignInUpApi(APIView):
         serializer.is_valid(raise_exception=True)
 
         if get_cache_verification_mobile_otp(mobile=serializer.validated_data.get("mobile")) is None:
-            user = create_user(mobile=serializer.validated_data.get("mobile"),)
+            user = get_or_create_user(mobile=serializer.validated_data.get("mobile"), )
 
             # Send Otp Verification
             otp_code = generate_otp_code()

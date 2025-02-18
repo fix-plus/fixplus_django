@@ -20,12 +20,13 @@ class TechnicianSkillListApi(IsSuperAdminOrAdminMixin, APIView):
         summary="Search Technician Skill",
         parameters=[InputTechnicianSkillParamsSerializer],
         responses=OutputTechnicianSkillSerializer)
-    def get(self, request):
+    def get(self, request, uuid):
         query_serializer = InputTechnicianSkillParamsSerializer(data=request.query_params)
         query_serializer.is_valid(raise_exception=True)
 
         db_technician_skill_list = search_technician_skill(
-            **query_serializer.validated_data
+            **query_serializer.validated_data,
+            technician_id=uuid,
         )
 
         return get_paginated_response_context(
@@ -41,12 +42,13 @@ class TechnicianSkillListApi(IsSuperAdminOrAdminMixin, APIView):
         request=InputTechnicianSkillSerializer,
         responses=OutputTechnicianSkillSerializer
     )
-    def post(self, request):
+    def post(self, request, uuid):
         serializer = InputTechnicianSkillSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         create_technician_skill(
-            **serializer.validated_data
+            **serializer.validated_data,
+            technician_id=uuid,
         )
 
         db_technician_skill_list = search_technician_skill(
@@ -71,18 +73,18 @@ class TechnicianSkillDetailApi(IsSuperAdminOrAdminMixin, APIView):
         request=InputUpdateTechnicianSkillSerializer,
         responses=OutputTechnicianSkillSerializer
     )
-    def patch(self, request, uuid):
+    def patch(self, request, skill_id):
         serializer = InputUpdateTechnicianSkillSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        technician_id = get_technician_skill(id=uuid).technician.id
+        db_technician_skill = get_technician_skill(id=skill_id)
         update_technician_skill(
-            instance=get_technician_skill(id=uuid),
+            instance=db_technician_skill,
             **serializer.validated_data
         )
 
         db_technician_skill_list = search_technician_skill(
-            technician_id=technician_id
+            technician_id=db_technician_skill.user.id
         )
 
         return get_paginated_response_context(
@@ -97,14 +99,14 @@ class TechnicianSkillDetailApi(IsSuperAdminOrAdminMixin, APIView):
         summary="Delete Technician Skill",
         responses=OutputTechnicianSkillSerializer
     )
-    def delete(self, request, uuid):
-        technician_id = get_technician_skill(id=uuid).technician.id
+    def delete(self, request, skill_id):
+        db_technician_skill = get_technician_skill(id=skill_id)
         delete_technician_skill(
-            instance=get_technician_skill(id=uuid),
+            instance=db_technician_skill,
         )
 
         db_technician_skill_list = search_technician_skill(
-            technician_id=technician_id
+            technician_id=db_technician_skill.user.id
         )
 
         return get_paginated_response_context(

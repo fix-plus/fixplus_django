@@ -20,7 +20,8 @@ class Profile(BaseModel, SoftDeleteBaseModel):
     ]
     user = models.OneToOneField(
         User,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        null=False,
     )
     full_name = models.CharField(
         max_length=200,
@@ -33,11 +34,14 @@ class Profile(BaseModel, SoftDeleteBaseModel):
     )
     gender = models.CharField(
         max_length=20,
-        choices=GENDER_CHOICES
+        choices=GENDER_CHOICES,
+        null=True,
+        blank=True
     )
     address = models.ForeignKey(
         Address,
         null=True,
+        blank=True,
         on_delete=models.CASCADE,
     )
     avatar = models.ImageField(

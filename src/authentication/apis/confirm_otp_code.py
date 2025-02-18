@@ -3,10 +3,10 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from src.account.selectors.user import get_tokens_user, get_user
-from src.account.serializers.auth import InputConfirmVerificationCodeSerializer, OutPutTokensUserSerializer
-from src.account.services.user import update_verified
-from src.account.utils import verify_otp
+from src.authentication.selectors.auth import get_tokens_user, get_user
+from src.authentication.serializers.auth import InputConfirmVerificationCodeSerializer, OutPutTokensUserSerializer
+from src.authentication.services.auth import update_verified
+from src.authentication.utils import verify_otp
 
 
 class ConfirmOtpCodeApi(APIView):
