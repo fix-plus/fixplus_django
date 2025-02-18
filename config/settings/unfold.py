@@ -173,6 +173,11 @@ UNFOLD = {
                             "icon": "money_bag",
                             "link": reverse_lazy("admin:customer_customer_changelist"),
                         },
+                        {
+                            "title": _("Customer Contact Numbers"),
+                            "icon": "phone_in_talk",
+                            "link": reverse_lazy("admin:customer_customercontactnumber_changelist"),
+                        },
                     ],
                 },
             ],
