@@ -180,6 +180,18 @@ UNFOLD = {
                         },
                     ],
                 },
+                {
+                    "title": _("Services"),
+                    "separator": True,  # Top border
+                    "collapsible": True,  # Collapsible group of links
+                    "items": [
+                        {
+                            "title": _("Services"),
+                            "icon": "build_circle",
+                            "link": reverse_lazy("admin:service_service_changelist"),
+                        },
+                    ],
+                },
             ],
         },
 }

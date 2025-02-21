@@ -19,7 +19,7 @@ LOCAL_APPS = [
     'src.account.apps.UserConfig',
     'src.media.apps.UploadConfig',
     'src.customer.apps.CustomerConfig',
-    'src.service.apps.JobConfig',
+    'src.service.apps.ServiceConfig',
     'src.parametric.apps.ParametricConfig',
     'src.repair_shop.apps.RepairShopConfig',
     'src.financial.apps.FinancialConfig',

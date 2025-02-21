@@ -2,7 +2,7 @@ from django.db import models
 
 from src.common.models import SoftDeleteBaseModel, BaseModel
 from src.customer.models import Customer
-from src.service.models.job import Job
+from src.service.models.service import Service
 from src.authentication.models import User
 
 
@@ -18,7 +18,7 @@ class PartInShop(BaseModel, SoftDeleteBaseModel):
         default='in_progress'
     )
     job = models.ForeignKey(
-        Job,
+        Service,
         on_delete=models.PROTECT,
         related_name='parts_in_shop',
         null=True,
