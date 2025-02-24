@@ -6,8 +6,8 @@ from django.utils.translation import gettext_lazy as _
 
 from src.common.mixins import IsSuperAdminOrAdminMixin
 from src.common.pagination import get_paginated_response_context, LimitOffsetPagination
-from src.customer.selectors.selectors import search_customer_list
-from src.customer.serializers.serializers import InputCustomerParamsSerializer, OutPutCustomerSerializer
+from src.customer.selectors.customer import search_customer_list
+from src.customer.serializers.customer import InputCustomerParamsSerializer, OutPutCustomerSerializer
 
 
 class CustomerListApi(IsSuperAdminOrAdminMixin, APIView):

@@ -1,5 +1,8 @@
 from django.db.models import Subquery
+from rest_framework import status
+from django.utils.translation import gettext_lazy as _
 
+from src.common.custom_exception import CustomAPIException
 from src.customer.models import Customer, CustomerContactNumber
 
 
@@ -36,3 +39,10 @@ def search_customer_list(
             raise ValueError("Invalid sort_by value. Must be one of: 'created_at', 'last_online',.")
 
     return queryset
+
+
+def get_customer(*, id: str) -> Customer:
+    try:
+        return Customer.objects.get(id=id)
+    except Customer.DoesNotExist:
+        raise CustomAPIException(_("Customer doesn't exist."), status.HTTP_404_NOT_FOUND)

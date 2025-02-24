@@ -190,8 +190,30 @@ UNFOLD = {
                             "icon": "build_circle",
                             "link": reverse_lazy("admin:service_service_changelist"),
                         },
+                        {
+                            "title": _("Service Histories"),
+                            "icon": "history",
+                            "link": reverse_lazy("admin:service_servicehistory_changelist"),
+                        }
                     ],
                 },
+                {
+                    "title": _("Communication"),
+                    "separator": True,  # Top border
+                    "collapsible": True,  # Collapsible group of links
+                    "items": [
+                        {
+                            "title": _("Customer Pin Messages"),
+                            "icon": "message",
+                            "link": reverse_lazy("admin:communication_customerpinmessage_changelist"),
+                        },
+                        {
+                            "title": _("User Dashboard Pin Messages"),
+                            "icon": "message",
+                            "link": reverse_lazy("admin:communication_userdashboardpinmessage_changelist"),
+                        }
+                    ],
+                }
             ],
         },
 }

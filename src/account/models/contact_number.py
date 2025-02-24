@@ -5,26 +5,18 @@ from src.authentication.models import User
 
 
 class UserContactNumber(BaseModel, SoftDeleteBaseModel):
+    MOBILE = 'mobile'
+    LAND_LINE = 'landline'
+
     PHONE_TYPE_CHOICES = [
-        ('mobile', 'Mobile'),
-        ('landline', 'Landline'),
+        (LAND_LINE, 'Mobile'),
+        (MOBILE, 'Landline')
     ]
 
-    user = models.ForeignKey(
-        User,
-        related_name='contact_numbers',
-        on_delete=models.CASCADE
-    )
-    phone_type = models.CharField(
-        max_length=8,
-        choices=PHONE_TYPE_CHOICES
-    )
-    number = models.CharField(
-        max_length=15
-    )
-    is_primary = models.BooleanField(
-        default=False
-    )
+    user = models.ForeignKey(User, related_name='contact_numbers', on_delete=models.CASCADE)
+    phone_type = models.CharField(max_length=8, choices=PHONE_TYPE_CHOICES)
+    number = models.CharField(max_length=15)
+    is_primary = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if self.is_primary:

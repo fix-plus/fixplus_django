@@ -3,7 +3,7 @@ import re
 from rest_framework import serializers
 from django.utils.translation import gettext_lazy as _
 
-from src.account.serializers.contact_number import OutPutContactNumberSerializer
+from src.account.serializers.contact_number import OutPutContactNumberSerializer, InputContactNumbersSerializer
 from src.customer.models import Customer
 
 
@@ -11,7 +11,7 @@ class InputCustomerSerializer(serializers.Serializer):
     customer_id = serializers.UUIDField(required=False, allow_null=True, default=None)
     full_name = serializers.CharField(required=True, max_length=200)
     gender = serializers.ChoiceField(choices=Customer.GENDER_CHOICES, required=True)
-    phone_numbers = serializers.ListField(child=serializers.CharField(), required=True)
+    contact_numbers = serializers.ListField(required=False, child=InputContactNumbersSerializer(), default=None)
 
 
 class OutPutCustomerSerializer(serializers.ModelSerializer):

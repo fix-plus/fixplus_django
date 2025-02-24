@@ -12,7 +12,9 @@ class UserDashboardPinMessageAdmin(ModelAdmin):
         "mobile",
         "full_name",
         "title",
-        "description",
+        "is_seen",
+        "is_read",
+        "is_active",
         "created_at",
     ]
     list_select_related = ["user"]

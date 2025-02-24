@@ -33,9 +33,9 @@ def create_superuser(sender, **kwargs):
     """Create a superuser after migrations if it does not exist."""
 
     if sender.name == "src.authentication":
-        if not User.objects.filter(mobile='admin@admin.com').exists():
+        if not User.objects.filter(mobile='+989032770354').exists():
             User.objects.create_superuser(
-                mobile='admin@admin.com',
+                mobile='+989032770354',
                 password='1234@1234',
             )
-            print("Superuser created with username: admin")
+            print("Superuser created with username: +989032770354")
