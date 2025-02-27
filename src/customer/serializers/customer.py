@@ -4,26 +4,34 @@ from rest_framework import serializers
 from django.utils.translation import gettext_lazy as _
 
 from src.account.serializers.contact_number import OutPutContactNumberSerializer, InputContactNumbersSerializer
+from src.communication.selectors.customer_pin_message import get_latest_customer_pin_message
+from src.communication.serializers.pin_message import PinMessageSerializer
 from src.customer.models import Customer
 
 
 class InputCustomerSerializer(serializers.Serializer):
     customer_id = serializers.UUIDField(required=False, allow_null=True, default=None)
-    full_name = serializers.CharField(required=True, max_length=200)
-    gender = serializers.ChoiceField(choices=Customer.GENDER_CHOICES, required=True)
+    full_name = serializers.CharField(required=False, max_length=200)
+    gender = serializers.ChoiceField(choices=Customer.GENDER_CHOICES, required=False)
     contact_numbers = serializers.ListField(required=False, child=InputContactNumbersSerializer(), default=None)
+
 
 
 class OutPutCustomerSerializer(serializers.ModelSerializer):
     searched_phone_number = serializers.CharField(required=False, default=None)
     contact_numbers = serializers.SerializerMethodField()
+    pin_message = serializers.SerializerMethodField()
 
     class Meta:
         model = Customer
-        fields = ['id', 'full_name', 'gender', 'searched_phone_number', 'contact_numbers']
+        fields = ['id', 'full_name', 'gender', 'searched_phone_number', 'contact_numbers', 'pin_message']
 
     def get_contact_numbers(self, obj):
         return OutPutContactNumberSerializer(obj.contact_numbers, many=True).data
+
+    def get_pin_message(self, obj):
+        queryset = get_latest_customer_pin_message(customer=obj)
+        return PinMessageSerializer(queryset).data if queryset else None
 
 
 class OutPutPublicCustomerSerializer(serializers.ModelSerializer):
