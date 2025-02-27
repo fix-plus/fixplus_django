@@ -3,9 +3,10 @@ from typing import Optional
 from django.contrib.auth.models import Group
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Count, Q
+from django.db.models import Count, Q, OuterRef, Subquery
 from django.utils.translation import gettext_lazy as _
 
+from src.account.models import UserRegistryRequest, TechnicianStatus
 from src.common.custom_exception import CustomAPIException
 from src.authentication.models import User
 
@@ -30,7 +31,8 @@ def get_user(id: Optional[str] = None, mobile: Optional[str] = None) -> User:
 
 def search_user_list(
     mobile: str = None,
-    status: list | None = None,
+    registry_status: list | None = None,
+    technician_status: list | None = None,
     full_name: str | None = None,
     group: list | None = None,
     sort_by: str | None = None,
@@ -43,10 +45,37 @@ def search_user_list(
     if mobile:
         queryset = queryset.filter(mobile__startswith=mobile)
 
-    # Filter by status if provided
-    if status:
-        status = status.split(',')
-        queryset = queryset.filter(status__in=status)
+    # Filter by registry status if provided
+    if registry_status:
+        registry_status = registry_status.split(',')
+
+        # Get the latest registry request for each user
+        latest_requests = UserRegistryRequest.objects.filter(
+            user=OuterRef('pk')
+        ).order_by('-created_at')
+
+        # Annotate the queryset with the latest registry request status
+        queryset = queryset.annotate(
+            latest_request_status=Subquery(latest_requests.values('status')[:1])
+        ).filter(
+            latest_request_status__in=registry_status
+        )
+
+    # Filter by registry status if provided
+    if technician_status:
+        technician_status = technician_status.split(',')
+
+        # Get the latest registry request for each user
+        latest_status = TechnicianStatus.objects.filter(
+            user=OuterRef('pk')
+        ).order_by('-created_at')
+
+        # Annotate the queryset with the latest registry request status
+        queryset = queryset.annotate(
+            latest_technician_status=Subquery(latest_status.values('status')[:1])
+        ).filter(
+            latest_technician_status__in=technician_status
+        )
 
     # Join with Profile to filter by full_name if provided
     if full_name:

@@ -22,15 +22,14 @@ def log_service_save(sender, instance, created, **kwargs):
             remarks=remark,
         )
     else:
-        # Log update event (only if status changed)
         try:
-            old_instance = sender.objects.get(pk=instance.pk)
-            if old_instance.status != instance.status:
+            latest_history = ServiceHistory.objects.filter(service=instance).latest("created_at")
+            if latest_history.new_status != instance.status:
                 remark = custom_remark if custom_remark else "Service status updated."
                 ServiceHistory.objects.create(
                     service=instance,
                     event_type=ServiceHistory.EVENT_UPDATE,
-                    previous_status=old_instance.status,
+                    previous_status=latest_history.new_status,
                     new_status=instance.status,
                     created_by=instance.updated_by,
                     remarks=remark,

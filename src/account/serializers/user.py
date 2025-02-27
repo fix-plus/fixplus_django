@@ -10,7 +10,8 @@ from src.account.serializers.profile import OutPutProfileSerializer, InputUpdate
 
 class InputUserParamsSerializer(serializers.Serializer):
     mobile = serializers.CharField(required=False, default=None)
-    status = serializers.CharField(required=False, default=None)
+    registry_status = serializers.CharField(required=False, default=None)
+    technician_status = serializers.CharField(required=False, default=None)
     full_name = serializers.CharField(required=False, default=None)
     group = serializers.CharField(required=False, default=None)
     sort_by = serializers.ChoiceField(required=False, default=None, choices=['created_at', 'last_online', 'request_register_datetime'])

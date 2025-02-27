@@ -12,7 +12,7 @@ def create_technician_skill(
         device_type: str,
         brand_names: list,
 ) -> TechnicianSkill:
-    try:
+
         # Fetch the technician and device type from the database
         technician = get_user(id=technician_id)
         if not technician.groups.filter(name='technician').exists(): raise CustomAPIException(_("Skills can only be assigned to technician users."))
@@ -32,9 +32,7 @@ def create_technician_skill(
 
         return technician_skill
 
-    except Exception as e:
-        # Handle the case where the technician or device type does not exist
-        raise CustomAPIException(_("Error creating technician skill."))
+
 
 
 def update_technician_skill(
@@ -43,7 +41,7 @@ def update_technician_skill(
         device_type: str | None = None,
         brand_names: list | None = None,
 ) -> TechnicianSkill:
-    try:
+
         if device_type:
             device_type_instance = DeviceType.objects.get(title__iexact=device_type)
             instance.device_type = device_type_instance
@@ -54,10 +52,6 @@ def update_technician_skill(
 
         instance.save()
         return instance
-
-    except Exception as e:
-        # Handle the case where the technician or device type does not exist
-        raise CustomAPIException(_("Error update technician skill."))
 
 
 def delete_technician_skill(

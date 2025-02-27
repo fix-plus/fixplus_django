@@ -7,10 +7,14 @@ from src.authentication.models import User
 
 
 class TechnicianStatus(BaseModel, SoftDeleteBaseModel):
+    ACTIVE = 'active'
+    IN_HOLIDAY = 'in_holiday'
+    IN_DEBT = 'in_debt'
+
     STATUS_CHOICES = [
-        ('active', 'Active'),
-        ('in_holiday', 'In Holiday'),
-        ('in_debt', 'In Debt'),
+        (ACTIVE, 'Active'),
+        (IN_HOLIDAY, 'In Holiday'),
+        (IN_DEBT, 'In Debt'),
     ]
 
     user = models.ForeignKey(

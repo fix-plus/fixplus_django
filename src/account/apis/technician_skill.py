@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 
 from src.common.mixins import IsSuperAdminOrAdminMixin
 from src.common.pagination import LimitOffsetPagination, get_paginated_response_context
-from src.account.selectors.skill import search_technician_skill, get_technician_skill
+from src.account.selectors.technician_skill import search_technician_skill, get_technician_skill
 from src.account.serializers.skill import InputTechnicianSkillParamsSerializer, OutputTechnicianSkillSerializer, \
     InputTechnicianSkillSerializer, InputUpdateTechnicianSkillSerializer
 from src.account.services.skill import create_technician_skill, update_technician_skill, delete_technician_skill

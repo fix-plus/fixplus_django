@@ -3,7 +3,7 @@ from django.urls import path
 from src.account.apis.me import MeApi
 from src.account.apis.register import RegisterApi
 from src.account.apis.users import UsersListApi, UserDetailAPIView
-from src.account.apis.skill import TechnicianSkillListApi, TechnicianSkillDetailApi
+from src.account.apis.technician_skill import TechnicianSkillListApi, TechnicianSkillDetailApi
 
 urlpatterns = [
 

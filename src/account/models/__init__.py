@@ -1,5 +1,5 @@
 from .profile import Profile
-from .skill import TechnicianSkill
+from .technician_skill import TechnicianSkill
 from .contact_number import UserContactNumber
 from .registry_request import UserRegistryRequest
 from .service_card import TechnicianServiceCard

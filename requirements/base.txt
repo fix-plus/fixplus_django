@@ -41,3 +41,5 @@ ipython==8.14.0
 
 django-thumbnails==0.8.0
 easy-thumbnails==2.9
+
+geopy==2.4.1

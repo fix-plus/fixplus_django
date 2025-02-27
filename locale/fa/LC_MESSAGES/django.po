@@ -197,11 +197,11 @@ msgstr "مهارت ها فقط می تواند به کاربران تکنسین 
 
 #: .\fixplus\user\services\skill.py:36
 msgid "Error creating technician skill."
-msgstr "ایجاد مهارت برای تکنسین با خطا مواحه شد."
+msgstr "ایجاد مهارت برای تکنسین با خطا مواجه شد."
 
 #: .\fixplus\user\services\skill.py:58
 msgid "Error update technician skill."
-msgstr "بروزرسانی مهارت برای تکنسین با خطا مواحه شد."
+msgstr "بروزرسانی مهارت برای تکنسین با خطا مواجه شد."
 
 #: .\fixplus\user\services\skill.py:70
 msgid "Error delete technician skill."

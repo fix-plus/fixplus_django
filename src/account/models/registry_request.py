@@ -8,11 +8,16 @@ from src.media.models import UploadIdentifyDocumentMedia
 
 
 class UserRegistryRequest(BaseModel, SoftDeleteBaseModel):
+    DRAFT = 'draft'
+    CHECKING = 'checking'
+    APPROVED = 'approved'
+    REJECTED = 'rejected'
+
     STATUS_CHOICES = [
-        ('draft', 'Draft'),
-        ('checking', 'Checking'),
-        ('approved', 'Approved'),
-        ('rejected', 'Rejected'),
+        (DRAFT, 'Draft'),
+        (CHECKING, 'Checking'),
+        (APPROVED, 'Approved'),
+        (REJECTED, 'Rejected'),
     ]
 
     status = models.CharField(
