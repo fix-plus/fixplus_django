@@ -36,7 +36,7 @@ class InputUserParamsSerializer(serializers.Serializer):
 
 class InputUserSerializer(serializers.Serializer):
     status = serializers.ChoiceField(required=False, default=None, allow_null=True, choices=['draft', 'checking', 'approved', 'rejected'])
-    reason_for_rejected = serializers.CharField(required=False, default=None, allow_null=True)
+    rejected_reason = serializers.CharField(required=False, default=None, allow_null=True)
     group = serializers.ListField(required=False, default=None, child=serializers.CharField())
     profile = InputUpdateProfileSerializer(required=False, allow_null=True, default=None)
 

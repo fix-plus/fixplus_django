@@ -33,6 +33,12 @@ def update_user(instance: User, *args, **kwargs):
             db_registry_req.save()
         elif key == 'profile' and value is not None:
             update_profile(instance.profile, **value)
+        elif key == 'rejected_reason' and value is not None:
+            db_registry_req = UserRegistryRequest.objects.filter(user=instance)
+            if not db_registry_req.exists(): raise CustomAPIException(_("User not was send request registry yet."))
+            db_registry_req = db_registry_req.latest('created_at')
+            db_registry_req.rejected_reason = value
+            db_registry_req.save()
         else:
             if value is not None:
                 setattr(instance, key, value)

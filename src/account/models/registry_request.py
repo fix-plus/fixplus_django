@@ -37,11 +37,6 @@ class UserRegistryRequest(BaseModel, SoftDeleteBaseModel):
         verbose_name_plural = "Registry Request"
         ordering = ('-created_at',)
 
-    def clean(self):
-        # Check if the status is 'rejected' and if rejected_reason is not provided
-        if self.status == 'rejected' and not self.rejected_reason:
-            raise ValidationError(_("A reason for rejection must be provided."))
-
     def save(self, *args, **kwargs):
         # Call the clean method to validate before saving
         self.clean()
