@@ -16,6 +16,7 @@ class OutPutProfileSerializer(serializers.ModelSerializer):
     user_id = serializers.SerializerMethodField()
     mobile = serializers.SerializerMethodField()
     avatar = serializers.SerializerMethodField()
+    last_online = serializers.SerializerMethodField()
     contact_numbers = serializers.SerializerMethodField()
     address = OutPutAddressSerializer()
     identify_document_photo = serializers.SerializerMethodField()
@@ -25,6 +26,8 @@ class OutPutProfileSerializer(serializers.ModelSerializer):
     is_verified_mobile = serializers.SerializerMethodField()
     groups = serializers.SerializerMethodField()
     permissions = serializers.SerializerMethodField()
+    register_request_at = serializers.SerializerMethodField()
+
 
     class Meta:
         model = Profile
@@ -35,21 +38,21 @@ class OutPutProfileSerializer(serializers.ModelSerializer):
         super().__init__(*args, **kwargs)
 
         # BaseFields
-        base_fields = ['user_id', 'full_name', 'gender', 'avatar', 'groups',]
+        base_fields = ['user_id', 'full_name', 'gender', 'avatar', 'groups', 'last_online', 'created_at']
 
         if user_type == "super_admin" or user_type == "me":
             allowed_fields = base_fields + [
                 "national_code", "mobile", "address","status", "rejected_reason", "is_verified_mobile",
-                "identify_document_photo", "other_identify_document_photos",
-                "contact_numbers", "permissions"
+                "description", "identify_document_photo", "other_identify_document_photos",
+                "contact_numbers", "permissions", "register_request_at"
             ]
         elif user_type == "admin":
             allowed_fields = base_fields + [
-                "mobile", "status", "contact_numbers", "address"
+                "mobile", "status", "contact_numbers", "address", "register_request_at"
             ]
         elif user_type == "admin_list":
             allowed_fields = base_fields + [
-                "mobile", "address",
+                "mobile", "address", "register_request_at"
             ]
         else:  # Public User
             allowed_fields = base_fields
@@ -71,6 +74,9 @@ class OutPutProfileSerializer(serializers.ModelSerializer):
             return request.build_absolute_uri(obj.avatar.url) if request else obj.avatar.url
         return None
 
+    def get_last_online(self, obj):
+        return obj.user.last_online if obj.user else None
+
     def get_contact_numbers(self, obj):
         return OutPutContactNumberSerializer(obj.user.contact_numbers, many=True).data
 
@@ -78,25 +84,27 @@ class OutPutProfileSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if obj.user.registry_requests.exists():
             identify_doc = obj.user.registry_requests.latest('created_at').identify_document_photo
-            if identify_doc and request:
-                return request.build_absolute_uri(identify_doc.image.url)
-            return identify_doc.file.url if identify_doc else None
+            if identify_doc:
+                image_url = request.build_absolute_uri(identify_doc.image.url) if request else identify_doc.image.url
+                return {
+                    "id": str(identify_doc.id),
+                    "image": image_url
+                }
         return None
 
     def get_other_identify_document_photos(self, obj):
         request = self.context.get('request')
-
         if obj.user.registry_requests.exists():
             identify_docs = obj.user.registry_requests.latest('created_at').other_identify_document_photos.all()
-            for i in identify_docs:
-                print(i.image)
-
-            if request:
-                result = []
-                for doc in identify_docs:
-                    if doc.image != "":
-                        result.append(request.build_absolute_uri(doc.image.url))
-                return result
+            result = []
+            for doc in identify_docs:
+                if doc.image:
+                    image_url = request.build_absolute_uri(doc.image.url) if request else doc.image.url
+                    result.append({
+                        "id": str(doc.id),
+                        "image": image_url
+                    })
+            return result
         return []
 
     def get_status(self, obj):
@@ -125,6 +133,11 @@ class OutPutProfileSerializer(serializers.ModelSerializer):
         all_permissions = user_permissions.union(group_permissions)
 
         return list(all_permissions)
+
+    def get_register_request_at(self, obj):
+        if obj.user.registry_requests.exists():
+            return obj.user.registry_requests.latest('created_at').created_at
+        return None
 
 
 class InputUpdateProfileSerializer(serializers.Serializer):

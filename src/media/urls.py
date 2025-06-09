@@ -4,5 +4,5 @@ from src.media.apis import UploadCenterApi
 
 
 urlpatterns = [
-    path('', UploadCenterApi.as_view(),name="media-center"),
+    path('upload/', UploadCenterApi.as_view(),name="media-center"),
 ]

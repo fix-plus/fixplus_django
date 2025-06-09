@@ -6,6 +6,7 @@ from src.service.models import Service
 def search_service_list(
     customer_name: str = None,
     customer_phone_number: str = None,
+    technician_id: str = None,
     device_type: str = None,
     brand: str = None,
     status: str | None = None,
@@ -23,6 +24,10 @@ def search_service_list(
     # Filter by customer_mobile if provided
     if customer_phone_number:
         queryset = queryset.filter(customer__contact_numbers__number__startswith=customer_phone_number)
+
+    # Filter by technician_id if provided
+    if technician_id:
+        queryset = queryset.filter(technician__id=technician_id)
 
     # Filter by device_type if provided
     if device_type:
