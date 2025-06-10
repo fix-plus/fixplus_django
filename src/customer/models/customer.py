@@ -5,12 +5,12 @@ from src.authentication.models import User
 
 
 class Customer(BaseModel, SoftDeleteBaseModel):
-    GENDER_CHOICES = [
-        ('male', 'Male'),
-        ('female', 'Female'),
-    ]
+    class Gender(models.TextChoices):
+        FEMALE = 'FEMALE', 'Female'
+        MALE = 'MALE', 'Male'
+
     full_name = models.CharField(max_length=200, blank=True, null=True)
-    gender = models.CharField(max_length=20, choices=GENDER_CHOICES)
+    gender = models.CharField(max_length=20, choices=Gender.choices)
 
     def __str__(self):
         return f"{self.full_name}"

@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from src.account.models import UserRegistryRequest
+from src.account.models import UserRegistryRequest, TechnicianStatus
 
 
 @receiver(post_save, sender=UserRegistryRequest)
@@ -18,8 +18,8 @@ def create_technician_status(sender, instance, created, **kwargs):
 
     """
     if created:
-        if instance.status == UserRegistryRequest.APPROVED and \
-            instance.user.groups.filter(name='technician').exists() and \
+        if instance.status == UserRegistryRequest.Status.APPROVED and \
+            instance.user.groups.filter(name='TECHNICIAN').exists() and \
             not instance.user.technician_statuses.exists():
 
-            instance.user.technician_statuses.create(status='active')
+            instance.user.technician_statuses.create(status=TechnicianStatus.Status.ACTIVE)

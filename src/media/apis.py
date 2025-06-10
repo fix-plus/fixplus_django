@@ -14,11 +14,11 @@ from src.media.services import create_upload_identify_document_media
 class UploadCenterApi(IsVerifiedMobileMixin, APIView):
     parser_classes = [MultiPartParser]
     
-    # @extend_schema(
-    #     summary="Upload Center",
-    #     parameters=[InputParamsUploadSerializer],
-    #     request=InputUploadSerializer,
-    #     responses=OutPutUploadSerializer)
+    @extend_schema(
+        summary="Upload Center",
+        parameters=[InputParamsUploadSerializer],
+        request=InputUploadSerializer,
+        responses=OutPutUploadSerializer)
     def post(self, request):
         method = InputParamsUploadSerializer(data=request.query_params)
         method.is_valid(raise_exception=True)

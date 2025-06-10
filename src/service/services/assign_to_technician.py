@@ -23,10 +23,10 @@ def assign_service_to_technician(
     if db_service.technician == db_technician : raise CustomAPIException(_("Service is already assigned to the technician"), status_code=400)
 
     # Check if the service is already completed
-    if db_service.status == Service.COMPLETED: raise CustomAPIException(_("Service is already completed"), status_code=400)
+    if db_service.status == Service.Status.COMPLETED: raise CustomAPIException(_("Service is already completed"), status_code=400)
 
     # Check if technician not active
-    if db_technician.technician_statuses.latest('created_at').status != TechnicianStatus.ACTIVE: raise CustomAPIException(_("Technician is not active"), status_code=400)
+    if db_technician.technician_statuses.latest('created_at').status != TechnicianStatus.Status.ACTIVE: raise CustomAPIException(_("Technician is not active"), status_code=400)
 
     # Initial
     timing_setting_db = get_timing_setting()
@@ -35,7 +35,7 @@ def assign_service_to_technician(
     db_service.technician = db_technician
     db_service.updated_at = timezone.now()
     db_service.updated_by = assigned_by
-    db_service.status = Service.ASSIGNED
+    db_service.status = Service.Status.ASSIGNED
     db_service.deadline_accepting_at = timezone.now() + timezone.timedelta(minutes=timing_setting_db.max_wait_determine_referred_job_by_tech_min)
     db_service._custom_remark = "Service assigned to the technician."
 

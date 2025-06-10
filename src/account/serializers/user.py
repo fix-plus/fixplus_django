@@ -5,6 +5,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 
+from src.account.models import UserRegistryRequest
 from src.authentication.models import User
 from src.account.serializers.profile import OutPutProfileSerializer, InputUpdateProfileSerializer
 
@@ -35,7 +36,7 @@ class InputUserParamsSerializer(serializers.Serializer):
 
 
 class InputUserSerializer(serializers.Serializer):
-    status = serializers.ChoiceField(required=False, default=None, allow_null=True, choices=['draft', 'checking', 'approved', 'rejected'])
+    status = serializers.ChoiceField(required=False, default=None, allow_null=True, choices=UserRegistryRequest.Status.choices)
     rejected_reason = serializers.CharField(required=False, default=None, allow_null=True)
     group = serializers.ListField(required=False, default=None, child=serializers.CharField())
     profile = InputUpdateProfileSerializer(required=False, allow_null=True, default=None)
@@ -69,7 +70,7 @@ class OutPutUserSerializer(serializers.ModelSerializer):
 #         fields = ['id', 'mobile', 'profile', 'last_login', 'last_online', 'created_at', ]
 #
 #     def get_profile(self, obj):
-#         return OutPutProfileSerializer(obj.profile, context=self.context, user_type='admin').data
+#         return OutPutProfileSerializer(obj.profile, context=self.context, user_type='ADMIN').data
 #
 #
 # class OutPutPublicUserDetailSerializer(serializers.ModelSerializer):

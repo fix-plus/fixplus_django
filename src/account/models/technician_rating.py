@@ -7,12 +7,7 @@ from src.authentication.models import User
 
 
 class TechnicianRating(BaseModel, SoftDeleteBaseModel):
-    user = models.ForeignKey(
-        User,
-        null=False,
-        on_delete=models.CASCADE,
-        related_name='technician_ratings',
-    )
+    user = models.ForeignKey(User, null=False, on_delete=models.CASCADE, related_name='technician_ratings')
     rating = models.ManyToManyField(Rating, blank=False, through='TechnicianRatingValue')
 
     def __str__(self):

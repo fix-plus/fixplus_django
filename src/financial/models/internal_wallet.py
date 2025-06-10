@@ -9,3 +9,6 @@ class InternalWallet(BaseModel, SoftDeleteBaseModel):
     balance = models.BigIntegerField(default=0)
     frozen_balance = models.BigIntegerField(default=0)
     is_frozen = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"InternalWallet(user={self.user.username}, balance={self.balance})"

@@ -5,16 +5,12 @@ from src.authentication.models import User
 
 
 class UserContactNumber(BaseModel, SoftDeleteBaseModel):
-    MOBILE = 'mobile'
-    LAND_LINE = 'landline'
-
-    PHONE_TYPE_CHOICES = [
-        (LAND_LINE, 'Mobile'),
-        (MOBILE, 'Landline')
-    ]
+    class PhoneType(models.TextChoices):
+        MOBILE = 'MOBILE', 'Mobile'
+        LAND_LINE = 'LAND_LINE', 'Land-Line'
 
     user = models.ForeignKey(User, related_name='contact_numbers', on_delete=models.CASCADE)
-    phone_type = models.CharField(max_length=8, choices=PHONE_TYPE_CHOICES)
+    phone_type = models.CharField(max_length=9, choices=PhoneType.choices)
     number = models.CharField(max_length=15)
     is_primary = models.BooleanField(default=False)
 

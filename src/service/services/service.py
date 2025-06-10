@@ -79,7 +79,7 @@ def create_job(
                 else:
                     setattr(service, key, value)
 
-            service.status = Service.WAITING
+            service.status = Service.Status.WAITING
             service.created_by = created_by
             service.save()
             service_instances.append(service)

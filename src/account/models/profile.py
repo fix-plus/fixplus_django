@@ -14,14 +14,14 @@ def upload_image_avatar(instance, filename):
 
 
 class Profile(BaseModel, SoftDeleteBaseModel):
-    GENDER_CHOICES = [
-        ('male', 'Male'),
-        ('female', 'Female'),
-    ]
+    class Gender(models.TextChoices):
+        FEMALE = 'FEMALE', 'Female'
+        MALE = 'MALE', 'Male'
+
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=False,)
     full_name = models.CharField(max_length=200, blank=True, null=True)
     national_code = models.CharField(blank=True, null=True)
-    gender = models.CharField(max_length=20, choices=GENDER_CHOICES, null=True, blank=True)
+    gender = models.CharField(max_length=20, choices=Gender.choices, null=True, blank=True)
     address = models.ForeignKey(Address, null=True, blank=True, on_delete=models.CASCADE,)
     description = models.TextField(blank=True, null=True)
     avatar = models.ImageField(

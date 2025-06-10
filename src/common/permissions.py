@@ -26,28 +26,28 @@ class IsRegistered(BasePermission):
 class IsSuperAdmin(BasePermission):
     message = _('You not allowed to use this method.')
     def has_permission(self, request, view):
-        return request.user and request.user.is_authenticated and request.user.groups.filter(name='super_admin').exists()
+        return request.user and request.user.is_authenticated and request.user.groups.filter(name='SUPER_ADMIN').exists()
 
 
 class IsAdmin(BasePermission):
     message = _('You not allowed to use this method.')
     def has_permission(self, request, view):
-        return request.user and request.user.is_authenticated and request.user.groups.filter(name='admin').exists()
+        return request.user and request.user.is_authenticated and request.user.groups.filter(name='ADMIN').exists()
 
 
 class IsSuperAdminOrAdmin(BasePermission):
     message = _('You not allowed to use this method.')
     def has_permission(self, request, view):
         return request.user and request.user.is_authenticated and (
-            request.user.groups.filter(name='super_admin').exists() or
-            request.user.groups.filter(name='admin').exists()
+            request.user.groups.filter(name='SUPER_ADMIN').exists() or
+            request.user.groups.filter(name='ADMIN').exists()
         )
 
 
 class IsTechnician(BasePermission):
     message = _('You not allowed to use this method.')
     def has_permission(self, request, view):
-        return request.user and request.user.is_authenticated and request.user.groups.filter(name='technician').exists()
+        return request.user and request.user.is_authenticated and request.user.groups.filter(name='TECHNICIAN').exists()
 
 
 class MultiPermission(permissions.BasePermission):

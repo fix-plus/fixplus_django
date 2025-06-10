@@ -54,14 +54,14 @@ class OutPutServiceSerializer(serializers.ModelSerializer):
 
     def get_assigned_by(self, obj):
         try:
-            queryset = obj.histories.filter(new_status=Service.ASSIGNED).latest('created_at').created_by
+            queryset = obj.histories.filter(new_status=Service.Status.ASSIGNED).latest('created_at').created_by
             return OutPutProfileSerializer(queryset.profile, user_type='public').data
         except ServiceHistory.DoesNotExist:
             return None
 
     def get_assigned_at(self, obj):
         try:
-            queryset = obj.histories.filter(new_status=Service.ASSIGNED).latest('created_at').created_at
+            queryset = obj.histories.filter(new_status=Service.Status.ASSIGNED).latest('created_at').created_at
             return queryset
         except ServiceHistory.DoesNotExist:
             return None

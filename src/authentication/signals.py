@@ -11,14 +11,14 @@ def create_user_groups(sender, **kwargs):
         return
 
     groups = {
-        'super_admin': [],
-        'admin': [],
-        'technician': [],
+        'SUPER_ADMIN': [],
+        'ADMIN': [],
+        'TECHNICIAN': [],
     }
 
     for group_name, permissions in groups.items():
         group, created = Group.objects.get_or_create(name=group_name)
-        if group_name == 'super_admin':
+        if group_name == 'SUPER_ADMIN':
             # Assign all permissions to super_admin
             group.permissions.set(Permission.objects.all())
         else:
@@ -33,9 +33,9 @@ def create_superuser(sender, **kwargs):
     """Create a superuser after migrations if it does not exist."""
 
     if sender.name == "src.authentication":
-        if not User.objects.filter(mobile='+989032770354').exists():
+        if not User.objects.filter(mobile='+989011265151').exists():
             User.objects.create_superuser(
-                mobile='+989032770354',
+                mobile='+989011265151',
                 password='1234@1234',
             )
-            print("Superuser created with username: +989032770354")
+            print("Superuser created with username: +989011265151")

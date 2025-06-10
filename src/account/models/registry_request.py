@@ -8,25 +8,13 @@ from src.media.models import UploadIdentifyDocumentMedia
 
 
 class UserRegistryRequest(BaseModel, SoftDeleteBaseModel):
-    DRAFT = 'draft'
-    CHECKING = 'checking'
-    APPROVED = 'approved'
-    REJECTED = 'rejected'
+    class Status(models.TextChoices):
+        DRAFT = 'DRAFT', 'Draft'
+        CHECKING = 'CHECKING', 'Checking'
+        APPROVED = 'APPROVED', 'Approved'
+        REJECTED = 'REJECTED', 'Rejected'
 
-    STATUS_CHOICES = [
-        (DRAFT, 'Draft'),
-        (CHECKING, 'Checking'),
-        (APPROVED, 'Approved'),
-        (REJECTED, 'Rejected'),
-    ]
-
-    status = models.CharField(
-        max_length=12,
-        blank=False,
-        null=False,
-        choices=STATUS_CHOICES,
-        default='draft',
-    )
+    status = models.CharField(max_length=12, choices=Status.choices, default=Status.DRAFT,)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='registry_requests')
     identify_document_photo = models.ForeignKey(UploadIdentifyDocumentMedia, blank=True, null=True, on_delete=models.CASCADE, related_name='identify_document_photo')
     other_identify_document_photos = models.ManyToManyField(UploadIdentifyDocumentMedia, blank=True, related_name='other_identify_document_photos')

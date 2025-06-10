@@ -7,26 +7,11 @@ from src.payment.models import ChequePay, CashPay, CardToCardPay, OnlinePay
 
 
 class CustomerPayment(BaseModel, SoftDeleteBaseModel):
-    customer = models.ForeignKey(
-        Customer,
-        on_delete=models.PROTECT
-    )
-    cheque = models.ManyToManyField(
-        ChequePay,
-        blank=True,
-    )
-    cash = models.ManyToManyField(
-        CashPay,
-        blank=True,
-    )
-    card_to_card = models.ManyToManyField(
-        CardToCardPay,
-        blank=True,
-    )
-    online = models.ManyToManyField(
-        OnlinePay,
-        blank=True,
-    )
+    customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
+    cheque = models.ManyToManyField(ChequePay, blank=True)
+    cash = models.ManyToManyField(CashPay, blank=True)
+    card_to_card = models.ManyToManyField(CardToCardPay, blank=True)
+    online = models.ManyToManyField(OnlinePay, blank=True)
 
     class Meta:
         ordering = ('-created_at',)

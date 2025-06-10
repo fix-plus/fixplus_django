@@ -13,9 +13,9 @@ def update_register(user: User):
 
     # Validator
     if not db_registry_req.exists(): raise CustomAPIException(_("Identify document cannot be None or empty."))
-    if db_registry_req.filter(status='approved').exists(): raise CustomAPIException(_("You are already verified. There is no need to reapply."))
-    if db_registry_req.latest('created_at').status == 'checking': raise CustomAPIException(_("Your request has already been submitted. Please refrain from resubmitting it."))
-    if db_registry_req.latest('created_at').status != 'draft': raise CustomAPIException(_("Identify document cannot be None or empty."))
+    if db_registry_req.filter(status=UserRegistryRequest.Status.APPROVED).exists(): raise CustomAPIException(_("You are already verified. There is no need to reapply."))
+    if db_registry_req.latest('created_at').status == UserRegistryRequest.Status.CHECKING: raise CustomAPIException(_("Your request has already been submitted. Please refrain from resubmitting it."))
+    if db_registry_req.latest('created_at').status != UserRegistryRequest.Status.DRAFT: raise CustomAPIException(_("Identify document cannot be None or empty."))
 
     fields_to_check = [
         (_('full_name'), user.profile.full_name),
@@ -31,6 +31,6 @@ def update_register(user: User):
 
     db_registry_req = db_registry_req.latest('created_at')
 
-    db_registry_req.status = 'checking'
+    db_registry_req.status = UserRegistryRequest.Status.CHECKING
     db_registry_req.updated_at = timezone.now()
     db_registry_req.save()

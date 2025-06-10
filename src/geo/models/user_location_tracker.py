@@ -5,10 +5,7 @@ from src.authentication.models import User
 
 
 class UserLocationTracker(BaseModel):
-    user = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE
-    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='location_trackers')
     latitude = models.FloatField()
     longitude = models.FloatField()
 

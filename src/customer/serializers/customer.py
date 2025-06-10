@@ -12,7 +12,7 @@ from src.customer.models import Customer
 class InputCustomerSerializer(serializers.Serializer):
     customer_id = serializers.UUIDField(required=False, allow_null=True, default=None)
     full_name = serializers.CharField(required=False, max_length=200)
-    gender = serializers.ChoiceField(choices=Customer.GENDER_CHOICES, required=False)
+    gender = serializers.ChoiceField(choices=Customer.Gender.choices, required=False)
     contact_numbers = serializers.ListField(required=False, child=InputContactNumbersSerializer(), default=None)
 
 

@@ -6,21 +6,9 @@ from src.authentication.models import User
 
 
 class TechnicianSkill(BaseModel, SoftDeleteBaseModel):
-    user = models.ForeignKey(
-        User,
-        null=False,
-        on_delete=models.CASCADE,
-        related_name='technician_skills',
-    )
-    device_type = models.ForeignKey(
-        DeviceType,
-        null=False,
-        on_delete=models.CASCADE,
-    )
-    brand_names = models.ManyToManyField(
-        Brand,
-        blank=True,
-    )
+    user = models.ForeignKey(User, null=False, on_delete=models.CASCADE, related_name='technician_skills')
+    device_type = models.ForeignKey( DeviceType,  null=False, on_delete=models.CASCADE)
+    brand_names = models.ManyToManyField(Brand, blank=True)
 
     def __str__(self):
         return f"{self.user.profile.full_name}"

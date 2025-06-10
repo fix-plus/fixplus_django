@@ -7,46 +7,16 @@ from src.authentication.models import User
 
 
 class PartInShop(BaseModel, SoftDeleteBaseModel):
-    STATUS_CHOICES = [
-        ('in_progress', "In Progress"),
-        ('completed', "Completed"),
-    ]
+    class Status(models.TextChoices):
+        IN_PROGRESS = 'IN_PROGRESS', 'In Progress'
+        COMPLETED = 'COMPLETED', 'Completed'
 
-    status = models.CharField(
-        max_length=11,
-        choices=STATUS_CHOICES,
-        default='in_progress'
-    )
-    job = models.ForeignKey(
-        Service,
-        on_delete=models.PROTECT,
-        related_name='parts_in_shop',
-        null=True,
-        blank=True,
-    )
-    customer = models.ForeignKey(
-        Customer,
-        on_delete=models.PROTECT,
-        related_name='parts_in_shop',
-        null=True,
-        blank=True,
-    )
-    technician = models.ForeignKey(
-        User,
-        on_delete=models.PROTECT,
-        related_name='parts_in_shop',
-        null=True,
-        blank=True,
-    )
-    title = models.CharField(
-        max_length=100,
-        null=False,
-        blank=False,
-    )
-    description = models.TextField(
-        null=True,
-        blank=True,
-    )
+    status = models.CharField(max_length=11, choices=Status.choices, default='in_progress')
+    job = models.ForeignKey(Service, on_delete=models.PROTECT, related_name='parts_in_shop', null=True, blank=True)
+    customer = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name='parts_in_shop', null=True, blank=True)
+    technician = models.ForeignKey(User, on_delete=models.PROTECT, related_name='parts_in_shop', null=True, blank=True)
+    title = models.CharField(max_length=100, null=False, blank=False)
+    description = models.TextField(null=True, blank=True)
 
     class Meta:
         ordering = ('-created_at',)

@@ -27,18 +27,18 @@ def update_profile(instance: Profile, *args, **kwargs):
             db_registry_req = UserRegistryRequest.objects.filter(user=instance.user)
 
             # Validator
-            if db_registry_req.filter(status='approved').exists(): raise CustomAPIException(
+            if db_registry_req.filter(status=UserRegistryRequest.Status.APPROVED).exists(): raise CustomAPIException(
                 _("You are already verified. There is no need to reapply."))
-            if db_registry_req.exists() and db_registry_req.latest('created_at').status == 'checking': raise CustomAPIException(
+            if db_registry_req.exists() and db_registry_req.latest('created_at').status == UserRegistryRequest.Status.CHECKING: raise CustomAPIException(
                 _("Your request has already been submitted. Please refrain from resubmitting it."))
 
-            if not db_registry_req.exists() or db_registry_req.latest('created_at').status == 'rejected':
+            if not db_registry_req.exists() or db_registry_req.latest('created_at').status == UserRegistryRequest.Status.REJECTED:
                 UserRegistryRequest.objects.create(
                     user=instance.user,
-                    status='draft',
+                    status=UserRegistryRequest.Status.DRAFT,
                     identify_document_photo = get_upload_identify_document_media(id=value)
                 )
-            elif db_registry_req.latest('created_at').status == 'draft':
+            elif db_registry_req.latest('created_at').status == UserRegistryRequest.Status.DRAFT:
                 db_registry_req = db_registry_req.latest('created_at')
                 db_registry_req.identify_document_photo = get_upload_identify_document_media(id=value)
                 db_registry_req.save()
@@ -47,20 +47,20 @@ def update_profile(instance: Profile, *args, **kwargs):
             db_registry_req = UserRegistryRequest.objects.filter(user=instance.user)
 
             # Validator
-            if db_registry_req.filter(status='approved').exists(): raise CustomAPIException(
+            if db_registry_req.filter(status=UserRegistryRequest.Status.APPROVED).exists(): raise CustomAPIException(
                 _("You are already verified. There is no need to reapply."))
-            if db_registry_req.exists() and db_registry_req.latest('created_at').status == 'checking': raise CustomAPIException(
+            if db_registry_req.exists() and db_registry_req.latest('created_at').status == UserRegistryRequest.Status.CHECKING: raise CustomAPIException(
                 _("Your request has already been submitted. Please refrain from resubmitting it."))
 
-            if not db_registry_req.exists() or db_registry_req.latest('created_at').status == 'rejected':
+            if not db_registry_req.exists() or db_registry_req.latest('created_at').status == UserRegistryRequest.Status.REJECTED:
                 query = UserRegistryRequest.objects.create(
                     user=instance.user,
-                    status='draft',
+                    status=UserRegistryRequest.Status.DRAFT,
                 )
                 for media_id in value:
                     query.other_identify_document_photos.add(get_upload_identify_document_media(id=media_id))
                 query.save()
-            elif db_registry_req.latest('created_at').status == 'draft':
+            elif db_registry_req.latest('created_at').status == UserRegistryRequest.Status.DRAFT:
                 db_registry_req = db_registry_req.latest('created_at')
                 db_registry_req.other_identify_document_photos.clear()
                 for media_id in value:

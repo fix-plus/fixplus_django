@@ -5,20 +5,9 @@ from src.customer.models import Customer
 
 
 class CashPay(BaseModel, SoftDeleteBaseModel):
-    customer = models.ForeignKey(
-        Customer,
-        on_delete=models.PROTECT,
-        related_name='cash_pays'
-    )
-    amount = models.PositiveBigIntegerField(
-        null=False,
-        blank=False,
-    )
-    is_paid = models.BooleanField(
-        default=False,
-        null=False,
-        blank=False
-    )
+    customer = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name='cash_pays')
+    amount = models.PositiveBigIntegerField(null=False, blank=False)
+    is_paid = models.BooleanField(default=False, null=False, blank=False)
 
     class Meta:
         ordering = ('-created_at',)

@@ -19,7 +19,7 @@ class AssignServiceToTechnicianApi(IsSuperAdminOrAdminMixin, APIView):
         # Validator
         user_groups = request.user.groups.values_list('name', flat=True)
 
-        if 'super_admin' not in user_groups and 'admin' not in user_groups:
+        if 'SUPER_ADMIN' not in user_groups and 'ADMIN' not in user_groups:
             return Response({'detail': _('You are not allowed to use this method.')}, status=status.HTTP_403_FORBIDDEN)
 
         serializer = InputAssignToTechnicianParamsSerializer(data=request.data)

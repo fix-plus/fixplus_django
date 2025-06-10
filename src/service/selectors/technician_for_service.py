@@ -16,12 +16,12 @@ def search_technician_for_service(
 ) -> User:
     # Initial queryset
     queryset = User.objects.filter(
-        groups__name='technician'
+        groups__name='TECHNICIAN'
     ).annotate(
         group_count=Count('groups')
     ).filter(
-        Q(registry_requests__status=UserRegistryRequest.APPROVED) &
-        Q(technician_statuses__status=TechnicianStatus.ACTIVE)
+        Q(registry_requests__status=UserRegistryRequest.Status.APPROVED) &
+        Q(technician_statuses__status=TechnicianStatus.Status.ACTIVE)
     ).distinct()
 
     # Set filter of brand and device type

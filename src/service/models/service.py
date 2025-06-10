@@ -10,30 +10,19 @@ from src.geo.models.address import Address
 
 
 class Service(BaseModel, SoftDeleteBaseModel):
-    WAITING = 'waiting'
-    ASSIGNED = 'assigned'
-    ACCEPTED = 'accepted'
-    REFERRED_TO_SHOP = 'referred_to_shop'
-    INVOICING = 'invoicing'
-    COMPLETED = 'completed'
-    REJECTED = 'rejected'
-    EXPIRED = 'expired'
-    CANCELED = 'canceled'
-
-    STATUS_CHOICES = [
-        (WAITING, 'Waiting for Assign'),
-        (ASSIGNED, 'Assigned'),
-        (ACCEPTED, 'Accepted'),
-        (REFERRED_TO_SHOP, 'Referred to Shop'),
-        (INVOICING, 'Invoicing'),
-        (COMPLETED, 'Completed'),
-        (REJECTED, 'Rejected'),
-        (EXPIRED, 'Expired'),
-        (CANCELED, 'Canceled'),
-    ]
+    class Status(models.TextChoices):
+        WAITING = 'WAITING', 'Waiting'
+        ASSIGNED = 'ASSIGNED', 'Assigned'
+        ACCEPTED = 'ACCEPTED', 'Accepted'
+        REFERRED_TO_SHOP = 'REFERRED_TO_SHOP', 'Referred To Shop'
+        INVOICING = 'INVOICING', 'Invoicing'
+        COMPLETED = 'COMPLETED', 'Completed'
+        REJECTED = 'REJECTED', 'Rejected'
+        EXPIRED = 'EXPIRED', 'Expired'
+        CANCELED = 'CANCELED', 'Canceled'
 
     # Core
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=WAITING)
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.WAITING)
     customer = models.ForeignKey(Customer, null=False, blank=False, related_name="services", on_delete=models.CASCADE)
     device_type = models.ForeignKey(DeviceType, null=False, blank=False, on_delete=models.CASCADE, related_name="services")
     brand = models.ForeignKey(Brand, null=False, blank=False, on_delete=models.CASCADE, related_name="services")

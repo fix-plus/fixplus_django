@@ -9,6 +9,8 @@ class UserDashboardPinMessage(BaseModel, SoftDeleteBaseModel):
     title = models.CharField(max_length=100, blank=False, null=False)
     description = models.TextField(blank=True, null=True)
     is_seen = models.BooleanField(default=False)
+    seen_at = models.DateTimeField(blank=True, null=True)
     is_read = models.BooleanField(default=False)
+    read_at = models.DateTimeField(blank=True, null=True)
     is_active = models.BooleanField(default=True)
 

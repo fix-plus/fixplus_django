@@ -46,7 +46,7 @@ class BrandNameParametricApi(IsRegisteredMixin, APIView):
     def post(self, request):
         user_groups = request.user.groups.values_list('name', flat=True)
 
-        if 'super_admin' not in user_groups:
+        if 'SUPER_ADMIN' not in user_groups:
             raise CustomAPIException(message=_('You are not allowed to use this method.'), status_code=status.HTTP_403_FORBIDDEN)
 
         serializer = InputBrandNameParametricSerializer(data=request.data)
@@ -95,7 +95,7 @@ class DeviceTypeParametricApi(IsRegisteredMixin, APIView):
     def post(self, request):
         user_groups = request.user.groups.values_list('name', flat=True)
 
-        if 'super_admin' not in user_groups:
+        if 'SUPER_ADMIN' not in user_groups:
             raise CustomAPIException(message='You are not allowed to use this method.', status_code=status.HTTP_403_FORBIDDEN)
 
         serializer = InputDeviceTypeParametricSerializer(data=request.data)
@@ -136,7 +136,7 @@ class TimingSettingParametricApi(IsRegisteredMixin, APIView):
     def patch(self, request):
         user_groups = request.user.groups.values_list('name', flat=True)
 
-        if 'super_admin' not in user_groups:
+        if 'SUPER_ADMIN' not in user_groups:
             raise CustomAPIException(message=_('You are not allowed to use this method.'), status_code=status.HTTP_403_FORBIDDEN)
 
         instance = get_timing_setting()

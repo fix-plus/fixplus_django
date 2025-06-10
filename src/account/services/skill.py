@@ -15,7 +15,7 @@ def create_technician_skill(
 
         # Fetch the technician and device type from the database
         technician = get_user(id=technician_id)
-        if not technician.groups.filter(name='technician').exists(): raise CustomAPIException(_("Skills can only be assigned to technician users."))
+        if not technician.groups.filter(name='TECHNICIAN').exists(): raise CustomAPIException(_("Skills can only be assigned to technician users."))
 
         device_type_instance = DeviceType.objects.get(title__iexact=device_type)
 

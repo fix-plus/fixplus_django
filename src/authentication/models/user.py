@@ -49,7 +49,7 @@ class UserManager(BUM):
         user.user_permissions.set(all_permissions)
 
         # Assign to super_user group
-        assign_groups_to_user(user, ['super_admin'])
+        assign_groups_to_user(user, ['SUPER_ADMIN'])
 
         return user
 

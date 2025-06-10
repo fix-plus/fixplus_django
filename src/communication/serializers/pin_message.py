@@ -5,6 +5,8 @@ class PinMessageSerializer(serializers.Serializer):
     title = serializers.CharField()
     description = serializers.CharField()
     is_seen = serializers.BooleanField()
+    seen_at = serializers.DateTimeField()
     is_read = serializers.BooleanField()
+    read_at = serializers.DateTimeField()
     is_active = serializers.BooleanField()
     created_at = serializers.DateTimeField()

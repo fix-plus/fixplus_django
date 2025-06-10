@@ -16,7 +16,7 @@ def log_service_save(sender, instance, created, **kwargs):
         remark = custom_remark if custom_remark else "Service created."
         ServiceHistory.objects.create(
             service=instance,
-            event_type=ServiceHistory.EVENT_CREATE,
+            event_type=ServiceHistory.EventType.CREATE,
             new_status=instance.status,
             created_by=instance.created_by,
             remarks=remark,
@@ -28,7 +28,7 @@ def log_service_save(sender, instance, created, **kwargs):
                 remark = custom_remark if custom_remark else "Service status updated."
                 ServiceHistory.objects.create(
                     service=instance,
-                    event_type=ServiceHistory.EVENT_UPDATE,
+                    event_type=ServiceHistory.EventType.UPDATE,
                     previous_status=latest_history.new_status,
                     new_status=instance.status,
                     created_by=instance.updated_by,
@@ -53,7 +53,7 @@ def log_service_delete(sender, instance, **kwargs):
 
     ServiceHistory.objects.create(
         service=instance,
-        event_type=ServiceHistory.EVENT_DELETE,
+        event_type=ServiceHistory.EventType.DELETE,
         previous_status=instance.status,
         created_by=instance.updated_by or instance.created_by,  # Fallback to created_by if no updated_by
         remarks=remark,
