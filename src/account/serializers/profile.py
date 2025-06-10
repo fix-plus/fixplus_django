@@ -1,6 +1,7 @@
 from django.core.validators import FileExtensionValidator
 from rest_framework import serializers
 
+from src.account.selectors.technician_status import get_latest_technician_status
 from src.account.serializers.contact_number import OutPutContactNumberSerializer, InputContactNumbersSerializer
 from src.geo.serializers.address import OutPutAddressSerializer
 from src.media.serializers import IdentifyDocumentMediaSerializer
@@ -22,6 +23,7 @@ class OutPutProfileSerializer(serializers.ModelSerializer):
     identify_document_photo = serializers.SerializerMethodField()
     other_identify_document_photos = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
+    technician_status = serializers.SerializerMethodField()
     rejected_reason = serializers.SerializerMethodField()
     is_verified_mobile = serializers.SerializerMethodField()
     groups = serializers.SerializerMethodField()
@@ -38,7 +40,7 @@ class OutPutProfileSerializer(serializers.ModelSerializer):
         super().__init__(*args, **kwargs)
 
         # BaseFields
-        base_fields = ['user_id', 'full_name', 'gender', 'avatar', 'groups', 'last_online', 'created_at']
+        base_fields = ['user_id', 'full_name', 'gender', 'avatar', 'groups', 'technician_status', 'last_online', 'created_at']
 
         if user_type == "super_admin" or user_type == "me":
             allowed_fields = base_fields + [
@@ -110,6 +112,9 @@ class OutPutProfileSerializer(serializers.ModelSerializer):
     def get_status(self, obj):
         return obj.user.registry_requests.latest('created_at').status if obj.user.registry_requests.exists() else None
 
+    def get_technician_status(self, obj):
+        return get_latest_technician_status(user=obj.user).status if get_latest_technician_status(user=obj.user) else None
+
     def get_rejected_reason(self, obj):
         return obj.user.registry_requests.latest('created_at').rejected_reason if obj.user.registry_requests.exists() else None
 
@@ -138,6 +143,15 @@ class OutPutProfileSerializer(serializers.ModelSerializer):
         if obj.user.registry_requests.exists():
             return obj.user.registry_requests.latest('created_at').created_at
         return None
+
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+        # Remove technician_status field if user is not a technician
+        if not instance.user.groups.filter(name='TECHNICIAN').exists():
+            representation.pop('technician_status', None)
+        return representation
 
 
 class InputUpdateProfileSerializer(serializers.Serializer):

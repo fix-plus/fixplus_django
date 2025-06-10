@@ -1,7 +1,7 @@
 from django.core.cache import cache
 from django.utils.translation import gettext_lazy as _
 
-from src.account.models import UserRegistryRequest
+from src.account.models import UserRegistryRequest, TechnicianStatus
 from src.common.custom_exception import CustomAPIException
 from src.authentication.models import User
 from src.authentication.selectors.auth import is_verified_mobile
@@ -25,6 +25,9 @@ def update_user(instance: User, *args, **kwargs):
         if key == 'group' and value is not None:
             instance.groups.clear()
             assign_groups_to_user(user=instance, group_names=value)
+            # First initialize technician status if the user is assigned to the TECHNICIAN group
+            if 'TECHNICIAN' in value:
+                TechnicianStatus.objects.create(user=instance, status=TechnicianStatus.Status.ACTIVE)
         elif key == 'status' and value is not None:
             db_registry_req = UserRegistryRequest.objects.filter(user=instance)
             if not db_registry_req.exists(): raise CustomAPIException(_("User not was send request registry yet."))
