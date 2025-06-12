@@ -35,6 +35,10 @@ urlpatterns = [
     path('customer/', include('src.customer.urls')),
 
     path('parametric/', include('src.parametric.urls')),
+
+    path('geo/', include('src.geo.urls')),
+
+    path('metric/', include('src.metric.urls')),
 ]
 urlpatterns += i18n_patterns(
     path(_('admin/'), admin.site.urls),

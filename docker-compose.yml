@@ -54,6 +54,7 @@ services:
       - EMAIL_HOST_USER=${EMAIL_HOST_USER}
       - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
       - SMS_API_KEY=${SMS_API_KEY}
+      - NESHAN_SERVICE_API_KEY=${NESHAN_SERVICE_API_KEY}
     volumes:
       - static_volume:/app/backend/staticfiles
       - media_volume:/app/backend/mediafiles
@@ -111,6 +112,7 @@ services:
       - EMAIL_HOST_USER=${EMAIL_HOST_USER}
       - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
       - SMS_API_KEY=${SMS_API_KEY}
+      - NESHAN_SERVICE_API_KEY=${NESHAN_SERVICE_API_KEY}
     volumes:
       - .:/app
     depends_on:
@@ -142,6 +144,7 @@ services:
       - EMAIL_HOST_USER=${EMAIL_HOST_USER}
       - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
       - SMS_API_KEY=${SMS_API_KEY}
+      - NESHAN_SERVICE_API_KEY=${NESHAN_SERVICE_API_KEY}
     volumes:
       - .:/app
     depends_on:

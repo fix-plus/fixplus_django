@@ -41,21 +41,24 @@ class OutPutServiceSerializer(serializers.ModelSerializer):
         ]
 
     def get_technician(self, obj):
+        request = self.context.get('request')
         try:
-            return OutPutProfileSerializer(obj.technician.profile, user_type='public').data
+            return OutPutProfileSerializer(obj.technician.profile, user_type='public', context={'request':request}).data
         except:
             return None
 
     def get_created_by(self, obj):
+        request = self.context.get('request')
         try:
-            return OutPutProfileSerializer(obj.created_by.profile, user_type='public').data
+            return OutPutProfileSerializer(obj.created_by.profile, user_type='public', context={'request':request}).data
         except:
             return None
 
     def get_assigned_by(self, obj):
+        request = self.context.get('request')
         try:
             queryset = obj.histories.filter(new_status=Service.Status.ASSIGNED).latest('created_at').created_by
-            return OutPutProfileSerializer(queryset.profile, user_type='public').data
+            return OutPutProfileSerializer(queryset.profile, user_type='public', context={'request':request}).data
         except ServiceHistory.DoesNotExist:
             return None
 

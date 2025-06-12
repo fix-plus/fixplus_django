@@ -26,6 +26,7 @@ LOCAL_APPS = [
     'src.payment.apps.PaymentConfig',
     'src.geo.apps.GeoConfig',
     'src.communication.apps.CommunicationConfig',
+    'src.metric.apps.MetricConfig',
 ]
 
 THIRD_PARTY_APPS = [
@@ -199,6 +200,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # SMS SERVICE
 SMS_API_KEY = env("SMS_API_KEY")
+
+# Geo Coding Service
+NESHAN_SERVICE_API_KEY = env('NESHAN_SERVICE_API_KEY')
 
 from config.settings.cors import *  # noqa
 from config.settings.jwt import *  # noqa
