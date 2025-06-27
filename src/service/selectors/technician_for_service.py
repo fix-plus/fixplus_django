@@ -1,6 +1,5 @@
 from django.db.models import Q, Count
 from geopy.distance import geodesic
-
 from src.account.models import UserRegistryRequest, TechnicianStatus
 from src.service.models import Service
 from src.authentication.models import User
@@ -12,7 +11,7 @@ def search_technician_for_service(
         full_name: str | None = None,
         sort_by: str = 'last_online',
         order: str = 'desc'  # Default to descending order
-) -> User:
+) -> list:
     # Initial queryset
     queryset = User.objects.filter(
         groups__name='TECHNICIAN'
@@ -29,7 +28,7 @@ def search_technician_for_service(
         db_service = Service.objects.filter(id=service_id).first()
 
         if not db_service:
-            return queryset.none()
+            return []
 
         queryset = queryset.filter(
             Q(technician_skills__device_type=db_service.device_type) &
@@ -37,7 +36,7 @@ def search_technician_for_service(
         )
 
         # Store service location for distance calculation
-        if db_service.address and db_service.address.latitude and db_service.address.longitude:
+        if db_service.address and db_service.address.latitude is not None and db_service.address.longitude is not None:
             service_location = (db_service.address.latitude, db_service.address.longitude)
 
     # Filter by mobile if provided
@@ -55,13 +54,19 @@ def search_technician_for_service(
     if service_location:
         for technician in technicians:
             try:
-                user_latest_location = technician.location_trackers.latest('created_at')
-                if user_latest_location and user_latest_location.latitude and user_latest_location.longitude:
-                    user_location = (user_latest_location.latitude, user_latest_location.longitude)
-                    technician.distance = round(geodesic(service_location, user_location).km, 1)
+                if technician.location_trackers.exists():
+                    user_latest_location = technician.location_trackers.latest('created_at')
+                    if (user_latest_location and
+                        user_latest_location.latitude is not None and
+                        user_latest_location.longitude is not None):
+                        user_location = (user_latest_location.latitude, user_latest_location.longitude)
+                        technician.distance = round(geodesic(service_location, user_location).km, 1)
+                    else:
+                        technician.distance = None
                 else:
                     technician.distance = None
-            except:
+            except Exception as e:
+                print(f"Error calculating distance for technician {technician.id}: {e}")
                 technician.distance = None
     else:
         # If no service location, set distance to None for all technicians
@@ -69,11 +74,15 @@ def search_technician_for_service(
             technician.distance = None
 
     # Handle sorting
-    order_prefix = '-' if order == 'desc' else ''
     if sort_by:
         if sort_by in ['created_at', 'last_online']:
-            # Re-query with proper ordering for database fields
-            return queryset.order_by(f"{order_prefix}{sort_by}")
+            # Sort in-memory to preserve distance attribute
+            reverse = (order == 'desc')
+            technicians = sorted(
+                technicians,
+                key=lambda x: getattr(x, sort_by) or float('inf'),
+                reverse=reverse
+            )
         elif sort_by == 'distance':
             if not service_location:
                 raise ValueError("Cannot sort by distance without a valid service address.")
@@ -83,7 +92,6 @@ def search_technician_for_service(
                 key=lambda x: x.distance if x.distance is not None else float('inf'),
                 reverse=(order == 'desc')
             )
-            return technicians
         else:
             raise ValueError("Invalid sort_by value. Must be one of: 'created_at', 'last_online', 'distance'.")
 
