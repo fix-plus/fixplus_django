@@ -14,5 +14,5 @@ class AddressAdmin(ModelAdmin):
         "address",
         "created_at",
     ]
-
+    list_select_related = ["user", "customer"]
     list_filter_submit = True

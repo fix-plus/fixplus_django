@@ -86,6 +86,9 @@ class InputDeviceSerializer(serializers.Serializer):
     customer_description = serializers.CharField(required=False, allow_blank=True)
     description_for_technician = serializers.CharField(required=False, allow_blank=True)
     address = serializers.CharField(required=True)
+    latitude = serializers.FloatField(required=False, allow_null=True)
+    longitude = serializers.FloatField(required=False, allow_null=True)
+
 
 
 class InputServiceSerializer(serializers.Serializer):

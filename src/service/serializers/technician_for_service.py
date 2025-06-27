@@ -7,7 +7,10 @@ from src.account.serializers.contact_number import OutPutContactNumberSerializer
 from src.authentication.models.user import User
 from src.account.models import Profile
 from src.account.serializers.profile import OutPutNumbersSerializer
+from src.communication.selectors.admin_pin_message_of_technician import get_latest_admin_pin_message_of_technician
+from src.communication.serializers.admin_pin_message_of_technician import OutputAdminPinMessageOfTechnicianSerializer
 from src.geo.serializers.address import OutPutAddressSerializer
+from src.geo.serializers.user_location_tracker import OutputUserLocationTrackerSerializer
 
 
 class InputTechnicianForServiceParamsSerializer(serializers.Serializer):
@@ -42,7 +45,7 @@ class OutPutTechnicianForServiceSerializer(serializers.ModelSerializer):
 
         class Meta:
             model = Profile
-            fields = ['full_name', 'mobile', 'avatar', 'contact_numbers', 'address', 'address',]
+            fields = ['full_name', 'mobile', 'avatar', 'contact_numbers', 'address',]
 
         def get_mobile(self, obj):
             return obj.user.mobile if obj.user else None
@@ -59,24 +62,35 @@ class OutPutTechnicianForServiceSerializer(serializers.ModelSerializer):
 
     profile = serializers.SerializerMethodField()
     distance = serializers.FloatField(default=None)
-    # in_processing_count = serializers.SerializerMethodField()
-    # rejected_count = serializers.SerializerMethodField()
-    # done_count = serializers.SerializerMethodField()
+    latest_location = serializers.SerializerMethodField()
+    in_processing_count = serializers.SerializerMethodField()
+    rejected_count = serializers.SerializerMethodField()
+    done_count = serializers.SerializerMethodField()
+    pin_message_of_technician = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ['mobile', 'id', 'profile', 'distance', 'last_online',]# 'in_processing_count', 'rejected_count', 'done_count', 'created_at', 'updated_at']
+        fields = ['mobile', 'id', 'profile', 'distance', 'last_online', 'latest_location', 'in_processing_count', 'rejected_count', 'done_count', 'pin_message_of_technician']
 
     def get_profile(self, obj):
         return self.OutPutProfileSerializer(obj.profile, context=self.context).data
 
+    def get_latest_location(self, obj):
+        queryset = obj.location_trackers.latest('created_at')
+        return OutputUserLocationTrackerSerializer(queryset).data
 
 
-    # def get_in_processing_count(self, obj):
-    #     return search_referred_job_list(technician_id=obj.id, status='in_processing').count()
-    # #
-    # def get_rejected_count(self, obj):
-    #     return search_referred_job_list(technician_id=obj.id, status='rejected').count()
+
+    def get_in_processing_count(self, obj):
+        return 3
     #
-    # def get_done_count(self, obj):
-    #     return search_referred_job_list(technician_id=obj.id, status='done').count()
+    def get_rejected_count(self, obj):
+        return 12
+
+    def get_done_count(self, obj):
+        return 4
+
+    def get_pin_message_of_technician(self, obj):
+        queryset = get_latest_admin_pin_message_of_technician(user=obj)
+        print(queryset)
+        return OutputAdminPinMessageOfTechnicianSerializer(queryset).data if queryset else None

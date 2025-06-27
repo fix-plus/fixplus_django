@@ -211,6 +211,11 @@ UNFOLD = {
                             "title": _("User Dashboard Pin Messages"),
                             "icon": "message",
                             "link": reverse_lazy("admin:communication_userdashboardpinmessage_changelist"),
+                        },
+                        {
+                            "title": _("Admin Pin Messages Of Technician"),
+                            "icon": "message",
+                            "link": reverse_lazy("admin:communication_adminpinmessageoftechnician_changelist"),
                         }
                     ],
                 }
