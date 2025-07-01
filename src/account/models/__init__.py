@@ -6,6 +6,7 @@ from .service_card import TechnicianServiceCard
 from .technician_rating import TechnicianRating
 from .technician_rating import TechnicianRatingValue
 from .technician_status import TechnicianStatus
+from .technician_service_zone import TechnicianServiceZone
 
 
 __all__ = [
@@ -17,4 +18,5 @@ __all__ = [
     'TechnicianRating',
     'TechnicianRatingValue',
     'TechnicianStatus',
+    'TechnicianServiceZone',
 ]

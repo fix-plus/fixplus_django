@@ -74,6 +74,11 @@ UNFOLD = {
                             "link": reverse_lazy("admin:account_technicianskill_changelist"),
                         },
                         {
+                            "title": _("Technician Service Zone"),
+                            "icon": "activity_zone",
+                            "link": reverse_lazy("admin:account_technicianservicezone_changelist"),
+                        },
+                        {
                             "title": _("Technician Service Cards"),
                             "icon": "style",
                             "link": reverse_lazy("admin:account_technicianservicecard_changelist"),

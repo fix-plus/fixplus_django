@@ -2,6 +2,7 @@ from django.urls import path
 
 from src.account.apis.me import MeApi
 from src.account.apis.register import RegisterApi
+from src.account.apis.technician_service_zone import TechnicianServiceZoneListApi, TechnicianServiceZoneDetailApi
 from src.account.apis.technician_status import TechnicianStatusApi
 from src.account.apis.users import UsersListApi, UserDetailAPIView
 from src.account.apis.technician_skill import TechnicianSkillListApi, TechnicianSkillDetailApi
@@ -18,5 +19,8 @@ urlpatterns = [
 
     path('users/<uuid:uuid>/skill/', TechnicianSkillListApi.as_view(), name='skill-list'),
     path('users/skill/<uuid:skill_id>/', TechnicianSkillDetailApi.as_view(), name='skill-detail'),
+
+    path('users/<uuid:uuid>/service-zone/', TechnicianServiceZoneListApi.as_view(), name='service-zone-list'),
+    path('users/service-zone/<uuid:service_zone_id>/', TechnicianServiceZoneDetailApi.as_view(), name='service-zone-detail'),
 
 ]

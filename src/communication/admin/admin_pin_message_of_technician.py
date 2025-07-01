@@ -10,7 +10,6 @@ from src.communication.models import AdminPinMessageOfTechnician
 class AdminPinMessageOfTechnicianAdmin(ModelAdmin):
     list_display = [
         "user",
-        "title",
         "created_at",
     ]
     list_select_related = ["user"]

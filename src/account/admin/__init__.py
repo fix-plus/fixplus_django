@@ -5,6 +5,7 @@ from .technician_skill import TechnicianSkillAdmin
 from .service_card import TechnicianServiceCardAdmin
 from .technician_rating import TechnicianRatingAdmin
 from .technician_status import TechnicianStatusAdmin
+from .technician_service_zone import TechnicianServiceZoneAdmin
 
 
 __all__ = [
@@ -15,4 +16,5 @@ __all__ = [
     'TechnicianServiceCardAdmin',
     'TechnicianRatingAdmin',
     'TechnicianStatusAdmin',
+    'TechnicianServiceZoneAdmin',
 ]
