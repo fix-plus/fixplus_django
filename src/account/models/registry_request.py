@@ -3,11 +3,11 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from src.authentication.models import User
-from src.common.models import SoftDeleteBaseModel, BaseModel
+from src.common.models import BaseModel
 from src.media.models import UploadIdentifyDocumentMedia
 
 
-class UserRegistryRequest(BaseModel, SoftDeleteBaseModel):
+class UserRegistryRequest(BaseModel):
     class Status(models.TextChoices):
         DRAFT = 'DRAFT', 'Draft'
         CHECKING = 'CHECKING', 'Checking'

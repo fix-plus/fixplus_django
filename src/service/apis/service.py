@@ -8,7 +8,7 @@ from src.common.mixins import IsSuperAdminOrAdminMixin
 from src.common.pagination import LimitOffsetPagination, get_paginated_response_context
 from src.service.selectors.service import search_service_list
 from src.service.serializers.service import InputServiceSerializer, OutPutServiceSerializer, InputServiceParamsSerializer
-from src.service.services.service import create_job
+from src.service.services.service import create_service
 
 
 class ServiceListApi(IsSuperAdminOrAdminMixin, APIView):
@@ -47,7 +47,7 @@ class ServiceListApi(IsSuperAdminOrAdminMixin, APIView):
         serializer.is_valid(raise_exception=True)
 
         # Core
-        create_job(
+        create_service(
             created_by=request.user,
             **serializer.validated_data
         )

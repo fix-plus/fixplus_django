@@ -1,12 +1,10 @@
 from django.db import models
 
-from src.common.models import SoftDeleteBaseModel, BaseModel
-from src.media.models import UploadServiceCardMedia
-from src.parametric.models import Brand, Rating
+from src.common.models import BaseModel
 from src.authentication.models import User
 
 
-class TechnicianStatus(BaseModel, SoftDeleteBaseModel):
+class TechnicianStatus(BaseModel):
     class Status(models.TextChoices):
         ACTIVE = 'ACTIVE', 'Active'
         IN_HOLIDAY = 'IN_HOLIDAY', 'In Holiday'

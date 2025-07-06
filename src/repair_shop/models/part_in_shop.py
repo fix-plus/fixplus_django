@@ -1,12 +1,12 @@
 from django.db import models
 
-from src.common.models import SoftDeleteBaseModel, BaseModel
+from src.common.models import BaseModel
 from src.customer.models import Customer
 from src.service.models.service import Service
 from src.authentication.models import User
 
 
-class PartInShop(BaseModel, SoftDeleteBaseModel):
+class PartInShop(BaseModel):
     class Status(models.TextChoices):
         IN_PROGRESS = 'IN_PROGRESS', 'In Progress'
         COMPLETED = 'COMPLETED', 'Completed'

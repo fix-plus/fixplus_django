@@ -3,13 +3,13 @@ from enum import Enum
 from django.db import models
 
 from src.authentication.models import User
-from src.common.models import BaseModel, SoftDeleteBaseModel
+from src.common.models import BaseModel
 from src.customer.models import Customer
 from src.parametric.models import DeviceType, Brand
 from src.geo.models.address import Address
 
 
-class Service(BaseModel, SoftDeleteBaseModel):
+class Service(BaseModel):
     class Status(models.TextChoices):
         WAITING = 'WAITING', 'Waiting'
         ASSIGNED = 'ASSIGNED', 'Assigned'

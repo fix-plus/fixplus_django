@@ -1,12 +1,12 @@
 from django.db import models
 
-from src.common.models import SoftDeleteBaseModel, BaseModel
+from src.common.models import BaseModel
 from src.media.models import UploadServiceCardMedia
 from src.parametric.models import Brand, Rating
 from src.authentication.models import User
 
 
-class TechnicianRating(BaseModel, SoftDeleteBaseModel):
+class TechnicianRating(BaseModel):
     user = models.ForeignKey(User, null=False, on_delete=models.CASCADE, related_name='technician_ratings')
     rating = models.ManyToManyField(Rating, blank=False, through='TechnicianRatingValue')
 
@@ -14,7 +14,7 @@ class TechnicianRating(BaseModel, SoftDeleteBaseModel):
         return f"{self.user.profile.full_name}"
 
 
-class TechnicianRatingValue(BaseModel, SoftDeleteBaseModel):
+class TechnicianRatingValue(BaseModel):
     rating = models.ForeignKey(Rating, on_delete=models.CASCADE)
     technician_rating = models.ForeignKey(TechnicianRating, on_delete=models.CASCADE)
     value = models.PositiveIntegerField(null=False, blank=False)

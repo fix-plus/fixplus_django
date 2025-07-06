@@ -1,9 +1,9 @@
 from django.db import models
 
-from src.common.models import BaseModel, SoftDeleteBaseModel
+from src.common.models import BaseModel
 
 
-class Rating(BaseModel, SoftDeleteBaseModel):
+class Rating(BaseModel):
     title = models.CharField(max_length=100, null=False)
     description = models.TextField(null=False)
 

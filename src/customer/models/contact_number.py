@@ -1,10 +1,10 @@
 from django.db import models
 
-from src.common.models import BaseModel, SoftDeleteBaseModel
+from src.common.models import BaseModel
 from src.customer.models import Customer
 
 
-class CustomerContactNumber(BaseModel, SoftDeleteBaseModel):
+class CustomerContactNumber(BaseModel):
     class PhoneType(models.TextChoices):
         MOBILE = 'MOBILE', 'Mobile'
         LAND_LINE = 'LAND_LINE', 'Land-Line'

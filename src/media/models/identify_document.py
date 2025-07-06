@@ -3,7 +3,7 @@ import uuid
 from django.core.validators import FileExtensionValidator
 from django.db import models
 
-from src.common.models import BaseModel, SoftDeleteBaseModel
+from src.common.models import BaseModel
 from src.media.validators import FileSizeValidator, ImageSizeValidator
 from src.authentication.models import User
 
@@ -12,7 +12,7 @@ def upload_image_identify_document(instance, filename):
     return 'images/identify-document/{filename}.{format}'.format( filename=str(uuid.uuid4()), format=filename.split(".")[-1])
 
 
-class UploadIdentifyDocumentMedia(BaseModel, SoftDeleteBaseModel):
+class UploadIdentifyDocumentMedia(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     image = models.ImageField(
         upload_to=upload_image_identify_document,

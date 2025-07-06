@@ -1,10 +1,10 @@
 from django.db import models
 
-from src.common.models import BaseModel, SoftDeleteBaseModel
+from src.common.models import BaseModel
 from src.customer.models import Customer
 
 
-class ChequePay(BaseModel, SoftDeleteBaseModel):
+class ChequePay(BaseModel):
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name='cheque_pays')
     amount = models.PositiveBigIntegerField(null=False, blank=False)
     is_paid = models.BooleanField(default=False, null=False, blank=False)

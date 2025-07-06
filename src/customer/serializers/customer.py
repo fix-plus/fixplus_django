@@ -11,20 +11,23 @@ from src.customer.models import Customer
 
 class InputCustomerSerializer(serializers.Serializer):
     customer_id = serializers.UUIDField(required=False, allow_null=True, default=None)
-    full_name = serializers.CharField(required=False, max_length=200)
-    gender = serializers.ChoiceField(choices=Customer.Gender.choices, required=False)
+    full_name = serializers.CharField(required=False, max_length=200, default=None)
+    gender = serializers.ChoiceField(choices=Customer.Gender.choices, required=False, default=None)
     contact_numbers = serializers.ListField(required=False, child=InputContactNumbersSerializer(), default=None)
-
+    pin_message = serializers.CharField(required=False, allow_blank=True, default=None)
 
 
 class OutPutCustomerSerializer(serializers.ModelSerializer):
     searched_phone_number = serializers.CharField(required=False, default=None)
     contact_numbers = serializers.SerializerMethodField()
     pin_message = serializers.SerializerMethodField()
+    in_processing_count = serializers.SerializerMethodField()
+    canceled_count = serializers.SerializerMethodField()
+    done_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Customer
-        fields = ['id', 'full_name', 'gender', 'searched_phone_number', 'contact_numbers', 'pin_message']
+        fields = ['id', 'full_name', 'gender', 'searched_phone_number', 'contact_numbers', 'pin_message', 'in_processing_count', 'canceled_count', 'done_count']
 
     def get_contact_numbers(self, obj):
         return OutPutContactNumberSerializer(obj.contact_numbers, many=True).data
@@ -32,6 +35,15 @@ class OutPutCustomerSerializer(serializers.ModelSerializer):
     def get_pin_message(self, obj):
         queryset = get_latest_customer_pin_message(customer=obj)
         return PinMessageSerializer(queryset).data if queryset else None
+
+    def get_in_processing_count(self, obj):
+        return  3
+
+    def get_canceled_count(self, obj):
+        return 1
+
+    def get_done_count(self, obj):
+        return 7
 
 
 class OutPutPublicCustomerSerializer(serializers.ModelSerializer):
@@ -61,4 +73,3 @@ class InputCustomerParamsSerializer(serializers.Serializer):
             phone = '+' + phone[2:]
 
         return phone
-

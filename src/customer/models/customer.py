@@ -1,10 +1,9 @@
 from django.db import models
 
-from src.common.models import SoftDeleteBaseModel, BaseModel
-from src.authentication.models import User
+from src.common.models import BaseModel
 
 
-class Customer(BaseModel, SoftDeleteBaseModel):
+class Customer(BaseModel):
     class Gender(models.TextChoices):
         FEMALE = 'FEMALE', 'Female'
         MALE = 'MALE', 'Male'

@@ -10,9 +10,6 @@ from src.communication.models import CustomerPinMessage
 class CustomerPinMessageAdmin(ModelAdmin):
     list_display = [
         "full_name",
-        "title",
-        "is_seen",
-        "is_read",
         "is_active",
         "created_at",
     ]

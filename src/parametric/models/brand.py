@@ -1,9 +1,9 @@
 from django.db import models
 
-from src.common.models import BaseModel, SoftDeleteBaseModel
+from src.common.models import BaseModel
 
 
-class Brand(BaseModel, SoftDeleteBaseModel):
+class Brand(BaseModel):
     title = models.CharField(max_length=100, null=False)
     fa_title = models.CharField(max_length=100, null=False)
     order = models.PositiveIntegerField(default=0, blank=True, null=True)

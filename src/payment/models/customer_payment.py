@@ -1,12 +1,12 @@
 from django.db import models
 from django.db.models import Sum
 
-from src.common.models import BaseModel, SoftDeleteBaseModel
+from src.common.models import BaseModel
 from src.customer.models import Customer
 from src.payment.models import ChequePay, CashPay, CardToCardPay, OnlinePay
 
 
-class CustomerPayment(BaseModel, SoftDeleteBaseModel):
+class CustomerPayment(BaseModel):
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
     cheque = models.ManyToManyField(ChequePay, blank=True)
     cash = models.ManyToManyField(CashPay, blank=True)

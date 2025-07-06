@@ -3,7 +3,7 @@ import uuid
 from django.core.validators import FileExtensionValidator
 from django.db import models
 
-from src.common.models import BaseModel, SoftDeleteBaseModel
+from src.common.models import BaseModel
 from src.media.validators import FileSizeValidator, ImageSizeValidator
 from src.authentication.models import User
 from src.geo.models.address import Address
@@ -13,7 +13,7 @@ def upload_image_avatar(instance, filename):
     return 'images/avatar/{filename}.{format}'.format( filename=str(uuid.uuid4()), format=filename.split(".")[-1])
 
 
-class Profile(BaseModel, SoftDeleteBaseModel):
+class Profile(BaseModel):
     class Gender(models.TextChoices):
         FEMALE = 'FEMALE', 'Female'
         MALE = 'MALE', 'Male'

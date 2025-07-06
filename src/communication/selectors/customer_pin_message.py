@@ -7,6 +7,6 @@ def get_latest_customer_pin_message(*, customer: Customer):
     Get customer pin message
     """
     try:
-        return CustomerPinMessage.objects.filter(customer=customer).latest('-created_at')
+        return CustomerPinMessage.objects.filter(customer=customer).latest('created_at')
     except CustomerPinMessage.DoesNotExist:
         return CustomerPinMessage.objects.none()

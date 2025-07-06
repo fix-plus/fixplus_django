@@ -1,10 +1,10 @@
 from django.db import models
 
 from src.authentication.models import User
-from src.common.models import BaseModel, SoftDeleteBaseModel
+from src.common.models import BaseModel
 
 
-class UserDashboardPinMessage(BaseModel, SoftDeleteBaseModel):
+class UserDashboardPinMessage(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=100, blank=False, null=False)
     description = models.TextField(blank=True, null=True)

@@ -1,10 +1,10 @@
 from django.db import models
 
-from src.common.models import BaseModel, SoftDeleteBaseModel
+from src.common.models import BaseModel
 from src.authentication.models import User
 
 
-class UserContactNumber(BaseModel, SoftDeleteBaseModel):
+class UserContactNumber(BaseModel):
     class PhoneType(models.TextChoices):
         MOBILE = 'MOBILE', 'Mobile'
         LAND_LINE = 'LAND_LINE', 'Land-Line'

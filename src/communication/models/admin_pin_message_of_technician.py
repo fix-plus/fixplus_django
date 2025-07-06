@@ -1,11 +1,10 @@
 from django.db import models
 
 from src.authentication.models import User
-from src.common.models import BaseModel, SoftDeleteBaseModel
-from src.customer.models import Customer
+from src.common.models import BaseModel
 
 
-class AdminPinMessageOfTechnician(BaseModel, SoftDeleteBaseModel):
+class AdminPinMessageOfTechnician(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     description = models.TextField(blank=True, null=True)
     is_active = models.BooleanField(default=True)

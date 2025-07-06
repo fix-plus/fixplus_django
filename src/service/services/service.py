@@ -1,3 +1,4 @@
+from src.communication.models import CustomerPinMessage
 from src.customer.models import CustomerContactNumber
 from src.customer.selectors.customer import get_customer
 from src.customer.services.customer import create_customer
@@ -7,7 +8,7 @@ from src.parametric.models import DeviceType, Brand
 from src.authentication.models import User
 
 
-def create_job(
+def create_service(
         *, created_by: User,
         customer_data=None,
         devices_data=None
@@ -37,6 +38,13 @@ def create_job(
                         'is_primary': item.get('is_primary'),
                     }
                 )
+
+        pin_message = customer_data.get('pin_message')
+        if pin_message:
+            CustomerPinMessage.objects.create(
+                customer=customer,
+                description=pin_message,
+            )
 
     if devices_data:
         service_instances = []

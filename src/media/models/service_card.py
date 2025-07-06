@@ -4,7 +4,7 @@ from django.core.validators import FileExtensionValidator
 from django.db import models
 
 from src.authentication.models import User
-from src.common.models import SoftDeleteBaseModel, BaseModel
+from src.common.models import BaseModel
 from src.media.validators import FileSizeValidator, ImageSizeValidator
 
 
@@ -12,7 +12,7 @@ def upload_image_identify_document(instance, filename):
     return 'images/identify-document/{filename}.{format}'.format( filename=str(uuid.uuid4()), format=filename.split(".")[-1])
 
 
-class UploadServiceCardMedia(BaseModel, SoftDeleteBaseModel):
+class UploadServiceCardMedia(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='service_card_medias')
     image = models.ImageField(
         upload_to=upload_image_identify_document,
