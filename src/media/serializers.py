@@ -9,7 +9,7 @@ from src.media.validators import FileSizeValidator, ImageSizeValidator
 
 class InputParamsUploadSerializer(serializers.Serializer):
     method = serializers.ChoiceField(
-        choices=['identify_document',],
+        choices=['identify_document', 'service_card'],
     )
 
 
@@ -44,7 +44,7 @@ class OutPutUploadSerializer(serializers.Serializer):
         return thumbnail_relative_url
 
 
-class IdentifyDocumentMediaSerializer(serializers.ModelSerializer):
+class OutputMediaSerializer(serializers.ModelSerializer):
     thumbnail_image = serializers.SerializerMethodField()
 
     class Meta:

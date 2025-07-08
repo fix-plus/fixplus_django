@@ -8,7 +8,7 @@ from rest_framework.parsers import MultiPartParser
 from src.common.custom_exception import CustomAPIException
 from src.common.mixins import IsVerifiedMobileMixin
 from src.media.serializers import InputParamsUploadSerializer, InputUploadSerializer, OutPutUploadSerializer
-from src.media.services import create_upload_identify_document_media
+from src.media.services import create_upload_identify_document_media, create_upload_service_card_media
 
 
 class UploadCenterApi(IsVerifiedMobileMixin, APIView):
@@ -27,6 +27,13 @@ class UploadCenterApi(IsVerifiedMobileMixin, APIView):
 
         if method.validated_data.get('method') == 'identify_document':
             created_db_upload = create_upload_identify_document_media(
+                user=request.user,
+                id=serializer.validated_data.get("id"),
+                image=serializer.validated_data.get("image")
+            )
+
+        if method.validated_data.get('method') == 'service_card':
+            created_db_upload = create_upload_service_card_media(
                 user=request.user,
                 id=serializer.validated_data.get("id"),
                 image=serializer.validated_data.get("image")

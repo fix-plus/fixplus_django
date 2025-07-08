@@ -168,8 +168,8 @@ MEDIA_URL = '/media/'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        # Comment out JWTAuthentication if using session-based authentication
-        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        "rest_framework.authentication.SessionAuthentication",
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny',
@@ -209,6 +209,6 @@ from config.settings.jwt import *  # noqa
 from config.settings.sessions import *  # noqa
 from config.settings.celery import *  # noqa
 from config.settings.swagger import *  # noqa
-from config.settings.thumbnails import *
-from config.settings.language import *
-from config.settings.unfold import *
+from config.settings.thumbnails import *  # noqa
+from config.settings.language import *  # noqa
+from config.settings.unfold import *  # noqa

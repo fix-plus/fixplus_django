@@ -2,7 +2,7 @@ from .profile import Profile
 from .technician_skill import TechnicianSkill
 from .contact_number import UserContactNumber
 from .registry_request import UserRegistryRequest
-from .service_card import TechnicianServiceCard
+from .technician_service_card import TechnicianServiceCard
 from .technician_rating import TechnicianRating
 from .technician_rating import TechnicianRatingValue
 from .technician_status import TechnicianStatus

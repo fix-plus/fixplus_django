@@ -4,7 +4,7 @@ from rest_framework import serializers
 from src.account.selectors.technician_status import get_latest_technician_status
 from src.account.serializers.contact_number import OutPutContactNumberSerializer, InputContactNumbersSerializer
 from src.geo.serializers.address import OutPutAddressSerializer
-from src.media.serializers import IdentifyDocumentMediaSerializer
+from src.media.serializers import OutputMediaSerializer
 from src.media.validators import FileSizeValidator, ImageSizeValidator
 from src.account.models import Profile
 
