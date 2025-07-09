@@ -32,7 +32,7 @@ class UploadCenterApi(IsVerifiedMobileMixin, APIView):
                 image=serializer.validated_data.get("image")
             )
 
-        if method.validated_data.get('method') == 'service_card':
+        elif method.validated_data.get('method') == 'service_card':
             created_db_upload = create_upload_service_card_media(
                 user=request.user,
                 id=serializer.validated_data.get("id"),

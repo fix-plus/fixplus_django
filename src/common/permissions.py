@@ -2,6 +2,8 @@ from rest_framework import permissions
 from rest_framework.permissions import BasePermission
 from django.utils.translation import gettext_lazy as _
 
+from src.account.models import UserRegistryRequest
+
 
 class AllowAny(BasePermission):
     message = ''
@@ -19,7 +21,7 @@ class IsVerifiedMobile(BasePermission):
 class IsRegistered(BasePermission):
     message = _('You not allowed to use this method.')
     def has_permission(self, request, view):
-        if request.user.is_admin or request.user.is_verified_mobile and request.user.registry_requests.exists and request.user.registry_requests.filter(status='approved').exists():
+        if request.user.is_admin or request.user.is_verified_mobile and request.user.registry_requests.exists() and request.user.registry_requests.filter(status=UserRegistryRequest.Status.APPROVED).exists():
             return True
 
 
