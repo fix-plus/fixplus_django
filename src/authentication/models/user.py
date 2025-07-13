@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, Permission
 from django.contrib.auth.models import UserManager as BUM
 from django.contrib.auth.models import PermissionsMixin
+from django.db.models import Q
 from django.utils import timezone
 
 
@@ -113,3 +114,15 @@ class User(AbstractUser, PermissionsMixin):
     def update_last_online(self):
         self.last_online = timezone.now()
         self.save(update_fields=['last_online'])
+
+    def has_super_admin_or_admin(self):
+        return self.groups.filter(Q(name='SUPER_ADMIN') | Q(name='ADMIN')).exists()
+
+    def has_super_admin(self):
+        return self.groups.filter(name='SUPER_ADMIN').exists()
+
+    def has_admin(self):
+        return self.groups.filter(name='ADMIN').exists()
+
+    def has_technician(self):
+        return self.groups.filter(name='TECHNICIAN').exists()

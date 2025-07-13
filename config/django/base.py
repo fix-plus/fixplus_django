@@ -78,7 +78,7 @@ MIDDLEWARE = [
     'src.account.middleware.UpdateLastOnlineMiddleware',
 ]
 
-ROOT_URLCONF = 'config.urls'
+ROOT_URLCONF = 'config.urls.base'
 
 TEMPLATES = [
     {
@@ -108,7 +108,6 @@ ASGI_APPLICATION = "config.asgi.application"
 DATABASES = {
     'default': env.db('DATABASE_URL'),
 }
-DATABASES['default']['ATOMIC_REQUESTS'] = True
 
 if os.environ.get('GITHUB_WORKFLOW'):
     DATABASES = {

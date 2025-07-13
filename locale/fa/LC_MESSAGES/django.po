@@ -8,11 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-26 19:21+0330\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"POT-Creation-Date: 2025-07-11 21:11+0330\n"
+"PO-Revision-Date: 2025-07-11 20:42+0330\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language-Team: Persian <fa@li.org>\n"
+"Language: fa\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,212 +20,638 @@ msgstr ""
 
 #: .\config\settings\language.py:20
 msgid "English"
-msgstr ""
+msgstr "انگلیسی"
 
 #: .\config\settings\language.py:21
 msgid "Persian"
-msgstr ""
+msgstr "فارسی"
 
-#: .\config\urls.py:39
-msgid "admin/"
-msgstr ""
+#: .\config\settings\unfold.py:42 .\config\settings\unfold.py:52
+msgid "Users"
+msgstr "کاربران"
 
-#: .\fixplus\common\apis.py:24
-msgid "Invalid permission."
-msgstr "دسترسی به درستی تنظیم نشده است."
+#: .\config\settings\unfold.py:47
+msgid "Groups"
+msgstr "گروه‌ها"
 
-#: .\fixplus\common\apis.py:31
-msgid "You do not have permission to perform this action."
-msgstr "دسترسی لازم را ندارید."
+#: .\config\settings\unfold.py:57
+msgid "Profiles"
+msgstr "پروفایل‌ها"
 
-#: .\fixplus\common\permissions.py:13
-msgid "You not allowed to use this method, should be verified mobile."
-msgstr "شما دسترسی لازم را ندارید، ابتدا شماره موبایل خود را وریفای کنید."
+#: .\config\settings\unfold.py:62
+msgid "Contact Numbers"
+msgstr "شماره‌های تماس"
 
-#: .\fixplus\common\permissions.py:20 .\fixplus\common\permissions.py:27
-#: .\fixplus\common\permissions.py:33 .\fixplus\common\permissions.py:39
-#: .\fixplus\common\permissions.py:48
-msgid "You not allowed to use this method."
-msgstr "شما دسترسی لازم را ندارید."
+#: .\config\settings\unfold.py:67
+msgid "Registration Requests"
+msgstr "درخواست‌های ثبت‌نام"
 
-#: .\fixplus\customer\serializers\serializers.py:48
-#: .\fixplus\job\serializers\technician_for_job.py:26
-#: .\fixplus\user\serializers\auth.py:18 .\fixplus\user\serializers\auth.py:39
-#: .\fixplus\user\serializers\auth.py:60 .\fixplus\user\serializers\user.py:29
-msgid ""
-"Mobile number must start with '00' or '+' and contain only digits after that."
-msgstr "شماره موبایل باید با 00 یا + شروع شود."
+#: .\config\settings\unfold.py:72
+msgid "Technician Skills"
+msgstr "مهارت‌های تکنسین"
 
-#: .\fixplus\job\apis\determine.py:34
-msgid "The status of the referred service was successfully determined."
-msgstr "وضعیت کار ارحاع شده با موفقیت تغییر کرد."
+#: .\config\settings\unfold.py:77
+msgid "Technician Service Zone"
+msgstr "منطقه خدماتی تکنسین"
 
-#: .\fixplus\job\apis\job.py:65
-msgid "Successfully placed in the assign queue."
-msgstr "با موفقیت در صف ارحاع قرار گرفت."
+#: .\config\settings\unfold.py:82
+msgid "Technician Service Cards"
+msgstr "کارت‌های خدماتی تکنسین"
 
-#: .\fixplus\job\apis\referred.py:58 .\fixplus\job\apis\referred.py:68
-#: .\fixplus\parametric\apis\apis.py:53 .\fixplus\parametric\apis\apis.py:114
-#: .\fixplus\parametric\apis\apis.py:165
-#, fuzzy
-#| msgid "You not allowed to use this method."
-msgid "You are not allowed to use this method."
-msgstr "شما دسترسی لازم را ندارید."
+#: .\config\settings\unfold.py:87
+msgid "Technician Ratings"
+msgstr "امتیازات تکنسین"
 
-#: .\fixplus\job\apis\referred.py:85
-msgid "Successfully referred to technician."
-msgstr "با موفقیت به تکنسین ارجاع داده شد."
+#: .\config\settings\unfold.py:92
+msgid "Technician Statuses"
+msgstr "وضعیت‌های تکنسین"
 
-#: .\fixplus\job\serializers\job.py:64 .\fixplus\job\serializers\referred.py:86
-#: .\fixplus\job\serializers\referred.py:113
-#, fuzzy
-#| msgid ""
-#| "Mobile number must start with '00' or '+' and contain only digits after "
-#| "that."
-msgid ""
-"Phone number must start with '00' or '+' and contain only digits after that."
-msgstr "شماره موبایل باید با 00 یا + شروع شود."
+#: .\config\settings\unfold.py:99
+msgid "Medias"
+msgstr "رسانه‌ها"
 
-#: .\fixplus\job\services\determine.py:19
-#: .\fixplus\job\services\determine.py:20
-#: .\fixplus\job\services\determine.py:24
-msgid "You do not have access to do this."
-msgstr "شما دسترسی لازم را ندارید."
+#: .\config\settings\unfold.py:104
+msgid "Identify Documents"
+msgstr "مدارک شناسایی"
 
-#: .\fixplus\job\services\determine.py:21
-msgid "You must enter the reason for rejection."
-msgstr "دلیل رد کردن را باید وارد کنید."
+#: .\config\settings\unfold.py:109
+msgid "Services Card"
+msgstr "کارت خدمات"
 
-#: .\fixplus\job\services\referred.py:20
-msgid "This service has already been referred."
-msgstr "این کار قبلا ارجاع داده شده است."
+#: .\config\settings\unfold.py:116
+msgid "Parametrics"
+msgstr "پارامترها"
 
-#: .\fixplus\parametric\selectors\selectors.py:11
-msgid "The configuration parameter was not found, please contact the admin."
-msgstr "پارامتر تنظیمات پیدا نشد، لطفا با ادمین تماس بگیرید."
+#: .\config\settings\unfold.py:121
+msgid "Ratings"
+msgstr "امتیازات"
 
-#: .\fixplus\upload\selectors.py:11
-msgid "Media file not found."
-msgstr "فایل مدیا پیدا نشد، ایدی ارسالی اشتباه است."
+#: .\config\settings\unfold.py:126
+msgid "Device Types"
+msgstr "انواع دستگاه"
 
-#: .\fixplus\user\apis\auth\resend_otp_code.py:26
-msgid "User with this mobile not found."
-msgstr "کاربری با این شماره موبایل پیدا نشد"
+#: .\config\settings\unfold.py:131
+msgid "Brands"
+msgstr "برندها"
 
-#: .\fixplus\user\apis\auth\resend_otp_code.py:41
-#: .\fixplus\user\apis\auth\sign_in_up.py:45
-msgid "A verification code has been send to your mobile number."
-msgstr "یک کد اعتبارسنجی به شماره موبایل شما پیامک شد."
+#: .\config\settings\unfold.py:136
+msgid "Timing Settings"
+msgstr "تنظیمات زمانی"
 
-#: .\fixplus\user\apis\auth\resend_otp_code.py:44
-#: .\fixplus\user\apis\auth\sign_in_up.py:49
-msgid "2 minutes must have passed since the last sms was sent."
-msgstr "دو دقیقه باید از ارسال کد اعتبارسنحی قبلی بگذرد."
+#: .\config\settings\unfold.py:143
+msgid "Geo"
+msgstr "موقعیت جغرافیایی"
 
-#: .\fixplus\user\apis\user\register.py:21
+#: .\config\settings\unfold.py:148
+msgid "Addresses"
+msgstr "آدرس‌ها"
+
+#: .\config\settings\unfold.py:153
+msgid "User Locations Tracker"
+msgstr "ردیاب موقعیت کاربران"
+
+#: .\config\settings\unfold.py:160
+msgid "Financial"
+msgstr "مالی"
+
+#: .\config\settings\unfold.py:165
+msgid "Internal Wallets"
+msgstr "کیف‌پول‌های داخلی"
+
+#: .\config\settings\unfold.py:172 .\config\settings\unfold.py:177
+msgid "Customers"
+msgstr "مشتریان"
+
+#: .\config\settings\unfold.py:182
+msgid "Customer Contact Numbers"
+msgstr "شماره‌های تماس مشتریان"
+
+#: .\config\settings\unfold.py:189 .\config\settings\unfold.py:194
+msgid "Services"
+msgstr "خدمات"
+
+#: .\config\settings\unfold.py:199
+msgid "Service Histories"
+msgstr "تاریخچه خدمات"
+
+#: .\config\settings\unfold.py:206
+msgid "Communication"
+msgstr "ارتباطات"
+
+#: .\config\settings\unfold.py:211
+msgid "Customer Pin Messages"
+msgstr "پیام‌های پین‌شده مشتریان"
+
+#: .\config\settings\unfold.py:216
+msgid "User Dashboard Pin Messages"
+msgstr "پیام‌های پین‌شده داشبورد کاربران"
+
+#: .\config\settings\unfold.py:221
+msgid "Admin Pin Messages Of Technician"
+msgstr "پیام‌های پین‌شده مدیر برای تکنسین"
+
+#: .\config\urls\base.py:35
+msgid "panel/"
+msgstr "پنل/"
+
+#: .\src\account\apis\register.py:20
 msgid "The request was sent successfully."
 msgstr "درخواست با موفقیت ارسال شد."
 
-#: .\fixplus\user\selectors\profile.py:13
+#: .\src\account\selectors\profile.py:13
 msgid "Profile does not exist"
-msgstr "پروفایل پیدا نشد."
+msgstr "پروفایل وجود ندارد."
 
-#: .\fixplus\user\selectors\user.py:21 .\fixplus\user\selectors\user.py:92
-msgid "User not found."
-msgstr "کاربر پیدا نشد."
+#: .\src\account\serializers\user.py:29
+#: .\src\authentication\serializers\auth.py:18
+#: .\src\authentication\serializers\auth.py:39
+#: .\src\authentication\serializers\auth.py:60
+#: .\src\customer\serializers\customer.py:69
+#: .\src\service\serializers\admin\technician_for_service.py:31
+msgid ""
+"Mobile number must start with '00' or '+' and contain only digits after that."
+msgstr "شماره موبایل باید با '00' یا '+' شروع شود و پس از آن فقط شامل ارقام باشد."
 
-#: .\fixplus\user\selectors\user.py:95 .\fixplus\user\selectors\user.py:96
-msgid "User not verified, please verified mobile first."
-msgstr ""
-"حساب کاربری شما وریفای نشده، لطفا ابتدا شماره موبایل خود را وریفای کنید."
-
-#: .\fixplus\user\services\group.py:10 .\fixplus\user\services\group.py:18
+#: .\src\account\services\group.py:11 .\src\account\services\group.py:19
 msgid "One or more groups do not exist."
-msgstr "یک یا چند گروه یافت نشد."
+msgstr "یک یا چند گروه وجود ندارند."
 
-#: .\fixplus\user\services\permission.py:9
-#: .\fixplus\user\services\permission.py:17
-#: .\fixplus\user\services\permission.py:25
-#: .\fixplus\user\services\permission.py:33
+#: .\src\account\services\permission.py:11
+#: .\src\account\services\permission.py:19
+#: .\src\account\services\permission.py:27
+#: .\src\account\services\permission.py:35
 msgid "One or more permissions do not exist."
-msgstr "یک یا چند مجوز پیدا نشد."
+msgstr "یک یا چند مجوز وجود ندارند."
 
-#: .\fixplus\user\services\register.py:10
-msgid "You have already registered."
-msgstr "شما قبلا ثبت نام کرده اید."
+#: .\src\account\services\profile.py:31 .\src\account\services\profile.py:51
+#: .\src\account\services\register.py:16
+msgid "You are already verified. There is no need to reapply."
+msgstr "شما قبلاً تأیید شده‌اید. نیازی به درخواست مجدد نیست."
 
-#: .\fixplus\user\services\register.py:11
-msgid "Your request has already been rejected by the admin."
-msgstr "درخواست شما قبلا توسط مدیر رد شده است."
-
-#: .\fixplus\user\services\register.py:12
+#: .\src\account\services\profile.py:33 .\src\account\services\profile.py:53
+#: .\src\account\services\register.py:17
 msgid ""
 "Your request has already been submitted. Please refrain from resubmitting it."
-msgstr "درخواست شما قبلا ثبت شده است لطفا از ارسال مجدد آن خودداری کنید."
+msgstr "درخواست شما قبلاً ارسال شده است. لطفاً از ارسال مجدد خودداری کنید."
 
-#: .\fixplus\user\services\register.py:15
+#: .\src\account\services\register.py:15 .\src\account\services\register.py:18
+msgid "Identify document cannot be None or empty."
+msgstr "مدرک شناسایی نمی‌تواند خالی یا نامعتبر باشد."
+
+#: .\src\account\services\register.py:21
 msgid "full_name"
-msgstr "نام و نام خانوادگی"
+msgstr "نام کامل"
 
-#: .\fixplus\user\services\register.py:16
+#: .\src\account\services\register.py:22
 msgid "national_code"
-msgstr "کد ملی"
+msgstr "کدملی"
 
-#: .\fixplus\user\services\register.py:17
+#: .\src\account\services\register.py:23
 msgid "gender"
 msgstr "جنسیت"
 
-#: .\fixplus\user\services\register.py:18
+#: .\src\account\services\register.py:24
 msgid "address"
 msgstr "آدرس"
 
-#: .\fixplus\user\services\register.py:19
+#: .\src\account\services\register.py:25
 msgid "avatar"
-msgstr "عکس پروفایل"
+msgstr "تصویر پروفایل"
 
-#: .\fixplus\user\services\register.py:20
-msgid "identify_document_photo"
-msgstr "تصویر کارت ملی/پاسپورت"
-
-#: .\fixplus\user\services\register.py:25
+#: .\src\account\services\register.py:30
 msgid " cannot be None or empty."
-msgstr " نمیتواند خالی باشد."
+msgstr " نمی‌تواند خالی یا نامعتبر باشد."
 
-#: .\fixplus\user\services\skill.py:17
+#: .\src\account\services\technician_service_card.py:19
+#: .\src\account\services\technician_skill.py:18
 msgid "Skills can only be assigned to technician users."
-msgstr "مهارت ها فقط می تواند به کاربران تکنسین اختصاص داده شود."
+msgstr "مهارت‌ها تنها به کاربران تکنسین قابل تخصیص هستند."
 
-#: .\fixplus\user\services\skill.py:36
-msgid "Error creating technician skill."
-msgstr "ایجاد مهارت برای تکنسین با خطا مواجه شد."
+#: .\src\account\services\technician_service_card.py:59
+msgid "Error delete technician service card."
+msgstr "خطا در حذف کارت خدماتی تکنسین."
 
-#: .\fixplus\user\services\skill.py:58
-msgid "Error update technician skill."
-msgstr "بروزرسانی مهارت برای تکنسین با خطا مواجه شد."
+#: .\src\account\services\technician_service_zone.py:16
+msgid "Service zone can only be assigned to technician users."
+msgstr "منطقه خدماتی تنها به کاربران تکنسین قابل تخصیص است."
 
-#: .\fixplus\user\services\skill.py:70
+#: .\src\account\services\technician_service_zone.py:50
+msgid "Error delete technician service zone."
+msgstr "خطا در حذف منطقه خدماتی تکنسین."
+
+#: .\src\account\services\technician_skill.py:66
 msgid "Error delete technician skill."
-msgstr "پاک کردن مهارت برای تکنسین با خطا مواحه شد."
+msgstr "خطا در حذف مهارت تکنسین."
 
-#: .\fixplus\user\services\user.py:46
-msgid "User was verified, please login."
-msgstr "حساب شما وریفای شده است. لطفا وارد شوید."
+#: .\src\account\services\technician_status.py:13
+msgid "This method only active for technician users."
+msgstr "این روش تنها برای کاربران تکنسین فعال است."
 
-#: .\fixplus\user\utils.py:36
-msgid "Verification code is expired or invalid."
-msgstr "کد اعتبارسنجی منقضی شده یا نامعتبر است."
-
-#: .\fixplus\user\validators.py:11
+#: .\src\account\validators.py:11
 msgid "password must include number"
-msgstr "پسورد باید حتما شامل هدد باشد."
+msgstr "رمز عبور باید شامل عدد باشد."
 
-#: .\fixplus\user\validators.py:20
+#: .\src\account\validators.py:20
 msgid "password must include letter"
-msgstr "پسورد باید حتما شامل حروف باشد."
+msgstr "رمز عبور باید شامل حروف باشد."
 
-#: .\fixplus\user\validators.py:29
+#: .\src\account\validators.py:29
 msgid "password must include special char"
-msgstr "پسورد باید حتما شامل کارکترهای خاص باشد."
+msgstr "رمز عبور باید شامل کاراکتر ویژه باشد."
 
-#~ msgid "You don't need to register."
-#~ msgstr "شما نیازی به ثبت نام مجدد ندارید."
+#: .\src\authentication\apis\resend_otp_code.py:26
+msgid "User with this mobile not found."
+msgstr "کاربری با این شماره موبایل یافت نشد."
+
+#: .\src\authentication\apis\resend_otp_code.py:41
+#: .\src\authentication\apis\sign_in_up.py:40
+msgid "A verification code has been send to your mobile number."
+msgstr "کد تأیید به شماره موبایل شما ارسال شد."
+
+#: .\src\authentication\apis\resend_otp_code.py:44
+#: .\src\authentication\apis\sign_in_up.py:43
+msgid "2 minutes must have passed since the last sms was sent."
+msgstr "باید ۲ دقیقه از ارسال آخرین پیامک گذشته باشد."
+
+#: .\src\authentication\selectors\auth.py:29
+#: .\src\authentication\selectors\auth.py:128
+msgid "User not found."
+msgstr "کاربر یافت نشد."
+
+#: .\src\authentication\selectors\auth.py:131
+#: .\src\authentication\selectors\auth.py:132
+msgid "User not verified, please verified mobile first."
+msgstr "کاربر تأیید نشده است، لطفاً ابتدا شماره موبایل را تأیید کنید."
+
+#: .\src\authentication\services\auth.py:33
+#: .\src\authentication\services\auth.py:41
+msgid "User not was send request registry yet."
+msgstr "کاربر هنوز درخواست ثبت‌نام ارسال نکرده است."
+
+#: .\src\authentication\services\auth.py:63
+msgid "User was verified, please login."
+msgstr "کاربر تأیید شد، لطفاً وارد شوید."
+
+#: .\src\authentication\utils.py:36
+msgid "Verification code is expired or invalid."
+msgstr "کد تأیید منقضی شده یا نامعتبر است."
+
+#: .\src\common\apis.py:24
+msgid "Invalid permission."
+msgstr "مجوز نامعتبر است."
+
+#: .\src\common\apis.py:31 .\src\common\exception_handlers.py:107
+msgid "You do not have permission to perform this action."
+msgstr "شما مجوز انجام این عملیات را ندارید."
+
+#: .\src\common\custom_exception.py:7
+msgid "An error occurred."
+msgstr "خطایی رخ داد."
+
+#: .\src\common\exception_handlers.py:74
+msgid "An unexpected error occurred."
+msgstr "خطای غیرمنتظره‌ای رخ داد."
+
+#: .\src\common\exception_handlers.py:88 .\src\common\exception_handlers.py:136
+msgid "Validation failed."
+msgstr "اعتبارسنجی ناموفق بود."
+
+#: .\src\common\exception_handlers.py:97
+msgid "The requested resource was not found."
+msgstr "منبع درخواستی یافت نشد."
+
+#: .\src\common\exception_handlers.py:98
+msgid "Not found."
+msgstr "یافت نشد."
+
+#: .\src\common\exception_handlers.py:100
+msgid "Malformed request."
+msgstr "درخواست نادرست است."
+
+#: .\src\common\exception_handlers.py:101
+msgid "The request could not be parsed."
+msgstr "درخواست قابل پردازش نیست."
+
+#: .\src\common\exception_handlers.py:103
+msgid "Method not allowed."
+msgstr "روش مجاز نیست."
+
+#: .\src\common\exception_handlers.py:104
+msgid "This method is not allowed for the requested URL."
+msgstr "این روش برای URL درخواستی مجاز نیست."
+
+#: .\src\common\exception_handlers.py:106
+msgid "Permission denied."
+msgstr "دسترسی رد شد."
+
+#: .\src\common\exception_handlers.py:109
+msgid "Authentication failed."
+msgstr "احراز هویت ناموفق بود."
+
+#: .\src\common\exception_handlers.py:110
+msgid "Invalid credentials provided."
+msgstr "اطلاعات ورود نامعتبر است."
+
+#: .\src\common\exception_handlers.py:112
+msgid "Not authenticated."
+msgstr "احراز هویت نشده است."
+
+#: .\src\common\exception_handlers.py:113
+msgid "You must be logged in to perform this action."
+msgstr "برای انجام این عملیات باید وارد شوید."
+
+#: .\src\common\exception_handlers.py:115
+msgid "Unsupported media type."
+msgstr "نوع رسانه پشتیبانی نمی‌شود."
+
+#: .\src\common\exception_handlers.py:116
+msgid "The media type of the request is not supported."
+msgstr "نوع رسانه درخواست پشتیبانی نمی‌شود."
+
+#: .\src\common\exception_handlers.py:118
+msgid "Request limit exceeded."
+msgstr "محدودیت تعداد درخواست‌ها exced شده است."
+
+#: .\src\common\exception_handlers.py:119
+msgid "You have exceeded your request limit."
+msgstr "شما از محدودیت تعداد درخواست‌ها عبور کرده‌اید."
+
+#: .\src\common\exception_handlers.py:121
+msgid "Not acceptable."
+msgstr "غیرقابل قبول."
+
+#: .\src\common\exception_handlers.py:122
+msgid "The requested format is not acceptable."
+msgstr "فرمت درخواستی قابل قبول نیست."
+
+#: .\src\common\exception_handlers.py:124
+msgid "The requested object does not exist."
+msgstr "شیء درخواستی وجود ندارد."
+
+#: .\src\common\exception_handlers.py:125
+msgid "Object not found."
+msgstr "شیء یافت نشد."
+
+#: .\src\common\exception_handlers.py:127
+msgid "Multiple objects returned."
+msgstr "چندین شیء بازگردانده شد."
+
+#: .\src\common\exception_handlers.py:128
+msgid "More than one object was found."
+msgstr "بیش از یک شیء یافت شد."
+
+#: .\src\common\exception_handlers.py:130
+msgid "Suspicious operation detected."
+msgstr "عملیات مشکوک شناسایی شد."
+
+#: .\src\common\exception_handlers.py:131
+msgid "A suspicious operation was attempted."
+msgstr "یک عملیات مشکوک انجام شد."
+
+#: .\src\common\exception_handlers.py:133
+msgid "Field error."
+msgstr "خطای فیلد."
+
+#: .\src\common\exception_handlers.py:134
+msgid "There was an error with a field."
+msgstr "خطایی در یکی از فیلدها رخ داد."
+
+#: .\src\common\exception_handlers.py:145
+msgid "App registry is not ready."
+msgstr "ثبت برنامه آماده نیست."
+
+#: .\src\common\exception_handlers.py:146
+msgid "The application registry is not ready."
+msgstr "ثبت برنامه آماده نیست."
+
+#: .\src\common\exception_handlers.py:148
+msgid "Empty result set."
+msgstr "مجموعه نتایج خالی است."
+
+#: .\src\common\exception_handlers.py:149
+msgid "No results were found."
+msgstr "نتیجه‌ای یافت نشد."
+
+#: .\src\common\exception_handlers.py:151
+msgid "Full result set."
+msgstr "مجموعه نتایج پر است."
+
+#: .\src\common\exception_handlers.py:152
+msgid "The result set is full."
+msgstr "مجموعه نتایج پر است."
+
+#: .\src\common\exception_handlers.py:154
+msgid "Field does not exist."
+msgstr "فیلد وجود ندارد."
+
+#: .\src\common\exception_handlers.py:155
+msgid "The specified field does not exist."
+msgstr "فیلد مشخص‌شده وجود ندارد."
+
+#: .\src\common\exception_handlers.py:157
+msgid "Improperly configured."
+msgstr "پیکربندی نادرست است."
+
+#: .\src\common\exception_handlers.py:158
+msgid "The application is improperly configured."
+msgstr "برنامه به‌درستی پیکربندی نشده است."
+
+#: .\src\common\exception_handlers.py:160
+msgid "View does not exist."
+msgstr "نمایش وجود ندارد."
+
+#: .\src\common\exception_handlers.py:161
+msgid "The specified view does not exist."
+msgstr "نمایش مشخص‌شده وجود ندارد."
+
+#: .\src\common\exception_handlers.py:163
+msgid "Middleware not used."
+msgstr "میان‌افزار استفاده نشده است."
+
+#: .\src\common\exception_handlers.py:164
+msgid "The specified middleware is not used."
+msgstr "میان‌افزار مشخص‌شده استفاده نشده است."
+
+#: .\src\common\exception_handlers.py:166
+msgid "Too many files sent."
+msgstr "تعداد فایل‌های ارسالی بیش از حد است."
+
+#: .\src\common\exception_handlers.py:167
+msgid "You have sent too many files."
+msgstr "شما تعداد زیادی فایل ارسال کرده‌اید."
+
+#: .\src\common\exception_handlers.py:169
+msgid "Too many fields sent."
+msgstr "تعداد فیلدهای ارسالی بیش از حد است."
+
+#: .\src\common\exception_handlers.py:170
+msgid "You have sent too many fields."
+msgstr "شما تعداد زیادی فیلد ارسال کرده‌اید."
+
+#: .\src\common\exception_handlers.py:172
+msgid "Suspicious file operation."
+msgstr "عملیات مشکوک فایل."
+
+#: .\src\common\exception_handlers.py:173
+msgid "A suspicious file operation was attempted."
+msgstr "یک عملیات مشکوک فایل انجام شد."
+
+#: .\src\common\exception_handlers.py:175
+msgid "Suspicious multipart form."
+msgstr "فرم چندبخشی مشکوک."
+
+#: .\src\common\exception_handlers.py:176
+msgid "A suspicious multipart form was submitted."
+msgstr "یک فرم چندبخشی مشکوک ارسال شد."
+
+#: .\src\common\exception_handlers.py:178
+msgid "Synchronous operation not allowed."
+msgstr "عملیات همزمان مجاز نیست."
+
+#: .\src\common\exception_handlers.py:179
+msgid "This operation cannot be performed synchronously."
+msgstr "این عملیات نمی‌تواند به‌صورت همزمان انجام شود."
+
+#: .\src\common\exception_handlers.py:181
+msgid "Request data too big."
+msgstr "داده‌های درخواست بیش از حد بزرگ هستند."
+
+#: .\src\common\exception_handlers.py:182
+msgid "The request data is too large."
+msgstr "داده‌های درخواست بیش از حد بزرگ هستند."
+
+#: .\src\common\exception_handlers.py:184
+msgid "Bad request."
+msgstr "درخواست نادرست."
+
+#: .\src\common\exception_handlers.py:185
+msgid "The request was malformed or invalid."
+msgstr "درخواست نادرست یا نامعتبر است."
+
+#: .\src\common\exception_handlers.py:187
+msgid "Request aborted."
+msgstr "درخواست لغو شد."
+
+#: .\src\common\exception_handlers.py:188
+msgid "The request was aborted."
+msgstr "درخواست لغو شد."
+
+#: .\src\common\exception_handlers.py:190
+msgid "Disallowed host."
+msgstr "هاست غیرمجاز."
+
+#: .\src\common\exception_handlers.py:191
+msgid "The host is not allowed."
+msgstr "هاست مجاز نیست."
+
+#: .\src\common\exception_handlers.py:193
+msgid "Disallowed redirect."
+msgstr "تغییر مسیر غیرمجاز."
+
+#: .\src\common\exception_handlers.py:194
+msgid "The redirect is not allowed."
+msgstr "تغییر مسیر مجاز نیست."
+
+#: .\src\common\permissions.py:15
+msgid "You not allowed to use this method, should be verified mobile."
+msgstr "شما مجاز به استفاده از این روش نیستید، باید شماره موبایل تأیید شود."
+
+#: .\src\common\permissions.py:22 .\src\common\permissions.py:29
+#: .\src\common\permissions.py:35 .\src\common\permissions.py:41
+#: .\src\common\permissions.py:50
+msgid "You not allowed to use this method."
+msgstr "شما مجاز به استفاده از این روش نیستید."
+
+#: .\src\customer\selectors\customer.py:48
+msgid "Customer doesn't exist."
+msgstr "مشتری وجود ندارد."
+
+#: .\src\geo\models\address.py:19
+msgid "Either user or customer must be provided for the address."
+msgstr "برای آدرس باید کاربر یا مشتری مشخص شود."
+
+#: .\src\media\selectors.py:10 .\src\media\selectors.py:17
+msgid "Media file not found."
+msgstr "فایل رسانه‌ای یافت نشد."
+
+#: .\src\parametric\apis\admin\timing_setting.py:18
+#: .\src\service\apis\admin\assign_to_technician.py:23
+msgid "You are not allowed to use this method."
+msgstr "شما مجاز به استفاده از این روش نیستید."
+
+#: .\src\parametric\apis\admin\timing_setting.py:23
+msgid "Timing setting not found."
+msgstr "تنظیمات زمانی یافت نشد."
+
+#: .\src\parametric\selectors\timing_setting.py:11
+msgid "The configuration parameter was not found, please contact the admin."
+msgstr "پارامتر پیکربندی یافت نشد، لطفاً با مدیر تماس بگیرید."
+
+#: .\src\service\apis\admin\assign_to_technician.py:36
+msgid "Assigning to technician was successful."
+msgstr "تخصیص به تکنسین با موفقیت انجام شد."
+
+#: .\src\service\apis\admin\service.py:56
+msgid "Successfully placed in the assign queue."
+msgstr "با موفقیت در صف تخصیص قرار گرفت."
+
+#: .\src\service\apis\technician\accept_service.py:32
+msgid "Service status was updated."
+msgstr "وضعیت سرویس به‌روزرسانی شد."
+
+#: .\src\service\models\service.py:46
+msgid "Service expired."
+msgstr "سرویس منقضی شده است."
+
+#: .\src\service\serializers\shared\service.py:123
+msgid ""
+"Phone number must start with '00' or '+' and contain only digits after that."
+msgstr "شماره تلفن باید با '00' یا '+' شروع شود و پس از آن فقط شامل ارقام باشد."
+
+#: .\src\service\serializers\technician\accept_service.py:13
+msgid "This field is required when accepting the service."
+msgstr "این فیلد هنگام پذیرش سرویس الزامی است."
+
+#: .\src\service\serializers\technician\accept_service.py:17
+msgid "This field is required when rejecting the service."
+msgstr "این فیلد هنگام رد سرویس الزامی است."
+
+#: .\src\service\services\admin\assign_to_technician.py:23
+msgid "Service is already assigned to the technician"
+msgstr "سرویس قبلاً به تکنسین تخصیص داده شده است."
+
+#: .\src\service\services\admin\assign_to_technician.py:26
+msgid "Service is already completed"
+msgstr "سرویس قبلاً تکمیل شده است."
+
+#: .\src\service\services\admin\assign_to_technician.py:29
+msgid "Technician is not active"
+msgstr "تکنسین فعال نیست."
+
+#: .\src\service\services\technician\accept_service.py:24
+msgid "This service is not assigned to the technician."
+msgstr "این سرویس به تکنسین تخصیص داده نشده است."
+
+#: .\src\service\services\technician\accept_service.py:28
+msgid "Service is not in the correct status to be accepted."
+msgstr "سرویس در وضعیت مناسب برای پذیرش نیست."
+
+#: .\src\service\services\technician\accept_service.py:33
+msgid "Service accepting deadline has passed."
+msgstr "مهلت پذیرش سرویس گذشته است."
+
+#: .\src\service\services\technician\accept_service.py:35
+msgid "Service deadline accepting has passed."
+msgstr "مهلت پذیرش سرویس گذشته است."
+
+#: .\src\service\services\technician\accept_service.py:39
+msgid "Estimate arrival time is required when accepting the service."
+msgstr "زمان تقریبی رسیدن هنگام پذیرش سرویس الزامی است."
+
+#: .\src\service\services\technician\accept_service.py:43
+msgid "Estimate arrival time must be in the future."
+msgstr "زمان تقریبی رسیدن باید در آینده باشد."
+
+#: .\src\service\services\technician\accept_service.py:54
+msgid "Service rejected by the technician. Reason:"
+msgstr "سرویس توسط تکنسین رد شد. دلیل:"

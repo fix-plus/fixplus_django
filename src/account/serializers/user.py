@@ -42,43 +42,10 @@ class InputUserSerializer(serializers.Serializer):
     profile = InputUpdateProfileSerializer(required=False, allow_null=True, default=None)
 
 
-class OutPutUserSerializer(serializers.ModelSerializer):
+class OutPutUserSerializer(serializers.Serializer):
     def __init__(self, *args, **kwargs):
         self.user_type = kwargs.pop('user_type', None)
         super().__init__(*args, **kwargs)
 
     def to_representation(self, instance):
         return OutPutProfileSerializer(instance.profile, context=self.context, user_type=self.user_type).data
-
-
-# class OutPutSuperAdminUserDetailSerializer(serializers.ModelSerializer):
-#     profile = serializers.SerializerMethodField()
-#
-#     class Meta:
-#         model = User
-#         fields = ['mobile', 'id', 'status', 'is_active', 'is_verified_mobile', 'profile', 'last_login', 'last_online', 'created_at', 'updated_at', 'request_register_datetime']
-#
-#     def get_profile(self, obj):
-#         return OutPutProfileSerializer(obj.profile, context=self.context, user_type='super_admin').data
-#
-#
-# class OutPutAdminUserDetailSerializer(serializers.ModelSerializer):
-#     profile = serializers.SerializerMethodField()
-#
-#     class Meta:
-#         model = User
-#         fields = ['id', 'mobile', 'profile', 'last_login', 'last_online', 'created_at', ]
-#
-#     def get_profile(self, obj):
-#         return OutPutProfileSerializer(obj.profile, context=self.context, user_type='ADMIN').data
-#
-#
-# class OutPutPublicUserDetailSerializer(serializers.ModelSerializer):
-#     profile = serializers.SerializerMethodField()
-#
-#     class Meta:
-#         model = User
-#         fields = ['id', 'profile', 'last_online',]
-#
-#     def get_profile(self, obj):
-#         return OutPutProfileSerializer(obj.profile, context=self.context, user_type='public').data

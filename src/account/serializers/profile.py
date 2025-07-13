@@ -4,6 +4,7 @@ from rest_framework import serializers
 from src.account.selectors.technician_status import get_latest_technician_status
 from src.account.serializers.contact_number import OutPutContactNumberSerializer, InputContactNumbersSerializer
 from src.geo.serializers.address import OutPutAddressSerializer
+from src.geo.serializers.user_location_tracker import OutputUserLocationTrackerSerializer
 from src.media.serializers import OutputMediaSerializer
 from src.media.validators import FileSizeValidator, ImageSizeValidator
 from src.account.models import Profile
@@ -24,6 +25,7 @@ class OutPutProfileSerializer(serializers.ModelSerializer):
     other_identify_document_photos = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
     technician_status = serializers.SerializerMethodField()
+    latest_location = serializers.SerializerMethodField()
     rejected_reason = serializers.SerializerMethodField()
     is_verified_mobile = serializers.SerializerMethodField()
     groups = serializers.SerializerMethodField()
@@ -40,7 +42,7 @@ class OutPutProfileSerializer(serializers.ModelSerializer):
         super().__init__(*args, **kwargs)
 
         # BaseFields
-        base_fields = ['user_id', 'full_name', 'gender', 'avatar', 'groups', 'technician_status', 'last_online', 'created_at']
+        base_fields = ['user_id', 'full_name', 'gender', 'avatar', 'groups', 'technician_status', 'latest_location', 'last_online', 'created_at']
 
         if user_type == "super_admin" or user_type == "me":
             allowed_fields = base_fields + [
@@ -115,6 +117,13 @@ class OutPutProfileSerializer(serializers.ModelSerializer):
     def get_technician_status(self, obj):
         return get_latest_technician_status(user=obj.user).status if get_latest_technician_status(user=obj.user) else None
 
+    def get_latest_location(self, obj):
+        try:
+            queryset = obj.user.location_trackers.latest('created_at')
+        except obj.user.location_trackers.model.DoesNotExist:
+            return None
+        return OutputUserLocationTrackerSerializer(queryset).data
+
     def get_rejected_reason(self, obj):
         return obj.user.registry_requests.latest('created_at').rejected_reason if obj.user.registry_requests.exists() else None
 
@@ -149,8 +158,9 @@ class OutPutProfileSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
 
         # Remove technician_status field if user is not a technician
-        if not instance.user.groups.filter(name='TECHNICIAN').exists():
+        if not instance.user.has_technician():
             representation.pop('technician_status', None)
+            representation.pop('latest_location', None)
         return representation
 
 

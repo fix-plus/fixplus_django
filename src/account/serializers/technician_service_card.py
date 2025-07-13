@@ -1,9 +1,8 @@
 from rest_framework import serializers
 
 from src.media.serializers import OutputMediaSerializer
-from src.parametric.serializers.serializers import OutPutBrandNameParametricSerializer, \
-    OutPutDeviceTypeParametricSerializer
 from src.account.models import TechnicianServiceCard
+from src.parametric.serializers.brand import OutPutBrandNameParametricSerializer
 
 
 class InputTechnicianServiceCardParamsSerializer(serializers.Serializer):

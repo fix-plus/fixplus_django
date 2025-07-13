@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
-from src.parametric.serializers.serializers import OutPutBrandNameParametricSerializer, \
-    OutPutDeviceTypeParametricSerializer
 from src.account.models import TechnicianSkill
+from src.parametric.serializers.brand import OutPutBrandNameParametricSerializer
+from src.parametric.serializers.device import OutPutDeviceTypeParametricSerializer
 
 
 class InputTechnicianSkillParamsSerializer(serializers.Serializer):
