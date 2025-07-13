@@ -40,7 +40,7 @@ python manage.py runserver 0.0.0.0:8000
 
 8- run Celery
 ```
-celery -A fixplus.tasks worker --loglevel=info -P eventlet
-celery -A fixplus.tasks worker -l info --without-gossip --without-mingle --without-heartbeat
-celery -A fixplus.tasks beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+celery -A src.tasks worker --loglevel=info -P eventlet
+celery -A src.tasks worker -l info --without-gossip --without-mingle --without-heartbeat
+celery -A src.tasks beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
 ```
