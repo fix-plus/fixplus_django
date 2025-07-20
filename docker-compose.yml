@@ -16,6 +16,22 @@ services:
       - POSTGRES_USER=fixplus
       - POSTGRES_PASSWORD=1234@1234
 
+  mongo:
+    image: mongo:8.0.9
+    container_name: fixplus-mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: fixplus
+      MONGO_INITDB_ROOT_PASSWORD: 1234@1234
+      MONGO_INITDB_DATABASE: fixplus
+    volumes:
+      - mongo-data:/var/lib/mongo/data/
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh fixplus --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   rabbitmq:
     image: "rabbitmq:alpine"
     container_name: fixplus-rabbitmq
@@ -45,6 +61,7 @@ services:
         daphne -b 0.0.0.0 -p 8000 config.asgi:application"
     environment:
       - DATABASE_URL=psql://fixplus:1234@1234@db:5432/fixplus
+      - MONGO_DB_URL=mongodb://fixplus:1234%401234@mongo:27017/fixplus?authSource=admin
       - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
       - REDIS_LOCATION=redis://redis:6379
       - ALLOWED_HOSTS=api.fixplus.org, localhost, 127.0.0.1
@@ -60,6 +77,7 @@ services:
       - media_volume:/app/backend/mediafiles
     depends_on:
       - db
+      - mongo
       - rabbitmq
     restart: on-failure
     labels:
@@ -103,6 +121,7 @@ services:
       "
     environment:
       - DATABASE_URL=psql://fixplus:1234@1234@db:5432/fixplus
+      - MONGO_DB_URL=mongodb://fixplus:1234%401234@mongo:27017/fixplus?authSource=admin
       - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
       - REDIS_LOCATION=redis://redis:6379
       - ALLOWED_HOSTS=api.fixplus.org, localhost, 127.0.0.1
@@ -117,6 +136,7 @@ services:
       - .:/app
     depends_on:
       - db
+      - mongo
       - rabbitmq
     restart: on-failure
 
@@ -135,6 +155,7 @@ services:
       "
     environment:
       - DATABASE_URL=psql://fixplus:1234@1234@db:5432/fixplus
+      - MONGO_DB_URL=mongodb://fixplus:1234%401234@mongo:27017/fixplus?authSource=admin
       - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
       - REDIS_LOCATION=redis://redis:6379
       - ALLOWED_HOSTS=api.fixplus.org, localhost, 127.0.0.1
@@ -149,6 +170,7 @@ services:
       - .:/app
     depends_on:
       - db
+      - mongo
       - rabbitmq
     restart: on-failure
 
@@ -158,3 +180,4 @@ volumes:
     static_volume:
     media_volume:
     postgres-data:
+    mongo-data:

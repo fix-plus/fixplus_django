@@ -1,4 +1,8 @@
 import os
+from urllib.parse import urlparse
+
+import django_mongodb_backend
+
 from config.env import env, BASE_DIR
 
 env.read_env(os.path.join(BASE_DIR, ".env"))
@@ -27,6 +31,7 @@ LOCAL_APPS = [
     'src.geo.apps.GeoConfig',
     'src.communication.apps.CommunicationConfig',
     'src.metric.apps.MetricConfig',
+    'src.chat.apps.ChatConfig',
 ]
 
 THIRD_PARTY_APPS = [
@@ -98,8 +103,16 @@ TEMPLATES = [
     },
 ]
 
-# WSGI_APPLICATION = 'config.wsgi.application'
 ASGI_APPLICATION = "config.asgi.application"
+parsed_redis_location = urlparse(env("REDIS_LOCATION"))
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "src.common.channel_layer.ExtendedRedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(parsed_redis_location.hostname, parsed_redis_location.port)],
+        },
+    },
+}
 
 
 # Database
@@ -107,19 +120,12 @@ ASGI_APPLICATION = "config.asgi.application"
 
 DATABASES = {
     'default': env.db('DATABASE_URL'),
+    'mongo_db': django_mongodb_backend.parse_uri(
+        env("MONGO_DB_URL"), db_name="fixplus"
+    ),
 }
 
-if os.environ.get('GITHUB_WORKFLOW'):
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'github_actions',
-            'USER': 'fixplus',
-            'PASSWORD': '1234@1234',
-            'HOST': '127.0.0.1',
-            'PORT': '5432',
-        }
-    }
+DATABASE_ROUTERS = ['config.db_router.ChatDBRouter']
 
 
 # Password validation

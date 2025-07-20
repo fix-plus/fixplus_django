@@ -42,5 +42,16 @@ python manage.py runserver 0.0.0.0:8000
 ```
 celery -A src.tasks worker --loglevel=info -P eventlet
 celery -A src.tasks worker -l info --without-gossip --without-mingle --without-heartbeat
+```
+
+9- run Beats
+```
+python manage.py setup_periodic_tasks
 celery -A src.tasks beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+```
+
+9- create and compile translate
+```
+django-admin makemessages -l fa --ignore 'venv/*'
+django-admin compilemessages
 ```

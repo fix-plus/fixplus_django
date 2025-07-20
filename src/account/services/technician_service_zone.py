@@ -1,5 +1,6 @@
 from django.utils.translation import gettext_lazy as _
 
+
 from src.common.custom_exception import CustomAPIException
 from src.account.models import TechnicianServiceZone
 from src.authentication.selectors.auth import get_user

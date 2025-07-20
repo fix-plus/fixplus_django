@@ -126,3 +126,13 @@ class User(AbstractUser, PermissionsMixin):
 
     def has_technician(self):
         return self.groups.filter(name='TECHNICIAN').exists()
+
+    def get_role(self):
+        if self.has_super_admin():
+            return "SUPER_ADMIN"
+        elif self.has_admin():
+            return "ADMIN"
+        elif self.has_technician():
+            return "TECHNICIAN"
+        else:
+            return "USER"

@@ -223,7 +223,29 @@ UNFOLD = {
                             "link": reverse_lazy("admin:communication_adminpinmessageoftechnician_changelist"),
                         }
                     ],
-                }
+                },
+                {
+                    "title": _("Chat"),
+                    "separator": True,
+                    "collapsible": True,
+                    "items": [
+                        {
+                            "title": _("Rooms"),
+                            "icon": "diversity_2",
+                            "link": reverse_lazy("admin:chat_chatroom_changelist"),
+                        },
+                        {
+                            "title": _("Memberships"),
+                            "icon": "article_person",
+                            "link": reverse_lazy("admin:chat_chatmembership_changelist"),
+                        },
+                        {
+                            "title": _("Messages"),
+                            "icon": "chat",
+                            "link": reverse_lazy("admin:chat_chatmessage_changelist"),
+                        },
+                    ],
+                },
             ],
         },
 }
