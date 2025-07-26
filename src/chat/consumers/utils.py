@@ -8,7 +8,6 @@ from src.service.models import Service
 from src.authentication.selectors.auth import get_user
 from typing import List, Tuple, Optional
 
-
 @database_sync_to_async
 def get_users_services_id(user_id: str) -> List[dict]:
     """
@@ -27,29 +26,8 @@ def get_users_services_id(user_id: str) -> List[dict]:
         print(f"Error fetching technician services: {e}")
         return []
 
-
 @database_sync_to_async
-def get_direct_chat_groups(user_id: str) -> List[str]:
-    """
-    Get all direct chat group names for a user.
-    Args:
-        user_id: ID of the user.
-    Returns:
-        List of group names for direct chats.
-    """
-    try:
-        rooms = ChatRoom.objects.filter(
-            type__in=[ChatRoom.Type.TECHNICIAN_DIRECT, ChatRoom.Type.ADMIN_DIRECT],
-            members_id__contains=[user_id]
-        )
-        return [f"room_{room.id}" for room in rooms]
-    except Exception as e:
-        print(f"Error fetching direct chat groups: {e}")
-        return []
-
-
-@database_sync_to_async
-def  _get_message_and_room(message_id: str) -> Tuple[Optional['ChatMessage'], Optional['ChatRoom']]:
+def _get_message_and_room(message_id: str) -> Tuple[Optional['ChatMessage'], Optional['ChatRoom']]:
     """
     Get a message and its associated room.
     Args:
@@ -66,9 +44,8 @@ def  _get_message_and_room(message_id: str) -> Tuple[Optional['ChatMessage'], Op
     except ChatRoom.DoesNotExist:
         return None, None
 
-
 @database_sync_to_async
-def  _get_sender_information(user_id: str) -> Optional[dict[str, str]]:
+def _get_sender_information(user_id: str) -> Optional[dict[str, str]]:
     user = get_user(id=user_id)
     if not user:
         return None
@@ -78,7 +55,6 @@ def  _get_sender_information(user_id: str) -> Optional[dict[str, str]]:
         "sender_full_name": user.profile.full_name,
         "sender_avatar": user.profile.avatar.url if user.profile.avatar else None
     }
-
 
 async def format_message_payload(message_id: str, user_id: str) -> dict:
     """
@@ -101,8 +77,6 @@ async def format_message_payload(message_id: str, user_id: str) -> dict:
         "text": message.text,
         "file_id": str(message.file_id) if message.file_id else None,
         "replied_from_id": str(message.replied_from_id) if message.replied_from_id else None,
-        # "is_delivered": message.is_delivered,
-        # "is_read": message.is_read,
         "is_system_message": message.is_system_message,
         "timestamp": int(message.timestamp.timestamp()),
     }
@@ -115,7 +89,6 @@ async def format_message_payload(message_id: str, user_id: str) -> dict:
         "service_id": str(room.service_id) if room.service_id else None,
         "message": message_data
     }
-
 
 async def format_status_payload(message_id: str, status: str) -> dict:
     """

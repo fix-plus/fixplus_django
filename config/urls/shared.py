@@ -6,4 +6,5 @@ urlpatterns = [
     path('account/', include('src.account.urls.shared')),
     path('media/', include('src.media.urls.shared')),
     path('parametric/', include('src.parametric.urls.shared')),
+    path('chat/', include('src.chat.urls.shared')),
 ]

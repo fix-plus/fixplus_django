@@ -3,9 +3,9 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-from src.chat.models import ChatMessage, ChatRoom
+from src.chat.models import ChatMessage, ChatRoom, ChatMembership
 from src.chat.selectors.message import get_message_by_id
-from src.chat.services.room import get_or_create_room
+from src.chat.services.room import get_or_create_room, add_members_to_room
 from src.chat.services.cache import save_message_to_cache, update_message_in_cache
 from src.chat.consumers.group_manager import add_room_members_to_group
 from src.authentication.models import User
@@ -35,7 +35,7 @@ def send_message(
     Returns:
         ChatMessage: The created message instance.
     Raises:
-        ValidationError: If input validation fails, with translated error messages.
+        ValidationError: If input validation fails.
     """
     logger.info(f"Attempting to send message from {sender_id} to receiver {receiver_id} with service_id {service_id}")
 
@@ -86,13 +86,21 @@ def send_message(
         logger.error(f"Failed to get or create room: {str(e)}")
         raise ValidationError(_("Failed to get or create room: %(error)s") % {"error": str(e)})
 
-    # Add online members to the WebSocket group for new direct rooms
-    if is_created and room_type in [ChatRoom.Type.TECHNICIAN_DIRECT, ChatRoom.Type.ADMIN_DIRECT]:
+    # Add sender to the room's membership for SERVICE rooms if not already a member
+    if room_type == ChatRoom.Type.SERVICE:
         try:
-            add_room_members_to_group(room)
-            logger.info(f"Online members added to group room_{room.id}")
-        except Exception as e:
-            logger.warning(f"Failed to add members to group room_{room.id}: {str(e)}. Continuing as message will be saved.")
+            add_members_to_room(room_id=str(room.id), member_ids=[sender_id])
+            logger.info(f"Sender {sender_id} added to room {room.id} if not already a member")
+        except ValidationError as e:
+            logger.error(f"Failed to add sender to room {room.id}: {str(e)}")
+            raise ValidationError(_("Failed to add sender to room: %(error)s") % {"error": str(e)})
+
+    # Add online members to the WebSocket group for new direct rooms or service rooms
+    try:
+        async_to_sync(add_room_members_to_group)(room)
+        logger.info(f"Online members added to group room_{room.id}")
+    except Exception as e:
+        logger.warning(f"Failed to add members to group room_{room.id}: {str(e)}. Continuing as message will be saved.")
 
     # Validate replied-to message
     replied_to = None
@@ -129,7 +137,7 @@ def send_message(
         raise ValidationError(_("Failed to save message to cache: %(error)s") % {"error": str(e)})
 
     # Notify via WebSocket
-    group_name = f"room_{room.id}" if service_id is None else f"service_{service_id}"
+    group_name = f"room_{room.id}"
     async_to_sync(channel_layer.group_send)(
         group_name,
         {
@@ -158,7 +166,7 @@ def send_system_message(
     Returns:
         ChatMessage: The created system message instance.
     Raises:
-        ValidationError: If input validation fails, with translated error messages.
+        ValidationError: If input validation fails.
     """
     logger.info(f"Attempting to send system message for service_id {service_id}")
 
@@ -186,7 +194,7 @@ def send_system_message(
     try:
         message = ChatMessage.objects.create(
             room_id=room.id,
-            user_id=None,  # No user for system messages
+            user_id=None,
             text=text,
             file_id=file_id,
             replied_from_id=replied_to.id if replied_to else None,
@@ -214,7 +222,7 @@ def send_system_message(
         logger.error("Channel layer is not configured")
         raise ValidationError(_("Channel layer is not configured"))
 
-    group_name = f"service_{service_id}"
+    group_name = f"room_{room.id}"
     async_to_sync(channel_layer.group_send)(
         group_name,
         {
@@ -248,10 +256,15 @@ def mark_message_delivered(message_id: str, receiver_id: str) -> None:
         logger.error(f"Room for message {message_id} not found")
         raise ValidationError(_("Room not found"))
 
-    # Validate user authorization
-    if room.type in [ChatRoom.Type.TECHNICIAN_DIRECT, ChatRoom.Type.ADMIN_DIRECT]:
-        if str(receiver_id) not in [str(member_id) for member_id in room.members_id]:
-            logger.error(f"User {receiver_id} not authorized to mark message {message_id} as delivered")
+    # Validate user authorization for SERVICE rooms
+    if room.type == ChatRoom.Type.SERVICE:
+        membership = ChatMembership.objects.filter(
+            room_id=room.id,
+            user_id=receiver_id,
+            left_at__isnull=True
+        ).first()
+        if not membership:
+            logger.error(f"User {receiver_id} not authorized to mark message {message_id} as delivered in SERVICE room")
             raise ValidationError(_("User not authorized to mark message as delivered"))
 
     if message.is_delivered:
@@ -309,10 +322,15 @@ def mark_message_read(message_id: str, user_id: str) -> None:
         logger.error(f"Room for message {message_id} not found")
         raise ValidationError(_("Room not found"))
 
-    # Validate user authorization
-    if room.type in [ChatRoom.Type.TECHNICIAN_DIRECT, ChatRoom.Type.ADMIN_DIRECT]:
-        if str(user_id) not in [str(member_id) for member_id in room.members_id]:
-            logger.error(f"User {user_id} not authorized to mark message {message_id} as read")
+    # Validate user authorization for SERVICE rooms
+    if room.type == ChatRoom.Type.SERVICE:
+        membership = ChatMembership.objects.filter(
+            room_id=room.id,
+            user_id=user_id,
+            left_at__isnull=True
+        ).first()
+        if not membership:
+            logger.error(f"User {user_id} not authorized to mark message {message_id} as read in SERVICE room")
             raise ValidationError(_("User not authorized to mark message as read"))
 
     if message.is_read:

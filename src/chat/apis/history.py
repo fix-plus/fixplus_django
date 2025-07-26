@@ -1,32 +1,36 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework.views import APIView
+from rest_framework.exceptions import NotFound
 
-from src.chat.selectors.api import get_messages_history
+from src.chat.selectors.message import get_messages_history_list
 from src.chat.serializers.message import OutputChatMessagesHistory
-from src.common.mixins import IsVerifiedMixin
+from src.common.mixins import IsVerifiedMobileMixin
 from src.common.pagination import LimitOffsetPagination, get_paginated_response_context
-from src.user.selectors.auth import get_user
+from src.chat.models import ChatRoom, ChatMembership
 
 
-class ChatMessageHistoryApi(IsVerifiedMixin, APIView):
+class ChatMessageHistoryApi(IsVerifiedMobileMixin, APIView):
     class Pagination(LimitOffsetPagination):
         default_limit = 100
 
     @extend_schema(
-        summary="Get Chat Message History",
+        summary="Get Chat Message History for a Room",
         responses=OutputChatMessagesHistory,
     )
-    def get(self, request, deal_offer_id):
-        # Initialize
-        user = request.user
+    def get(self, request, room_id):
+        # Verify user is a member of the room
+        membership = ChatMembership.objects.filter(
+            room_id=room_id,
+            user_id=request.user.id,
+            left_at__isnull=True
+        ).exists()
+        if not membership:
+            raise NotFound("Room not found or user is not a member")
 
-        # Queryset
-        queryset = get_messages_history(
-            user=user,
-            deal_offer_id=deal_offer_id,
-        )
+        # Get message history
+        queryset = get_messages_history_list(room_id=room_id)
 
-        # Response Pagination
+        # Return paginated response
         return get_paginated_response_context(
             pagination_class=self.Pagination,
             serializer_class=OutputChatMessagesHistory,

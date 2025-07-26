@@ -7,7 +7,7 @@ def get_messages_history_list(
         *,
         room_id: str,
 ):
-    room = ChatRoom.objects.filter(id=UUID(room_id))
+    room = ChatRoom.objects.filter(id=room_id)
 
     if not room.exists():
         return ChatMessage.objects.none()

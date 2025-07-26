@@ -20,7 +20,6 @@ class OutputChatMessagesHistory(serializers.ModelSerializer):
             return str(obj.user_id) == str(request.user.id)
         return False
 
-
 class OutputUnReadMessagesCountSerializers(serializers.Serializer):
     service_id = serializers.UUIDField()
     unread_messages_count = serializers.IntegerField()
