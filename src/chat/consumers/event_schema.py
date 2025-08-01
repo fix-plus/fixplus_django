@@ -28,7 +28,8 @@ class HeartbeatEvent(TypedDict):
 # Output event schemas
 class NewMessagePayload(TypedDict):
     type: Literal["new_message"]
-    service_id: str
+    room_id: str
+    service_id: Optional[str]
     message: dict
 
 

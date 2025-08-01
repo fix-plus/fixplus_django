@@ -86,6 +86,7 @@ async def format_message_payload(message_id: str, user_id: str) -> dict:
         message_data.update(sender_information)
 
     return {
+        "room_id": str(room.id),
         "service_id": str(room.service_id) if room.service_id else None,
         "message": message_data
     }

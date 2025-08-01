@@ -7,7 +7,6 @@ from src.chat.selectors.message import calculate_unread_messages
 from src.customer.models import CustomerContactNumber
 from src.service.models import Service
 
-
 def get_chat_room_list(
         *,
         user: User,
@@ -30,9 +29,11 @@ def get_chat_room_list(
         user_id=user.id,
         left_at__isnull=True
     ).values_list('room_id', flat=True)
+    print(f"Memberships: {list(memberships)}")
 
     # Base query for rooms where the user is an active member
     rooms_query = ChatRoom.objects.filter(id__in=memberships)
+    print(f"Initial rooms: {list(rooms_query.values('id', 'type', 'service_id'))}")
 
     # Filter by room type if provided
     if room_type:
@@ -42,6 +43,7 @@ def get_chat_room_list(
             ChatRoom.Type.ADMIN_DIRECT
         ]
         if room_type not in valid_types:
+            print(f"Invalid room_type: {room_type}")
             return []
         rooms_query = rooms_query.filter(type=room_type)
     else:
@@ -52,32 +54,43 @@ def get_chat_room_list(
                 ChatRoom.Type.ADMIN_DIRECT
             ]
         )
+    print(f"Rooms after type filter: {list(rooms_query.values('id', 'type', 'service_id'))}")
 
     # Apply search filter
     if search:
         search = search.strip()
+        print(f"Search term: {search}")
         if room_type == ChatRoom.Type.SERVICE:
             # Search by customer full_name for SERVICE rooms
             service_ids = Service.objects.filter(
                 customer__full_name__icontains=search
             ).exclude(customer__full_name__isnull=True).values_list('id', flat=True)
-            rooms_query = rooms_query.filter(service_id__in=list(service_ids))
+            service_ids = [str(service_id) for service_id in service_ids]
+            print(f"Service IDs: {list(service_ids)}")
+            rooms_query = rooms_query.filter(service_id__in=service_ids)
+            print(f"Rooms after search filter: {list(rooms_query.values('id', 'type', 'service_id'))}")
         elif room_type in [ChatRoom.Type.TECHNICIAN_DIRECT, ChatRoom.Type.ADMIN_DIRECT]:
             # Search by other member's full_name for DIRECT rooms
             matching_memberships = ChatMembership.objects.filter(
                 room_id__in=rooms_query.values_list('id', flat=True),
                 left_at__isnull=True
-            ).exclude(user_id=user.id).select_related('user__profile')
+            ).exclude(user_id=user.id)
             matching_room_ids = []
             for membership in matching_memberships:
-                full_name = (
-                    membership.user.profile.full_name
-                    if hasattr(membership.user, 'profile') and membership.user.profile.full_name
-                    else membership.user.get_full_name() or ''
-                )
-                if search.lower() in full_name.lower():
-                    matching_room_ids.append(membership.room_id)
+                try:
+                    member_user = User.objects.get(id=membership.user_id)
+                    full_name = member_user.get_full_name() or ''
+                    if hasattr(member_user, 'profile') and member_user.profile and member_user.profile.full_name:
+                        full_name = member_user.profile.full_name
+                    print(f"Checking member {membership.user_id}: full_name={full_name}")
+                    if search.lower() in full_name.lower():
+                        matching_room_ids.append(membership.room_id)
+                except User.DoesNotExist:
+                    print(f"User {membership.user_id} not found")
+                    continue
+            print(f"Matching room IDs for direct: {matching_room_ids}")
             rooms_query = rooms_query.filter(id__in=matching_room_ids)
+            print(f"Rooms after search filter: {list(rooms_query.values('id', 'type'))}")
 
     result = []
     for room in rooms_query:
@@ -91,22 +104,27 @@ def get_chat_room_list(
         sender_data = None
 
         if last_message:
-            last_message_date = last_message.timestamp.isoformat()
+            last_message_date = last_message.timestamp
             last_message_data = {
                 'message_id': str(last_message.id),
                 'text': last_message.text,
                 'timestamp': last_message_date,
                 'is_sent': str(last_message.user_id) == str(user.id) if last_message.user_id else False,
-                'is_system_message': last_message.is_system_message
+                'is_system_message': last_message.is_system_message,
+                'sender': None
             }
 
-            # Get sender's details
+            # Get sender's details for last message
             if last_message.user_id and not last_message.is_system_message:
                 try:
                     sender = User.objects.get(id=last_message.user_id)
+                    full_name = sender.get_full_name() or ''
+                    if hasattr(sender, 'profile') and sender.profile and sender.profile.full_name:
+                        full_name = sender.profile.full_name
+                    avatar = sender.profile.avatar if hasattr(sender, 'profile') and sender.profile and sender.profile.avatar else None
                     sender_data = {
-                        'full_name': sender.profile.full_name if hasattr(sender,
-                                                                         'profile') else sender.get_full_name() or '',
+                        'full_name': full_name,
+                        'avatar': avatar,
                         'role': (
                             'TECHNICIAN' if sender.groups.filter(name='TECHNICIAN').exists() else
                             'ADMIN' if sender.groups.filter(name='ADMIN').exists() else
@@ -114,19 +132,18 @@ def get_chat_room_list(
                             'UNKNOWN'
                         )
                     }
+                    last_message_data['sender'] = sender_data
                 except User.DoesNotExist:
-                    sender_data = {'full_name': '', 'role': 'UNKNOWN'}
+                    last_message_data['sender'] = {'full_name': '', 'role': 'UNKNOWN', 'avatar': None}
 
         # Prepare room details
         room_data = {
             'room_id': str(room.id),
             'type': room.type,
-            'service_id': str(room.service_id) if room.service_id else None,
             'unread_messages_count': unread_count,
-            'members': [],
             'last_message': last_message_data,
             'last_message_date': last_message_date,
-            'sender': sender_data,
+            'counterpart': None,
             'service': None,
             'customer': None
         }
@@ -137,7 +154,8 @@ def get_chat_room_list(
                 service = Service.objects.get(id=room.service_id)
                 # Service details
                 room_data['service'] = {
-                    'created_at': service.created_at.isoformat(),
+                    'id': str(room.service_id),
+                    'created_at': service.created_at,
                     'status': service.status
                 }
 
@@ -153,26 +171,38 @@ def get_chat_room_list(
                     'phone_number': primary_contact.number if primary_contact else None,
                     'address': str(service.address) if service.address else None
                 }
-
             except Service.DoesNotExist:
-                # Handle case where service is not found
+                print(f"Service {room.service_id} not found")
                 pass
 
-        # For direct rooms, include member details
+        # Add counterpart details for DIRECT rooms
         if room.type in [ChatRoom.Type.TECHNICIAN_DIRECT, ChatRoom.Type.ADMIN_DIRECT]:
             members = ChatMembership.objects.filter(
                 room_id=room.id,
                 left_at__isnull=True
-            ).select_related('user__profile')
-            room_data['members'] = [
-                {
-                    'user_id': str(membership.user_id),
-                    'full_name': membership.user.profile.full_name if hasattr(membership.user,
-                                                                              'profile') else membership.user.get_full_name() or '',
-                    'avatar': str(membership.user.profile.avatar.url) if hasattr(membership.user,
-                                                                                 'profile') and membership.user.profile.avatar else None
-                } for membership in members if str(membership.user_id) != str(user.id)
-            ]
+            ).exclude(user_id=user.id)
+            if members.exists():
+                membership = members.first()
+                try:
+                    counterpart_user = User.objects.get(id=membership.user_id)
+                    full_name = counterpart_user.get_full_name() or ''
+                    if hasattr(counterpart_user, 'profile') and counterpart_user.profile and counterpart_user.profile.full_name:
+                        full_name = counterpart_user.profile.full_name
+                    avatar = counterpart_user.profile.avatar if hasattr(counterpart_user, 'profile') and counterpart_user.profile and counterpart_user.profile.avatar else None
+                    room_data['counterpart'] = {
+                        'user_id': str(membership.user_id),
+                        'full_name': full_name,
+                        'avatar': avatar,
+                        'role': (
+                            'TECHNICIAN' if counterpart_user.groups.filter(name='TECHNICIAN').exists() else
+                            'ADMIN' if counterpart_user.groups.filter(name='ADMIN').exists() else
+                            'SUPER_ADMIN' if counterpart_user.groups.filter(name='SUPER_ADMIN').exists() else
+                            'UNKNOWN'
+                        )
+                    }
+                except User.DoesNotExist:
+                    print(f"User {membership.user_id} not found")
+                    room_data['counterpart'] = None
 
         result.append(room_data)
 
