@@ -2,8 +2,8 @@ from drf_spectacular.utils import extend_schema
 from rest_framework.views import APIView
 from rest_framework.exceptions import NotFound
 
-from src.chat.selectors.message import get_messages_history_list
-from src.chat.serializers.message import OutputChatMessagesHistory
+from src.chat.selectors.history import get_messages_history_list
+from src.chat.serializers.history import OutputChatMessagesHistory
 from src.common.mixins import IsVerifiedMobileMixin
 from src.common.pagination import LimitOffsetPagination, get_paginated_response_context
 from src.chat.models import ChatRoom, ChatMembership
