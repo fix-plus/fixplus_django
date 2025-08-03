@@ -4,6 +4,7 @@ from typing import TypedDict, Optional, Literal
 # Input event schemas
 class SendMessageEvent(TypedDict):
     action: Literal["send_message"]
+    room_id: Optional[str]
     service_id: Optional[str]
     receiver_id: Optional[str]
     text: Optional[str]

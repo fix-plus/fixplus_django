@@ -142,7 +142,8 @@ def get_or_create_room(
         *,
         type: str,
         service_id: Optional[str] = None,
-        members_id: Optional[List[str]] = None
+        members_id: Optional[List[str]] = None,
+        room_id: Optional[str] = None  # Added room_id as optional
 ) -> Tuple[ChatRoom, bool]:
     """
     Get or create a chat room based on the provided parameters.
@@ -150,13 +151,14 @@ def get_or_create_room(
         type: Type of the room ('SERVICE', 'TECHNICIAN_DIRECT', 'ADMIN_DIRECT').
         service_id: ID of the service for SERVICE rooms.
         members_id: Sorted list of user IDs for direct rooms.
+        room_id: Optional room ID provided by the client for new rooms, mandatory for new direct rooms.
     Returns:
         Tuple[ChatRoom, bool]: A tuple containing the existing or newly created chat room
                               and a boolean indicating if the room was created.
     Raises:
         ValidationError: If input validation fails.
     """
-    logger.info(f"Attempting to get or create room with type={type}, service_id={service_id}, members_id={members_id}")
+    logger.info(f"Attempting to get or create room with type={type}, service_id={service_id}, members_id={members_id}, room_id={room_id}")
 
     if type not in [ChatRoom.Type.SERVICE, ChatRoom.Type.TECHNICIAN_DIRECT, ChatRoom.Type.ADMIN_DIRECT]:
         logger.error(f"Invalid room type: {type}")
@@ -169,6 +171,9 @@ def get_or_create_room(
         if members_id:
             logger.error("members_id must be null for SERVICE rooms")
             raise ValidationError(_("members_id must be null for SERVICE rooms"))
+        if room_id:
+            logger.error("room_id must be null for SERVICE rooms")
+            raise ValidationError(_("room_id must be null for SERVICE rooms"))
 
         try:
             room, created = ChatRoom.objects.get_or_create(
@@ -200,6 +205,7 @@ def get_or_create_room(
             raise ValidationError(_("User with ID %(id)s not found") % {"id": member_id})
 
     try:
+        # Check if a room already exists for the given members
         first_member_memberships = ChatMembership.objects.filter(
             user_id=members_id[0],
             left_at__isnull=True
@@ -207,23 +213,40 @@ def get_or_create_room(
 
         logger.debug(f"Found {len(first_member_memberships)} rooms for user {members_id[0]}: {list(first_member_memberships)}")
 
-        for room_id in first_member_memberships:
+        for existing_room_id in first_member_memberships:
             try:
-                room = ChatRoom.objects.get(id=room_id, type=type)
+                room = ChatRoom.objects.get(id=existing_room_id, type=type)
                 room_members = ChatMembership.objects.filter(
-                    room_id=room_id,
+                    room_id=existing_room_id,
                     left_at__isnull=True
                 ).values_list('user_id', flat=True)
                 room_members = [str(member_id) for member_id in room_members]
-                logger.debug(f"Checking room {room_id} with members {room_members}")
+                logger.debug(f"Checking room {existing_room_id} with members {room_members}")
                 if sorted(room_members) == sorted(members_id):
                     logger.info(f"Found existing direct room {room.id} for members {members_id}")
                     return room, False
             except ChatRoom.DoesNotExist:
-                logger.warning(f"Room {room_id} not found in ChatRoom, skipping")
+                logger.warning(f"Room {existing_room_id} not found in ChatRoom, skipping")
                 continue
 
+        # For new direct rooms, room_id is mandatory
+        if not room_id:
+            logger.error("room_id is required for creating new direct rooms")
+            raise ValidationError(_("room_id is required for creating new direct rooms"))
+
+        # Validate provided room_id
+        try:
+            uuid.UUID(room_id)  # Validate that room_id is a valid UUID
+            if ChatRoom.objects.filter(id=room_id).exists():
+                logger.error(f"Room with ID {room_id} already exists")
+                raise ValidationError(_("Room with provided ID already exists"))
+        except ValueError:
+            logger.error(f"Invalid room_id format: {room_id}")
+            raise ValidationError(_("Invalid room_id format"))
+
+        # Create new room with provided room_id
         room = ChatRoom.objects.create(
+            id=room_id,  # Use provided room_id
             type=type,
             service_id=None
         )

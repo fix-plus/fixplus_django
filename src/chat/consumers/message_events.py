@@ -15,6 +15,7 @@ async def handle_send_message(consumer: Any, data: SendMessageEvent) -> None:
     """
     try:
         await database_sync_to_async(send_message)(
+            room_id=data.get("room_id"),
             sender_id=str(consumer.user.id),
             service_id=data.get("service_id"),
             receiver_id=data.get("receiver_id"),

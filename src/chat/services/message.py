@@ -21,7 +21,8 @@ def send_message(
         receiver_id: Optional[str] = None,
         text: Optional[str] = None,
         file_id: Optional[str] = None,
-        replied_to_id: Optional[str] = None
+        replied_to_id: Optional[str] = None,
+        room_id: Optional[str] = None  # Added room_id as optional
 ) -> ChatMessage:
     """
     Send a new user message to a chat room and ensure online members are added to the WebSocket group.
@@ -32,12 +33,13 @@ def send_message(
         text: Message text content.
         file_id: ID of the attached file, if any.
         replied_to_id: ID of the message being replied to, if any.
+        room_id: Optional room ID provided by the client for new direct rooms.
     Returns:
         ChatMessage: The created message instance.
     Raises:
         ValidationError: If input validation fails.
     """
-    logger.info(f"Attempting to send message from {sender_id} to receiver {receiver_id} with service_id {service_id}")
+    logger.info(f"Attempting to send message from {sender_id} to receiver {receiver_id} with service_id {service_id}, room_id={room_id}")
 
     # Validate inputs
     if service_id and receiver_id:
@@ -53,6 +55,9 @@ def send_message(
     if service_id:
         room_type = ChatRoom.Type.SERVICE
         members_id = None
+        if room_id:
+            logger.error("room_id must be null for SERVICE rooms")
+            raise ValidationError(_("room_id must be null for SERVICE rooms"))
         try:
             sender = User.objects.get(id=sender_id)
         except User.DoesNotExist:
@@ -80,7 +85,7 @@ def send_message(
 
     # Get or create the room
     try:
-        room, is_created = get_or_create_room(type=room_type, service_id=service_id, members_id=members_id)
+        room, is_created = get_or_create_room(type=room_type, service_id=service_id, members_id=members_id, room_id=room_id)
         logger.info(f"Room {'created' if is_created else 'retrieved'}: {room.id}")
     except ValidationError as e:
         logger.error(f"Failed to get or create room: {str(e)}")
