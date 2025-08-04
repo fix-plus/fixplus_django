@@ -135,3 +135,23 @@ class ChatWebSocketConsumer(AsyncWebsocketConsumer):
                 "type": "error",
                 "error": str(_("Failed to process status: %(error)s") % {"error": str(e)})
             }, ensure_ascii=False))
+
+    async def unread_message_count(self, event: dict):
+        """
+        Handle unread_message_count event.
+        Send unread message count for a specific room to the client.
+        Args:
+            event: Event data containing room_id and unread_count.
+        """
+        from .utils import format_unread_count_payload
+        try:
+            payload = await format_unread_count_payload(event["room_id"], self.user.id)
+            await self.send(text_data=json.dumps({
+                "type": "unread_message_count",
+                **payload
+            }, ensure_ascii=False))
+        except Exception as e:
+            await self.send(text_data=json.dumps({
+                "type": "error",
+                "error": str(_("Failed to process unread count: %(error)s") % {"error": str(e)})
+            }, ensure_ascii=False))

@@ -22,7 +22,7 @@ def send_message(
         text: Optional[str] = None,
         file_id: Optional[str] = None,
         replied_to_id: Optional[str] = None,
-        room_id: Optional[str] = None  # Added room_id as optional
+        room_id: Optional[str] = None
 ) -> ChatMessage:
     """
     Send a new user message to a chat room and ensure online members are added to the WebSocket group.
@@ -141,7 +141,7 @@ def send_message(
         logger.error(f"Failed to save message to cache: {str(e)}")
         raise ValidationError(_("Failed to save message to cache: %(error)s") % {"error": str(e)})
 
-    # Notify via WebSocket
+    # Notify via WebSocket for new message
     group_name = f"room_{room.id}"
     async_to_sync(channel_layer.group_send)(
         group_name,
@@ -151,6 +151,24 @@ def send_message(
         }
     )
     logger.info(f"Message {message.id} sent to group {group_name}")
+
+    # Notify receivers about unread message count (exclude sender)
+    try:
+        memberships = ChatMembership.objects.filter(
+            room_id=room.id,
+            left_at__isnull=True
+        ).exclude(user_id=sender_id)
+        for membership in memberships:
+            async_to_sync(channel_layer.group_send)(
+                f"user_{membership.user_id}",
+                {
+                    "type": "unread_message_count",
+                    "room_id": str(room.id)
+                }
+            )
+            logger.info(f"Unread count update sent to user {membership.user_id} for room {room.id}")
+    except Exception as e:
+        logger.warning(f"Failed to send unread count update for room {room.id}: {str(e)}")
 
     return message
 
@@ -236,6 +254,24 @@ def send_system_message(
         }
     )
     logger.info(f"System message {message.id} sent to group {group_name}")
+
+    # Notify all room members about unread message count
+    try:
+        memberships = ChatMembership.objects.filter(
+            room_id=room.id,
+            left_at__isnull=True
+        )
+        for membership in memberships:
+            async_to_sync(channel_layer.group_send)(
+                f"user_{membership.user_id}",
+                {
+                    "type": "unread_message_count",
+                    "room_id": str(room.id)
+                }
+            )
+            logger.info(f"Unread count update sent to user {membership.user_id} for room {room.id}")
+    except Exception as e:
+        logger.warning(f"Failed to send unread count update for room {room.id}: {str(e)}")
 
     return message
 
@@ -355,7 +391,7 @@ def mark_message_read(message_id: str, user_id: str) -> None:
         logger.error(f"Failed to update message {message_id} in cache: {str(e)}")
         raise ValidationError(_("Failed to update message in cache: %(error)s") % {"error": str(e)})
 
-    # Notify via WebSocket
+    # Notify via WebSocket for message status
     channel_layer = get_channel_layer()
     if channel_layer is None:
         logger.error("Channel layer is not configured")
@@ -371,3 +407,16 @@ def mark_message_read(message_id: str, user_id: str) -> None:
         }
     )
     logger.info(f"Message status 'read' sent to group {group_name}")
+
+    # Notify the user about updated unread message count
+    try:
+        async_to_sync(channel_layer.group_send)(
+            f"user_{user_id}",
+            {
+                "type": "unread_message_count",
+                "room_id": str(room.id)
+            }
+        )
+        logger.info(f"Unread count update sent to user {user_id} for room {room.id}")
+    except Exception as e:
+        logger.warning(f"Failed to send unread count update for user {user_id} in room {room.id}: {str(e)}")

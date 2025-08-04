@@ -3,7 +3,7 @@ from channels.db import database_sync_to_async
 from django.db.models import Q
 from src.authentication.models import User
 from src.chat.models import ChatRoom
-from src.chat.selectors.message import get_message_by_id
+from src.chat.selectors.message import get_message_by_id, calculate_unread_messages
 from src.service.models import Service
 from src.authentication.selectors.auth import get_user
 from typing import List, Tuple, Optional
@@ -108,4 +108,35 @@ async def format_status_payload(message_id: str, status: str) -> dict:
         "service_id": str(room.service_id) if room.service_id else None,
         "message_id": str(message_id),
         "status": status
+    }
+
+@database_sync_to_async
+def _calculate_unread_messages(room_id: str, user_id: str) -> int:
+    """
+    Calculate the number of unread messages for a user in a room.
+    Args:
+        room_id: ID of the room.
+        user_id: ID of the user.
+    Returns:
+        Number of unread messages.
+    """
+    try:
+        return calculate_unread_messages(room_id=room_id, user_id=user_id)
+    except Exception as e:
+        print(f"Error calculating unread messages for room {room_id} and user {user_id}: {e}")
+        return 0
+
+async def format_unread_count_payload(room_id: str, user_id: str) -> dict:
+    """
+    Format the payload for an unread message count event.
+    Args:
+        room_id: ID of the room.
+        user_id: ID of the user receiving the payload.
+    Returns:
+        Formatted payload dictionary.
+    """
+    unread_count = await _calculate_unread_messages(room_id, user_id)
+    return {
+        "room_id": room_id,
+        "unread_count": unread_count
     }
