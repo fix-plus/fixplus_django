@@ -21,7 +21,40 @@ class MarkReadEvent(TypedDict):
 class HeartbeatEvent(TypedDict):
     action: Literal["heartbeat"]
 
+class NewRoomEvent(TypedDict):
+    action: Literal["new_room"]
+    room_id: str
+
 # Output event schemas
+class SenderPayload(TypedDict):
+    full_name: str
+    avatar: Optional[str]
+    role: str
+
+class LastMessagePayload(TypedDict):
+    message_id: str
+    text: Optional[str]
+    timestamp: str
+    is_sent: bool
+    is_system_message: bool
+    sender: Optional[SenderPayload]
+
+class CounterpartPayload(TypedDict):
+    user_id: str
+    full_name: str
+    avatar: Optional[str]
+    role: str
+
+class NewRoomPayload(TypedDict):
+    type: Literal["new_room"]
+    room_id: str
+    type: str
+    unread_messages_count: int
+    last_message: Optional[LastMessagePayload]
+    counterpart: Optional[CounterpartPayload]
+    service: Optional[dict]
+    customer: Optional[dict]
+
 class NewMessagePayload(TypedDict):
     type: Literal["new_message"]
     room_id: str
@@ -48,7 +81,7 @@ class UpdateUnreadMessageCountPayload(TypedDict):
     unread_count: int
 
 # All possible input events
-InputEvent = SendMessageEvent | MarkDeliveredEvent | MarkReadEvent | HeartbeatEvent
+InputEvent = SendMessageEvent | MarkDeliveredEvent | MarkReadEvent | HeartbeatEvent | NewRoomEvent
 
 # All possible output events
-OutputEvent = NewMessagePayload | MessageStatusPayload | ErrorPayload | HeartbeatResponsePayload | UpdateUnreadMessageCountPayload
+OutputEvent = NewRoomPayload | NewMessagePayload | MessageStatusPayload | ErrorPayload | HeartbeatResponsePayload | UpdateUnreadMessageCountPayload

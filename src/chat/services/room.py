@@ -7,6 +7,7 @@ from src.authentication.models import User
 from src.chat.models import ChatRoom, ChatMembership
 from src.chat.consumers.group_manager import add_room_members_to_group, remove_member_from_group
 from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 import logging
 
 logger = logging.getLogger(__name__)
@@ -143,26 +144,33 @@ def get_or_create_room(
         type: str,
         service_id: Optional[str] = None,
         members_id: Optional[List[str]] = None,
-        room_id: Optional[str] = None  # Added room_id as optional
+        room_id: Optional[str] = None,
+        send_event: bool = True
 ) -> Tuple[ChatRoom, bool]:
     """
-    Get or create a chat room based on the provided parameters.
+    Get or create a chat room based on the provided parameters and notify members.
     Args:
         type: Type of the room ('SERVICE', 'TECHNICIAN_DIRECT', 'ADMIN_DIRECT').
         service_id: ID of the service for SERVICE rooms.
         members_id: Sorted list of user IDs for direct rooms.
         room_id: Optional room ID provided by the client for new rooms, mandatory for new direct rooms.
+        send_event: Whether to send the new_room event to members (default: True).
     Returns:
         Tuple[ChatRoom, bool]: A tuple containing the existing or newly created chat room
                               and a boolean indicating if the room was created.
     Raises:
         ValidationError: If input validation fails.
     """
-    logger.info(f"Attempting to get or create room with type={type}, service_id={service_id}, members_id={members_id}, room_id={room_id}")
+    logger.info(f"Attempting to get or create room with type={type}, service_id={service_id}, members_id={members_id}, room_id={room_id}, send_event={send_event}")
 
     if type not in [ChatRoom.Type.SERVICE, ChatRoom.Type.TECHNICIAN_DIRECT, ChatRoom.Type.ADMIN_DIRECT]:
         logger.error(f"Invalid room type: {type}")
         raise ValidationError(_("Invalid room type: %(type)s") % {"type": type})
+
+    channel_layer = get_channel_layer()
+    if channel_layer is None:
+        logger.error("Channel layer is not configured")
+        raise ValidationError(_("Channel layer is not configured"))
 
     if type == ChatRoom.Type.SERVICE:
         if not service_id:
@@ -269,6 +277,21 @@ def get_or_create_room(
             logger.info(f"Updated WebSocket group for new room {room.id}")
         except Exception as e:
             logger.warning(f"Failed to update WebSocket group for room {room.id}: {str(e)}. Memberships created successfully.")
+
+        # Notify members about new room if send_event is True
+        if send_event:
+            try:
+                group_name = f"room_{room.id}"
+                async_to_sync(channel_layer.group_send)(
+                    group_name,
+                    {
+                        "type": "new_room",
+                        "room_id": str(room.id)
+                    }
+                )
+                logger.info(f"Sent new_room event to group {group_name}")
+            except Exception as e:
+                logger.warning(f"Failed to send new_room event for room {room.id}: {str(e)}")
 
         return room, True
 

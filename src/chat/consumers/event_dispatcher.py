@@ -1,5 +1,6 @@
 from .message_events import handle_send_message
 from .status_events import handle_mark_delivered, handle_mark_read
+from .room_events import handle_new_room
 from .event_schema import InputEvent
 from typing import Any
 import json
@@ -11,9 +12,9 @@ ACTION_HANDLERS = {
     "heartbeat": lambda consumer, _: consumer.send(text_data=json.dumps({
         "type": "heartbeat_response",
         "status": "ok"
-    }, ensure_ascii=False))
+    }, ensure_ascii=False)),
+    "new_room": handle_new_room
 }
-
 
 async def dispatch_event(consumer: Any, data: InputEvent) -> None:
     """

@@ -9,6 +9,7 @@ from src.chat.services.room import get_or_create_room, add_members_to_room
 from src.chat.services.cache import save_message_to_cache, update_message_in_cache
 from src.chat.consumers.group_manager import add_room_members_to_group
 from src.authentication.models import User
+from django.db import transaction
 from typing import Optional
 import logging
 
@@ -115,20 +116,21 @@ def send_message(
             logger.error(f"Replied-to message {replied_to_id} not found")
             raise ValidationError(_("Replied-to message not found"))
 
-    # Create the message
+    # Create the message within a transaction
     try:
-        message = ChatMessage.objects.create(
-            room_id=room.id,
-            user_id=sender_id,
-            text=text,
-            file_id=file_id,
-            replied_from_id=replied_to.id if replied_to else None,
-            is_delivered=False,
-            is_read=False,
-            is_deleted=False,
-            is_system_message=False
-        )
-        logger.info(f"Message created: {message.id}")
+        with transaction.atomic():
+            message = ChatMessage.objects.create(
+                room_id=room.id,
+                user_id=sender_id,
+                text=text,
+                file_id=file_id,
+                replied_from_id=replied_to.id if replied_to else None,
+                is_delivered=False,
+                is_read=False,
+                is_deleted=False,
+                is_system_message=False
+            )
+            logger.info(f"Message created: {message.id}")
     except Exception as e:
         logger.error(f"Failed to create message: {str(e)}")
         raise ValidationError(_("Failed to create message: %(error)s") % {"error": str(e)})
@@ -215,18 +217,19 @@ def send_system_message(
 
     # Create the system message
     try:
-        message = ChatMessage.objects.create(
-            room_id=room.id,
-            user_id=None,
-            text=text,
-            file_id=file_id,
-            replied_from_id=replied_to.id if replied_to else None,
-            is_delivered=False,
-            is_read=False,
-            is_deleted=False,
-            is_system_message=True
-        )
-        logger.info(f"System message created: {message.id}")
+        with transaction.atomic():
+            message = ChatMessage.objects.create(
+                room_id=room.id,
+                user_id=None,
+                text=text,
+                file_id=file_id,
+                replied_from_id=replied_to.id if replied_to else None,
+                is_delivered=False,
+                is_read=False,
+                is_deleted=False,
+                is_system_message=True
+            )
+            logger.info(f"System message created: {message.id}")
     except Exception as e:
         logger.error(f"Failed to create system message: {str(e)}")
         raise ValidationError(_("Failed to create system message: %(error)s") % {"error": str(e)})

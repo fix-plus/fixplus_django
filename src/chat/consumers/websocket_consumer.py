@@ -7,7 +7,6 @@ from .event_dispatcher import dispatch_event
 from .event_schema import InputEvent, OutputEvent
 from ..services.channel_storage import channel_storage
 
-
 class ChatWebSocketConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         """
@@ -15,6 +14,16 @@ class ChatWebSocketConsumer(AsyncWebsocketConsumer):
         Authenticate user and join relevant groups.
         """
         self.user = self.scope["user"]
+
+        # Extract base_url from scope headers
+        base_url = None
+        for header_name, header_value in self.scope['headers']:
+            if header_name.decode('utf-8').lower() == 'host':
+                # Assume HTTPS for production, fallback to HTTP if explicitly set
+                protocol = 'https' if self.scope.get('scheme', 'http') == 'https' else 'http'
+                base_url = f"{protocol}://{header_value.decode('utf-8')}"
+                break
+        self.scope['base_url'] = base_url or 'http://localhost:8000'  # Fallback for local development
 
         # Accept the connection first
         await self.accept()
@@ -105,7 +114,11 @@ class ChatWebSocketConsumer(AsyncWebsocketConsumer):
         """
         from .utils import format_message_payload
         try:
-            payload = await format_message_payload(event["message_id"], self.user.id)
+            payload = await format_message_payload(
+                event["message_id"],
+                self.user.id,
+                base_url=self.scope.get('base_url')
+            )
             await self.send(text_data=json.dumps({
                 "type": "new_message",
                 **payload
@@ -154,4 +167,29 @@ class ChatWebSocketConsumer(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps({
                 "type": "error",
                 "error": str(_("Failed to process unread count: %(error)s") % {"error": str(e)})
+            }, ensure_ascii=False))
+
+    async def new_room(self, event: dict):
+        """
+        Handle new_room event.
+        Send new room payload to the client.
+        Args:
+            event: Event data containing room_id and optional message_id.
+        """
+        from .utils import format_new_room_payload
+        try:
+            payload = await format_new_room_payload(
+                event["room_id"],
+                str(self.user.id),
+                message_id=event.get("message_id"),
+                base_url=self.scope.get('base_url')
+            )
+            await self.send(text_data=json.dumps({
+                "type": "new_room",
+                "data": payload
+            }, ensure_ascii=False))
+        except Exception as e:
+            await self.send(text_data=json.dumps({
+                "type": "error",
+                "error": str(_("Failed to process new room: %(error)s") % {"error": str(e)})
             }, ensure_ascii=False))
