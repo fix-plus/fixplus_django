@@ -55,7 +55,6 @@ class OutputChatRoomSerializer(serializers.Serializer):
     type = serializers.CharField()
     unread_messages_count = serializers.IntegerField()
     last_message = LastMessageSerializer(allow_null=True)
-    last_message_date = serializers.DateTimeField(allow_null=True)
     counterpart = CounterpartSerializer(allow_null=True)
     service = ServiceSerializer(allow_null=True)
     customer = CustomerSerializer(allow_null=True)

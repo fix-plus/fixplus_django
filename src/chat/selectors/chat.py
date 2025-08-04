@@ -142,7 +142,6 @@ def get_chat_room_list(
             'type': room.type,
             'unread_messages_count': unread_count,
             'last_message': last_message_data,
-            'last_message_date': last_message_date,
             'counterpart': None,
             'service': None,
             'customer': None
