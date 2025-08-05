@@ -2,7 +2,6 @@ from typing import Any
 
 from channels.db import database_sync_to_async
 from django.utils.translation import gettext_lazy as _
-from src.chat.services.message import send_message
 from src.chat.consumers.event_schema import SendMessageEvent
 from src.chat.models import ChatRoom
 from channels.layers import get_channel_layer
@@ -13,6 +12,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 async def handle_send_message(consumer: Any, data: SendMessageEvent) -> None:
+    from src.chat.services.message import send_message
     """
     Handle the send_message event.
     Args:
