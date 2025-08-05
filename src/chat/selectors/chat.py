@@ -24,18 +24,15 @@ def get_chat_room_list(
         List of dictionaries containing room details, unread message counts, last message,
         sender information, and service/customer details.
     """
-    # Get active memberships for the user
     memberships = ChatMembership.objects.filter(
         user_id=user.id,
         left_at__isnull=True
     ).values_list('room_id', flat=True)
     print(f"Memberships: {list(memberships)}")
 
-    # Base query for rooms where the user is an active member
     rooms_query = ChatRoom.objects.filter(id__in=memberships)
     print(f"Initial rooms: {list(rooms_query.values('id', 'type', 'service_id'))}")
 
-    # Filter by room type if provided
     if room_type:
         valid_types = [
             ChatRoom.Type.SERVICE,
@@ -56,12 +53,10 @@ def get_chat_room_list(
         )
     print(f"Rooms after type filter: {list(rooms_query.values('id', 'type', 'service_id'))}")
 
-    # Apply search filter
     if search:
         search = search.strip()
         print(f"Search term: {search}")
         if room_type == ChatRoom.Type.SERVICE:
-            # Search by customer full_name for SERVICE rooms
             service_ids = Service.objects.filter(
                 customer__full_name__icontains=search
             ).exclude(customer__full_name__isnull=True).values_list('id', flat=True)
@@ -70,7 +65,6 @@ def get_chat_room_list(
             rooms_query = rooms_query.filter(service_id__in=service_ids)
             print(f"Rooms after search filter: {list(rooms_query.values('id', 'type', 'service_id'))}")
         elif room_type in [ChatRoom.Type.TECHNICIAN_DIRECT, ChatRoom.Type.ADMIN_DIRECT]:
-            # Search by other member's full_name for DIRECT rooms
             matching_memberships = ChatMembership.objects.filter(
                 room_id__in=rooms_query.values_list('id', flat=True),
                 left_at__isnull=True
@@ -94,27 +88,12 @@ def get_chat_room_list(
 
     result = []
     for room in rooms_query:
-        # Calculate unread messages for the room
         unread_count = calculate_unread_messages(room_id=str(room.id), user_id=str(user.id))
-
-        # Get the last message for the room
         last_message = ChatMessage.objects.filter(room_id=room.id).order_by('-timestamp').first()
         last_message_data = None
-        last_message_date = None
-        sender_data = None
 
         if last_message:
-            last_message_date = last_message.timestamp
-            last_message_data = {
-                'message_id': str(last_message.id),
-                'text': last_message.text,
-                'timestamp': last_message_date,
-                'is_sent': str(last_message.user_id) == str(user.id) if last_message.user_id else False,
-                'is_system_message': last_message.is_system_message,
-                'sender': None
-            }
-
-            # Get sender's details for last message
+            sender_data = None
             if last_message.user_id and not last_message.is_system_message:
                 try:
                     sender = User.objects.get(id=last_message.user_id)
@@ -123,6 +102,7 @@ def get_chat_room_list(
                         full_name = sender.profile.full_name
                     avatar = sender.profile.avatar if hasattr(sender, 'profile') and sender.profile and sender.profile.avatar else None
                     sender_data = {
+                        'id': str(last_message.user_id),
                         'full_name': full_name,
                         'avatar': avatar,
                         'role': (
@@ -132,11 +112,20 @@ def get_chat_room_list(
                             'UNKNOWN'
                         )
                     }
-                    last_message_data['sender'] = sender_data
                 except User.DoesNotExist:
-                    last_message_data['sender'] = {'full_name': '', 'role': 'UNKNOWN', 'avatar': None}
+                    sender_data = {'id': None, 'full_name': '', 'role': 'UNKNOWN', 'avatar': None}
 
-        # Prepare room details
+            last_message_data = {
+                'message_id': str(last_message.id),
+                'text': last_message.text,
+                'timestamp': last_message.timestamp,
+                'is_sent': str(last_message.user_id) == str(user.id) if last_message.user_id else False,
+                'is_system_message': last_message.is_system_message,
+                'file_id': str(last_message.file_id) if last_message.file_id else None,
+                'replied_from_id': str(last_message.replied_from_id) if last_message.replied_from_id else None,
+                'sender': sender_data
+            }
+
         room_data = {
             'room_id': str(room.id),
             'type': room.type,
@@ -147,26 +136,20 @@ def get_chat_room_list(
             'customer': None
         }
 
-        # Add service-specific details for SERVICE rooms
         if room.type == ChatRoom.Type.SERVICE and room.service_id:
             try:
                 service = Service.objects.get(id=room.service_id)
-                # Service details
+                primary_contact = CustomerContactNumber.objects.filter(
+                    customer=service.customer,
+                    is_primary=True
+                ).first()
                 room_data['service'] = {
                     'id': str(room.service_id),
                     'created_at': service.created_at,
                     'status': service.status
                 }
-
-                # Customer details
-                customer = service.customer
-                primary_contact = CustomerContactNumber.objects.filter(
-                    customer=customer,
-                    is_primary=True
-                ).first()
-
                 room_data['customer'] = {
-                    'full_name': customer.full_name or '',
+                    'full_name': service.customer.full_name or '',
                     'phone_number': primary_contact.number if primary_contact else None,
                     'address': str(service.address) if service.address else None
                 }
@@ -174,7 +157,6 @@ def get_chat_room_list(
                 print(f"Service {room.service_id} not found")
                 pass
 
-        # Add counterpart details for DIRECT rooms
         if room.type in [ChatRoom.Type.TECHNICIAN_DIRECT, ChatRoom.Type.ADMIN_DIRECT]:
             members = ChatMembership.objects.filter(
                 room_id=room.id,

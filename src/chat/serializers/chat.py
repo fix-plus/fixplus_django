@@ -10,6 +10,7 @@ class InputParamsChatRoomSerializer(serializers.Serializer):
     search = serializers.CharField(max_length=200, required=False, allow_blank=True)
 
 class SenderSerializer(serializers.Serializer):
+    id = serializers.UUIDField(allow_null=True)
     full_name = serializers.CharField(allow_null=True)
     avatar = serializers.SerializerMethodField()
     role = serializers.CharField(allow_null=True)
@@ -26,6 +27,8 @@ class LastMessageSerializer(serializers.Serializer):
     timestamp = serializers.DateTimeField()
     is_sent = serializers.BooleanField()
     is_system_message = serializers.BooleanField()
+    file_id = serializers.UUIDField(allow_null=True)
+    replied_from_id = serializers.UUIDField(allow_null=True)
     sender = SenderSerializer(allow_null=True)
 
 class CounterpartSerializer(serializers.Serializer):

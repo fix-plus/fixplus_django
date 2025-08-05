@@ -12,6 +12,8 @@ from django.db import transaction
 from typing import Optional
 import logging
 
+from src.chat.services.channel_storage import channel_storage
+
 logger = logging.getLogger(__name__)
 
 def send_message(
@@ -280,14 +282,6 @@ def send_system_message(
     return message
 
 def mark_message_delivered(message_id: str, receiver_id: str) -> None:
-    """
-    Mark a message as delivered and notify room participants.
-    Args:
-        message_id: ID of the message to mark as delivered.
-        receiver_id: ID of the user marking the message as delivered.
-    Raises:
-        ValidationError: If the message or room is invalid or user is unauthorized.
-    """
     logger.info(f"Marking message {message_id} as delivered for receiver {receiver_id}")
 
     message = get_message_by_id(message_id=message_id)
@@ -301,7 +295,6 @@ def mark_message_delivered(message_id: str, receiver_id: str) -> None:
         logger.error(f"Room for message {message_id} not found")
         raise ValidationError(_("Room not found"))
 
-    # Validate user authorization for SERVICE rooms
     if room.type == ChatRoom.Type.SERVICE:
         membership = ChatMembership.objects.filter(
             room_id=room.id,
@@ -320,7 +313,6 @@ def mark_message_delivered(message_id: str, receiver_id: str) -> None:
     message.save()
     logger.info(f"Message {message_id} marked as delivered")
 
-    # Update cache
     try:
         update_message_in_cache(message)
         logger.info(f"Message {message_id} updated in cache")
@@ -328,7 +320,6 @@ def mark_message_delivered(message_id: str, receiver_id: str) -> None:
         logger.error(f"Failed to update message {message_id} in cache: {str(e)}")
         raise ValidationError(_("Failed to update message in cache: %(error)s") % {"error": str(e)})
 
-    # Notify via WebSocket
     channel_layer = get_channel_layer()
     if channel_layer is None:
         logger.error("Channel layer is not configured")
@@ -345,15 +336,21 @@ def mark_message_delivered(message_id: str, receiver_id: str) -> None:
     )
     logger.info(f"Message status 'delivered' sent to group {group_name}")
 
+    # Send unread count update only to the receiver
+    channel_name = channel_storage.get_channel_name(receiver_id)
+    if channel_name:
+        async_to_sync(channel_layer.group_send)(
+            f"user_{receiver_id}",
+            {
+                "type": "unread_message_count",
+                "room_id": str(room.id)
+            }
+        )
+        logger.info(f"Unread count update sent to user {receiver_id} for room {room.id}")
+    else:
+        logger.warning(f"User {receiver_id} is offline, skipping unread count update for room {room.id}")
+
 def mark_message_read(message_id: str, user_id: str) -> None:
-    """
-    Mark a message as read and notify room participants.
-    Args:
-        message_id: ID of the message to mark as read.
-        user_id: ID of the user marking the message as read.
-    Raises:
-        ValidationError: If the message or room is invalid or user is unauthorized.
-    """
     logger.info(f"Marking message {message_id} as read for user {user_id}")
 
     message = get_message_by_id(message_id=message_id)
@@ -367,7 +364,6 @@ def mark_message_read(message_id: str, user_id: str) -> None:
         logger.error(f"Room for message {message_id} not found")
         raise ValidationError(_("Room not found"))
 
-    # Validate user authorization for SERVICE rooms
     if room.type == ChatRoom.Type.SERVICE:
         membership = ChatMembership.objects.filter(
             room_id=room.id,
@@ -387,7 +383,6 @@ def mark_message_read(message_id: str, user_id: str) -> None:
     message.save()
     logger.info(f"Message {message_id} marked as read")
 
-    # Update cache
     try:
         update_message_in_cache(message)
         logger.info(f"Message {message_id} updated in cache")
@@ -395,7 +390,6 @@ def mark_message_read(message_id: str, user_id: str) -> None:
         logger.error(f"Failed to update message {message_id} in cache: {str(e)}")
         raise ValidationError(_("Failed to update message in cache: %(error)s") % {"error": str(e)})
 
-    # Notify via WebSocket for message status
     channel_layer = get_channel_layer()
     if channel_layer is None:
         logger.error("Channel layer is not configured")
@@ -412,8 +406,9 @@ def mark_message_read(message_id: str, user_id: str) -> None:
     )
     logger.info(f"Message status 'read' sent to group {group_name}")
 
-    # Notify the user about updated unread message count
-    try:
+    # Send unread count update only to the user who marked the message as read
+    channel_name = channel_storage.get_channel_name(user_id)
+    if channel_name:
         async_to_sync(channel_layer.group_send)(
             f"user_{user_id}",
             {
@@ -422,5 +417,5 @@ def mark_message_read(message_id: str, user_id: str) -> None:
             }
         )
         logger.info(f"Unread count update sent to user {user_id} for room {room.id}")
-    except Exception as e:
-        logger.warning(f"Failed to send unread count update for user {user_id} in room {room.id}: {str(e)}")
+    else:
+        logger.warning(f"User {user_id} is offline, skipping unread count update for room {room.id}")

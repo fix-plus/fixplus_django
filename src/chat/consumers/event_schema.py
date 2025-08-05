@@ -25,11 +25,12 @@ class NewRoomEvent(TypedDict):
     action: Literal["new_room"]
     room_id: str
 
-# Output event schemas
+# Common payload schemas
 class SenderPayload(TypedDict):
-    full_name: str
+    id: Optional[str]
+    full_name: Optional[str]
     avatar: Optional[str]
-    role: str
+    role: Optional[str]
 
 class LastMessagePayload(TypedDict):
     message_id: str
@@ -38,47 +39,49 @@ class LastMessagePayload(TypedDict):
     is_sent: bool
     is_system_message: bool
     sender: Optional[SenderPayload]
+    file_id: Optional[str]
+    replied_from_id: Optional[str]
 
 class CounterpartPayload(TypedDict):
     user_id: str
-    full_name: str
+    full_name: Optional[str]
     avatar: Optional[str]
     role: str
 
+class ServicePayload(TypedDict):
+    id: str
+    created_at: str
+    status: str
+
+class CustomerPayload(TypedDict):
+    full_name: Optional[str]
+    phone_number: Optional[str]
+    address: Optional[str]
+
+# Output event schemas
 class NewRoomPayload(TypedDict):
     type: Literal["new_room"]
-    room_id: str
-    type: str
-    unread_messages_count: int
-    last_message: Optional[LastMessagePayload]
-    counterpart: Optional[CounterpartPayload]
-    service: Optional[dict]
-    customer: Optional[dict]
+    data: dict  # Will contain room_id, type, unread_messages_count, last_message, counterpart, service, customer
 
 class NewMessagePayload(TypedDict):
     type: Literal["new_message"]
-    room_id: str
-    service_id: Optional[str]
-    message: dict
+    data: dict  # Will contain room_id, service_id, message
 
 class MessageStatusPayload(TypedDict):
     type: Literal["message_status"]
-    service_id: str
-    message_id: str
-    status: Literal["delivered", "read"]
+    data: dict  # Will contain service_id, message_id, status
 
 class ErrorPayload(TypedDict):
     type: Literal["error"]
-    error: str
+    data: dict  # Will contain error message
 
 class HeartbeatResponsePayload(TypedDict):
     type: Literal["heartbeat_response"]
-    status: Literal["ok"]
+    data: dict  # Will contain status
 
 class UpdateUnreadMessageCountPayload(TypedDict):
     type: Literal["unread_message_count"]
-    room_id: str
-    unread_count: int
+    data: dict  # Will contain room_id, unread_count
 
 # All possible input events
 InputEvent = SendMessageEvent | MarkDeliveredEvent | MarkReadEvent | HeartbeatEvent | NewRoomEvent

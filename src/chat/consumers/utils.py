@@ -126,11 +126,11 @@ async def format_message_payload(message_id: str, user_id: str, base_url: Option
         user_id: ID of the user receiving the payload.
         base_url: Optional base URL to construct absolute URLs.
     Returns:
-        Formatted payload dictionary.
+        Formatted payload dictionary with type and data.
     """
     message, room = await _get_message_and_room(message_id)
     if not message or not room:
-        return {"error": str(_("Message or room not found"))}
+        return {"type": "error", "data": {"error": str(_("Message or room not found"))}}
 
     is_sent = str(message.user_id) == str(user_id)
 
@@ -142,17 +142,26 @@ async def format_message_payload(message_id: str, user_id: str, base_url: Option
         "replied_from_id": str(message.replied_from_id) if message.replied_from_id else None,
         "is_system_message": message.is_system_message,
         "timestamp": int(message.timestamp.timestamp()),
+        "sender": None
     }
 
     if not is_sent and not message.is_system_message:
         sender_information = await _get_sender_information(str(message.user_id), base_url=base_url)
         if sender_information:
-            message_data.update(sender_information)
+            message_data["sender"] = {
+                "id": sender_information["sender_id"],
+                "full_name": sender_information["sender_full_name"],
+                "avatar": sender_information["sender_avatar"],
+                "role": sender_information["sender_role"]
+            }
 
     return {
-        "room_id": str(room.id),
-        "service_id": str(room.service_id) if room.service_id else None,
-        "message": message_data
+        "type": "new_message",
+        "data": {
+            "room_id": str(room.id),
+            "service_id": str(room.service_id) if room.service_id else None,
+            "message": message_data
+        }
     }
 
 async def format_status_payload(message_id: str, status: str) -> dict:
@@ -162,16 +171,19 @@ async def format_status_payload(message_id: str, status: str) -> dict:
         message_id: ID of the message.
         status: Status of the message (delivered, read).
     Returns:
-        Formatted payload dictionary.
+        Formatted payload dictionary with type and data.
     """
     message, room = await _get_message_and_room(message_id)
     if not message or not room:
-        return {"error": str(_("Message or room not found"))}
+        return {"type": "error", "data": {"error": str(_("Message or room not found"))}}
 
     return {
-        "service_id": str(room.service_id) if room.service_id else None,
-        "message_id": str(message_id),
-        "status": status
+        "type": "message_status",
+        "data": {
+            "service_id": str(room.service_id) if room.service_id else None,
+            "message_id": str(message_id),
+            "status": status
+        }
     }
 
 @database_sync_to_async
@@ -197,12 +209,15 @@ async def format_unread_count_payload(room_id: str, user_id: str) -> dict:
         room_id: ID of the room.
         user_id: ID of the user receiving the payload.
     Returns:
-        Formatted payload dictionary.
+        Formatted payload dictionary with type and data.
     """
     unread_count = await _calculate_unread_messages(room_id, user_id)
     return {
-        "room_id": room_id,
-        "unread_count": unread_count
+        "type": "unread_message_count",
+        "data": {
+            "room_id": room_id,
+            "unread_count": unread_count
+        }
     }
 
 @database_sync_to_async
@@ -301,19 +316,14 @@ async def format_new_room_payload(room_id: str, user_id: str, message_id: Option
         message_id: Optional ID of the message to use as last_message.
         base_url: Optional base URL to construct absolute URLs.
     Returns:
-        Formatted payload dictionary.
+        Formatted payload dictionary with type and data.
     """
     try:
-        # Get and validate room
         room = await _get_room_and_validate(room_id)
         if not room:
-            logger.error(f"Room {room_id} not found")
-            return {"error": str(_("Room not found"))}
+            return {"type": "error", "data": {"error": str(_("Room not found"))}}
 
-        # Calculate unread messages
         unread_count = await _calculate_unread_messages(room_id, user_id)
-
-        # Get last message, using provided message_id if available
         last_message = await _get_last_message(room_id, message_id)
         last_message_data = None
         if last_message:
@@ -324,18 +334,20 @@ async def format_new_room_payload(room_id: str, user_id: str, message_id: Option
                 'timestamp': last_message.timestamp.isoformat(),
                 'is_sent': is_sent,
                 'is_system_message': last_message.is_system_message,
+                'file_id': str(last_message.file_id) if last_message.file_id else None,
+                'replied_from_id': str(last_message.replied_from_id) if last_message.replied_from_id else None,
                 'sender': None
             }
             if last_message.user_id and not last_message.is_system_message:
                 sender_info = await _get_sender_information(str(last_message.user_id), base_url=base_url)
                 if sender_info:
                     last_message_data['sender'] = {
+                        'id': sender_info['sender_id'],
                         'full_name': sender_info['sender_full_name'],
                         'avatar': sender_info['sender_avatar'],
                         'role': sender_info['sender_role']
                     }
 
-        # Prepare room data
         room_data = {
             'room_id': str(room.id),
             'type': room.type,
@@ -346,7 +358,6 @@ async def format_new_room_payload(room_id: str, user_id: str, message_id: Option
             'customer': None
         }
 
-        # Add counterpart details only for direct rooms
         if room.type in [ChatRoom.Type.TECHNICIAN_DIRECT, ChatRoom.Type.ADMIN_DIRECT]:
             counterpart_data = await _get_counterpart_data(room_id, user_id, base_url=base_url)
             if counterpart_data:
@@ -355,7 +366,6 @@ async def format_new_room_payload(room_id: str, user_id: str, message_id: Option
                 logger.warning(f"Failed to get counterpart data for direct room {room_id}, setting counterpart to None")
                 room_data['counterpart'] = None
 
-        # Add service and customer details for SERVICE rooms
         if room.type == ChatRoom.Type.SERVICE and room.service_id:
             try:
                 service = await database_sync_to_async(Service.objects.get)(id=room.service_id)
@@ -372,7 +382,10 @@ async def format_new_room_payload(room_id: str, user_id: str, message_id: Option
                 room_data['service'] = None
                 room_data['customer'] = None
 
-        return room_data
+        return {
+            "type": "new_room",
+            "data": room_data
+        }
     except Exception as e:
         logger.error(f"Failed to format new room payload for room {room_id}: {str(e)}\n{traceback.format_exc()}")
-        return {"error": str(_("Failed to format room payload: %(error)s") % {"error": str(e)})}
+        return {"type": "error", "data": {"error": str(_("Failed to format room payload: %(error)s") % {"error": str(e)})}}
