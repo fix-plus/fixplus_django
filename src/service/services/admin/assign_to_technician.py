@@ -4,6 +4,8 @@ from django.utils.translation import gettext_lazy as _
 from src.account.models import TechnicianStatus
 from src.authentication.models import User
 from src.authentication.selectors.auth import get_user
+from src.chat.services.message import send_system_message
+from src.chat.services.room import get_or_create_service_room, add_members_to_room
 from src.common.custom_exception import CustomAPIException
 from src.parametric.selectors.timing_setting import get_timing_setting
 from src.service.models import Service
@@ -42,5 +44,14 @@ def assign_service_to_technician(
     db_service.full_clean()
     db_service.save()
 
+    # Get Service Chat room
+    room, _ = get_or_create_service_room(str(db_service.id))
+
+    # Add technician to the room
+    add_members_to_room(room_id=str(room.id), member_ids=[str(db_technician.id)])
+
+    # Send Assign System Message
+    message_text = f'سرویس توسط {"کارشناس" if assigned_by.get_role() == "ADMIN" else "سوپرادمین"} "{assigned_by.profile.full_name}" به تکنسین "{db_service.technician.profile.full_name}" ارجاع شد.'
+    send_system_message(service_id=str(db_service.id), text=message_text)
 
     return db_service

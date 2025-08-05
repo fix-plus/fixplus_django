@@ -1,3 +1,5 @@
+from src.chat.services.message import send_system_message
+from src.chat.services.room import get_or_create_service_room, add_members_to_room
 from src.communication.models import CustomerPinMessage
 from src.customer.models import CustomerContactNumber
 from src.customer.selectors.customer import get_customer
@@ -92,6 +94,18 @@ def create_service(
             service.save()
             service_instances.append(service)
 
-        return service_instances
+            # Create Service Chat room
+            room, _ = get_or_create_service_room(str(service.id))
 
+            # Add Admins to the room
+            users_id = User.objects.filter(groups__name__in=['ADMIN', 'SUPER_ADMIN']).values_list('id', flat=True)
+            user_ids_str = list(map(str, users_id))
+            add_members_to_room(room_id=str(room.id),member_ids=user_ids_str)
+
+            # Send first System Message
+            message_text = f'ایجاد شده توسط {"کارشناس" if created_by.get_role() == "ADMIN" else "سوپرادمین"} "{created_by.profile.full_name}"'
+            send_system_message(service_id=str(service.id), text=message_text)
+
+
+        return service_instances
     return None
