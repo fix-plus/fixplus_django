@@ -1,16 +1,17 @@
 from django.contrib.auth.models import Group
 from channels.db import database_sync_to_async
 from django.db.models import Q
+from django.utils.translation import gettext_lazy as _
 from src.authentication.models import User
 from src.chat.models import ChatRoom, ChatMembership, ChatMessage
 from src.chat.selectors.message import get_message_by_id, calculate_unread_messages
 from src.service.models import Service
+from src.customer.models import CustomerContactNumber
 from src.authentication.selectors.auth import get_user
 from typing import List, Tuple, Optional
 import logging
 
 logger = logging.getLogger(__name__)
-
 
 @database_sync_to_async
 def get_users_services_id(user_id: str) -> List[dict]:
@@ -86,6 +87,37 @@ def _get_sender_information(user_id: str, base_url: Optional[str] = None) -> Opt
         logger.error(f"Error in _get_sender_information for user {user_id}: {str(e)}")
         return None
 
+@database_sync_to_async
+def _get_customer_data(service: Service, base_url: Optional[str] = None) -> Tuple[Optional[dict], Optional[dict]]:
+    """
+    Get customer and service data for a SERVICE room.
+    Args:
+        service: The Service instance.
+        base_url: Optional base URL to construct absolute avatar URL.
+    Returns:
+        Tuple of (customer_data, service_data) or (None, None) if data cannot be retrieved.
+    """
+    try:
+        customer = service.customer if hasattr(service, 'customer') and service.customer else None
+        primary_contact = CustomerContactNumber.objects.filter(
+            customer=customer,
+            is_primary=True
+        ).first() if customer else None
+        customer_data = {
+            "full_name": customer.full_name or "" if customer else "",
+            "phone_number": primary_contact.number if primary_contact else None,
+            "address": str(service.address) if service.address else None
+        }
+        service_data = {
+            "id": str(service.id),
+            "created_at": service.created_at.isoformat(),
+            "status": service.status
+        }
+        return customer_data, service_data
+    except Exception as e:
+        logger.error(f"Error in _get_customer_data for service {service.id}: {str(e)}")
+        return None, None
+
 async def format_message_payload(message_id: str, user_id: str, base_url: Optional[str] = None) -> dict:
     """
     Format the payload for a new message event.
@@ -98,7 +130,7 @@ async def format_message_payload(message_id: str, user_id: str, base_url: Option
     """
     message, room = await _get_message_and_room(message_id)
     if not message or not room:
-        return {"error": "Message or room not found"}
+        return {"error": str(_("Message or room not found"))}
 
     is_sent = str(message.user_id) == str(user_id)
 
@@ -134,7 +166,7 @@ async def format_status_payload(message_id: str, status: str) -> dict:
     """
     message, room = await _get_message_and_room(message_id)
     if not message or not room:
-        return {"error": "Message or room not found"}
+        return {"error": str(_("Message or room not found"))}
 
     return {
         "service_id": str(room.service_id) if room.service_id else None,
@@ -176,17 +208,14 @@ async def format_unread_count_payload(room_id: str, user_id: str) -> dict:
 @database_sync_to_async
 def _get_room_and_validate(room_id: str) -> Optional['ChatRoom']:
     """
-    Get a room and validate it is a direct room.
+    Get a room and validate it exists.
     Args:
         room_id: ID of the room.
     Returns:
-        ChatRoom instance or None if not found or invalid.
+        ChatRoom instance or None if not found.
     """
     try:
         room = ChatRoom.objects.get(id=room_id)
-        if room.type not in [ChatRoom.Type.TECHNICIAN_DIRECT, ChatRoom.Type.ADMIN_DIRECT]:
-            logger.error(f"Room {room_id} is not a direct room")
-            return None
         return room
     except ChatRoom.DoesNotExist:
         logger.error(f"Room {room_id} not found")
@@ -265,7 +294,7 @@ def _get_counterpart_data(room_id: str, user_id: str, base_url: Optional[str] = 
 
 async def format_new_room_payload(room_id: str, user_id: str, message_id: Optional[str] = None, base_url: Optional[str] = None) -> dict:
     """
-    Format the payload for a new room event (TECHNICIAN_DIRECT, ADMIN_DIRECT).
+    Format the payload for a new room event (SERVICE, TECHNICIAN_DIRECT, ADMIN_DIRECT).
     Args:
         room_id: ID of the room.
         user_id: ID of the user receiving the payload.
@@ -278,7 +307,8 @@ async def format_new_room_payload(room_id: str, user_id: str, message_id: Option
         # Get and validate room
         room = await _get_room_and_validate(room_id)
         if not room:
-            return {"error": "Room not found or not a direct room"}
+            logger.error(f"Room {room_id} not found")
+            return {"error": str(_("Room not found"))}
 
         # Calculate unread messages
         unread_count = await _calculate_unread_messages(room_id, user_id)
@@ -316,12 +346,33 @@ async def format_new_room_payload(room_id: str, user_id: str, message_id: Option
             'customer': None
         }
 
-        # Add counterpart details
-        counterpart_data = await _get_counterpart_data(room_id, user_id, base_url=base_url)
-        if counterpart_data:
-            room_data['counterpart'] = counterpart_data
+        # Add counterpart details only for direct rooms
+        if room.type in [ChatRoom.Type.TECHNICIAN_DIRECT, ChatRoom.Type.ADMIN_DIRECT]:
+            counterpart_data = await _get_counterpart_data(room_id, user_id, base_url=base_url)
+            if counterpart_data:
+                room_data['counterpart'] = counterpart_data
+            else:
+                logger.warning(f"Failed to get counterpart data for direct room {room_id}, setting counterpart to None")
+                room_data['counterpart'] = None
+
+        # Add service and customer details for SERVICE rooms
+        if room.type == ChatRoom.Type.SERVICE and room.service_id:
+            try:
+                service = await database_sync_to_async(Service.objects.get)(id=room.service_id)
+                customer_data, service_data = await _get_customer_data(service, base_url=base_url)
+                if customer_data and service_data:
+                    room_data['service'] = service_data
+                    room_data['customer'] = customer_data
+                else:
+                    logger.warning(f"Failed to get customer or service data for room {room_id}")
+                    room_data['service'] = None
+                    room_data['customer'] = None
+            except Service.DoesNotExist:
+                logger.warning(f"Service {room.service_id} not found for room {room_id}")
+                room_data['service'] = None
+                room_data['customer'] = None
 
         return room_data
     except Exception as e:
-        logger.error(f"Failed to format new room payload for room {room_id}: {str(e)}")
-        return {"error": str(("Failed to format room payload: %(error)s") % {"error": str(e)})}
+        logger.error(f"Failed to format new room payload for room {room_id}: {str(e)}\n{traceback.format_exc()}")
+        return {"error": str(_("Failed to format room payload: %(error)s") % {"error": str(e)})}

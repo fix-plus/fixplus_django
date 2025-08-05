@@ -4,8 +4,10 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from src.authentication.models import User
-from src.chat.models import ChatRoom, ChatMembership
+from src.chat.models import ChatRoom, ChatMembership, ChatMessage
 from src.chat.consumers.group_manager import add_room_members_to_group, remove_member_from_group
+from src.chat.consumers.utils import format_new_room_payload
+from src.service.models import Service
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 import logging
@@ -42,7 +44,7 @@ def get_or_create_service_room(service_id: str) -> Tuple[ChatRoom, bool]:
 
 def add_members_to_room(room_id: str, member_ids: List[str]) -> List[ChatMembership]:
     """
-    Add members to a room with active memberships and update WebSocket groups.
+    Add members to a room with active memberships, update WebSocket groups, and send new_room event for SERVICE rooms.
     If a member was previously in the room and left, a new membership is created.
     Args:
         room_id: ID of the room.
@@ -61,6 +63,11 @@ def add_members_to_room(room_id: str, member_ids: List[str]) -> List[ChatMembers
         raise ValidationError(_("Room not found"))
 
     memberships = []
+    channel_layer = get_channel_layer()
+    if channel_layer is None:
+        logger.error("Channel layer is not configured")
+        raise ValidationError(_("Channel layer is not configured"))
+
     for member_id in member_ids:
         try:
             User.objects.get(id=member_id)
@@ -85,6 +92,46 @@ def add_members_to_room(room_id: str, member_ids: List[str]) -> List[ChatMembers
         else:
             logger.debug(f"User {member_id} already has active membership in room {room_id}")
             memberships.append(existing_membership)
+
+        # Send new_room event for SERVICE rooms
+        if room.type == ChatRoom.Type.SERVICE:
+            try:
+                # Use format_new_room_payload to prepare the payload
+                payload = async_to_sync(format_new_room_payload)(
+                    room_id=room_id,
+                    user_id=member_id
+                )
+                if "error" in payload:
+                    logger.error(f"Failed to format new_room payload for user {member_id} in room {room_id}: {payload['error']}")
+                    async_to_sync(channel_layer.group_send)(
+                        f"user_{member_id}",
+                        {
+                            "type": "error",
+                            "error": f"Failed to format new_room payload: {payload['error']}"
+                        }
+                    )
+                    continue
+
+                # Send new_room event with correct structure
+                group_name = f"user_{member_id}"
+                async_to_sync(channel_layer.group_send)(
+                    group_name,
+                    {
+                        "type": "new_room",
+                        "room_id": str(room.id),
+                        "data": payload
+                    }
+                )
+                logger.info(f"Sent new_room event to user {member_id} for SERVICE room {room_id} with room_id {room.id}")
+            except Exception as e:
+                logger.error(f"Failed to send new_room event for user {member_id} in SERVICE room {room_id}: {str(e)}")
+                async_to_sync(channel_layer.group_send)(
+                    f"user_{member_id}",
+                    {
+                        "type": "error",
+                        "error": f"Failed to send new_room event: {str(e)}"
+                    }
+                )
 
     # Update WebSocket group for all active members
     try:

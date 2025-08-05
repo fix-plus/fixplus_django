@@ -5,7 +5,6 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from src.chat.models import ChatMessage, ChatRoom, ChatMembership
 from src.chat.selectors.message import get_message_by_id
-from src.chat.services.room import get_or_create_room, add_members_to_room
 from src.chat.services.cache import save_message_to_cache, update_message_in_cache
 from src.chat.consumers.group_manager import add_room_members_to_group
 from src.authentication.models import User
@@ -40,6 +39,7 @@ def send_message(
     Raises:
         ValidationError: If input validation fails.
     """
+    from src.chat.services.room import get_or_create_room, add_members_to_room
     logger.info(f"Attempting to send message from {sender_id} to receiver {receiver_id} with service_id {service_id}, room_id={room_id}")
 
     # Validate inputs
@@ -92,14 +92,14 @@ def send_message(
         logger.error(f"Failed to get or create room: {str(e)}")
         raise ValidationError(_("Failed to get or create room: %(error)s") % {"error": str(e)})
 
-    # Add sender to the room's membership for SERVICE rooms if not already a member
-    if room_type == ChatRoom.Type.SERVICE:
-        try:
-            add_members_to_room(room_id=str(room.id), member_ids=[sender_id])
-            logger.info(f"Sender {sender_id} added to room {room.id} if not already a member")
-        except ValidationError as e:
-            logger.error(f"Failed to add sender to room {room.id}: {str(e)}")
-            raise ValidationError(_("Failed to add sender to room: %(error)s") % {"error": str(e)})
+    # # Add sender to the room's membership for SERVICE rooms if not already a member
+    # if room_type == ChatRoom.Type.SERVICE:
+    #     try:
+    #         add_members_to_room(room_id=str(room.id), member_ids=[sender_id])
+    #         logger.info(f"Sender {sender_id} added to room {room.id} if not already a member")
+    #     except ValidationError as e:
+    #         logger.error(f"Failed to add sender to room {room.id}: {str(e)}")
+    #         raise ValidationError(_("Failed to add sender to room: %(error)s") % {"error": str(e)})
 
     # Add online members to the WebSocket group for new direct rooms or service rooms
     try:
@@ -193,6 +193,7 @@ def send_system_message(
     Raises:
         ValidationError: If input validation fails.
     """
+    from src.chat.services.room import get_or_create_room, add_members_to_room
     logger.info(f"Attempting to send system message for service_id {service_id}")
 
     if not service_id:

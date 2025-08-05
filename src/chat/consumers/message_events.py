@@ -23,6 +23,7 @@ async def handle_send_message(consumer: Any, data: SendMessageEvent) -> None:
         # Check if the room is new by calling get_or_create_room
         room_id = data.get("room_id")
         created = False
+
         if data.get("receiver_id") and data.get("type") in [ChatRoom.Type.TECHNICIAN_DIRECT, ChatRoom.Type.ADMIN_DIRECT]:
             from .room import get_or_create_room
             room, created = await database_sync_to_async(get_or_create_room)(
@@ -44,8 +45,8 @@ async def handle_send_message(consumer: Any, data: SendMessageEvent) -> None:
             replied_to_id=data.get("replied_to_id")
         )
 
-        # If room was created, send new_room event to the group with message_id
-        if created:
+        # Only send new_room event for newly created direct rooms
+        if created and data.get("type") in [ChatRoom.Type.TECHNICIAN_DIRECT, ChatRoom.Type.ADMIN_DIRECT]:
             channel_layer = get_channel_layer()
             if channel_layer is None:
                 logger.error("Channel layer is not configured")

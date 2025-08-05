@@ -6,6 +6,10 @@ from .group_manager import join_user_groups, leave_user_groups
 from .event_dispatcher import dispatch_event
 from .event_schema import InputEvent, OutputEvent
 from ..services.channel_storage import channel_storage
+import logging
+import traceback
+
+logger = logging.getLogger(__name__)
 
 class ChatWebSocketConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -41,7 +45,7 @@ class ChatWebSocketConsumer(AsyncWebsocketConsumer):
         if not self.user.is_authenticated:
             await self.send(text_data=json.dumps({
                 "type": "error",
-                "error": str(_("Authentication required"))
+                "error": "Authentication required"
             }, ensure_ascii=False))
             await self.close()
             return
@@ -59,9 +63,10 @@ class ChatWebSocketConsumer(AsyncWebsocketConsumer):
                 "status": "ok"
             }, ensure_ascii=False))
         except Exception as e:
+            logger.error(f"Connection failed for user {self.user.id}: {str(e)}\n{traceback.format_exc()}")
             await self.send(text_data=json.dumps({
                 "type": "error",
-                "error": str(_("Connection failed: %(error)s") % {"error": str(e)})
+                "error": f"Connection failed: {str(e)}"
             }, ensure_ascii=False))
             await self.close()
 
@@ -77,7 +82,7 @@ class ChatWebSocketConsumer(AsyncWebsocketConsumer):
             # Leave all user groups
             await leave_user_groups(self)
         except Exception as e:
-            print(f"Error during disconnect: {e}")
+            logger.error(f"Error during disconnect for user {self.user.id}: {str(e)}")
 
     async def receive(self, text_data: str):
         """
@@ -89,20 +94,23 @@ class ChatWebSocketConsumer(AsyncWebsocketConsumer):
             data: InputEvent = json.loads(text_data)
             await dispatch_event(self, data)
         except json.JSONDecodeError:
+            logger.error(f"Invalid JSON format received: {text_data}")
             await self.send(text_data=json.dumps({
                 "type": "error",
-                "error": str(_("Invalid JSON format"))
+                "error": "Invalid JSON format"
             }, ensure_ascii=False))
         except ValidationError as e:
             error_message = str(e).replace("['", "").replace("']", "")
+            logger.error(f"Validation error: {error_message}")
             await self.send(text_data=json.dumps({
                 "type": "error",
-                "error": str(_(error_message))
+                "error": error_message
             }, ensure_ascii=False))
         except Exception as e:
+            logger.error(f"Unexpected error in receive: {str(e)}\n{traceback.format_exc()}")
             await self.send(text_data=json.dumps({
                 "type": "error",
-                "error": str(_("An unexpected error occurred: %(error)s") % {"error": str(e)})
+                "error": f"An unexpected error occurred: {str(e)}"
             }, ensure_ascii=False))
 
     async def chat_message(self, event: dict):
@@ -124,9 +132,10 @@ class ChatWebSocketConsumer(AsyncWebsocketConsumer):
                 **payload
             }, ensure_ascii=False))
         except Exception as e:
+            logger.error(f"Failed to process chat_message for message {event['message_id']}: {str(e)}\n{traceback.format_exc()}")
             await self.send(text_data=json.dumps({
                 "type": "error",
-                "error": str(_("Failed to process message: %(error)s") % {"error": str(e)})
+                "error": f"Failed to process message: {str(e)}"
             }, ensure_ascii=False))
 
     async def message_status(self, event: dict):
@@ -144,9 +153,10 @@ class ChatWebSocketConsumer(AsyncWebsocketConsumer):
                 **payload
             }, ensure_ascii=False))
         except Exception as e:
+            logger.error(f"Failed to process message_status for message {event['message_id']}: {str(e)}\n{traceback.format_exc()}")
             await self.send(text_data=json.dumps({
                 "type": "error",
-                "error": str(_("Failed to process status: %(error)s") % {"error": str(e)})
+                "error": f"Failed to process status: {str(e)}"
             }, ensure_ascii=False))
 
     async def unread_message_count(self, event: dict):
@@ -164,9 +174,10 @@ class ChatWebSocketConsumer(AsyncWebsocketConsumer):
                 **payload
             }, ensure_ascii=False))
         except Exception as e:
+            logger.error(f"Failed to process unread_message_count for room {event['room_id']}: {str(e)}\n{traceback.format_exc()}")
             await self.send(text_data=json.dumps({
                 "type": "error",
-                "error": str(_("Failed to process unread count: %(error)s") % {"error": str(e)})
+                "error": f"Failed to process unread count: {str(e)}"
             }, ensure_ascii=False))
 
     async def new_room(self, event: dict):
@@ -177,19 +188,56 @@ class ChatWebSocketConsumer(AsyncWebsocketConsumer):
             event: Event data containing room_id and optional message_id.
         """
         from .utils import format_new_room_payload
+        room_id = event.get("room_id")
+        message_id = event.get("message_id")
+        user_id = str(self.user.id) if hasattr(self.user, 'id') else None
+
+        if not room_id:
+            logger.error("No room_id provided in new_room event")
+            await self.send(text_data=json.dumps({
+                "type": "error",
+                "error": "No room_id provided"
+            }, ensure_ascii=False))
+            return
+
+        if not user_id:
+            logger.error("No user associated with WebSocket consumer")
+            await self.send(text_data=json.dumps({
+                "type": "error",
+                "error": "No user associated with WebSocket connection"
+            }, ensure_ascii=False))
+            return
+
+        logger.info(f"Handling new_room event in consumer for room_id={room_id}, user_id={user_id}, message_id={message_id}")
+
         try:
+            # Format payload
+            logger.debug(f"Formatting payload for room {room_id}, user {user_id}, message_id={message_id}")
             payload = await format_new_room_payload(
-                event["room_id"],
-                str(self.user.id),
-                message_id=event.get("message_id"),
+                room_id=room_id,
+                user_id=user_id,
+                message_id=message_id,
                 base_url=self.scope.get('base_url')
             )
+
+            # Check if payload contains an error
+            if "error" in payload:
+                logger.error(f"Failed to format payload for room {room_id}: {payload['error']}")
+                await self.send(text_data=json.dumps({
+                    "type": "error",
+                    "error": f"Failed to format room payload: {payload['error']}"
+                }, ensure_ascii=False))
+                return
+
+            # Send the new_room event
             await self.send(text_data=json.dumps({
                 "type": "new_room",
                 "data": payload
             }, ensure_ascii=False))
+            logger.info(f"Successfully sent new_room event to user {user_id} for room {room_id}")
         except Exception as e:
+            logger.error(f"Unexpected error in new_room for room {room_id}, user {user_id}: {str(e)}\n{traceback.format_exc()}")
             await self.send(text_data=json.dumps({
                 "type": "error",
-                "error": str(_("Failed to process new room: %(error)s") % {"error": str(e)})
+                "error": f"Unexpected error in processing new room: {str(e)}"
             }, ensure_ascii=False))
