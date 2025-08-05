@@ -145,7 +145,7 @@ async def format_message_payload(message_id: str, user_id: str, base_url: Option
         "sender": None
     }
 
-    if not is_sent and not message.is_system_message:
+    if not message.is_system_message:
         sender_information = await _get_sender_information(str(message.user_id), base_url=base_url)
         if sender_information:
             message_data["sender"] = {

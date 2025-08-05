@@ -35,11 +35,9 @@ class OutputChatMessagesHistory(serializers.ModelSerializer):
         return int(obj.timestamp.timestamp())
 
     def get_sender(self, obj):
-        if obj.is_system_message or self.get_is_sent(obj):
-            return None
         try:
             user = User.objects.get(id=obj.user_id)
-            full_name = user.get_full_name() or ''
+            full_name = user.profile.full_name
             request = self.context.get('request')
             avatar = request.build_absolute_uri(user.profile.avatar.url) if hasattr(user, 'profile') and user.profile and user.profile.avatar else None
             return {
