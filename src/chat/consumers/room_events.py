@@ -1,6 +1,5 @@
 from channels.db import database_sync_to_async
 from django.utils.translation import gettext_lazy as _
-from src.chat.models import ChatRoom, ChatMembership
 from src.chat.consumers.event_schema import NewRoomEvent
 from src.chat.consumers.utils import format_new_room_payload
 from typing import Any
@@ -11,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 async def handle_new_room(consumer: Any, data: NewRoomEvent) -> None:
+    from src.chat.models import ChatRoom, ChatMembership
     """
     Handle the new_room event for direct rooms (TECHNICIAN_DIRECT, ADMIN_DIRECT).
     Args:

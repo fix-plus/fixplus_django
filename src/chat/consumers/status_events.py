@@ -1,11 +1,12 @@
 from channels.db import database_sync_to_async
-from src.chat.services.message import mark_message_delivered, mark_message_read
+
 from src.chat.consumers.event_schema import MarkDeliveredEvent, MarkReadEvent
 from typing import Any
 import json
 
 
 async def handle_mark_delivered(consumer: Any, data: MarkDeliveredEvent) -> None:
+    from src.chat.services.message import mark_message_delivered
     """
     Handle the mark_delivered event.
     Args:
@@ -25,6 +26,7 @@ async def handle_mark_delivered(consumer: Any, data: MarkDeliveredEvent) -> None
 
 
 async def handle_mark_read(consumer: Any, data: MarkReadEvent) -> None:
+    from src.chat.services.message import mark_message_read
     """
     Handle the mark_read event.
     Args:
