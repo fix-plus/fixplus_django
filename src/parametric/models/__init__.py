@@ -2,6 +2,7 @@ from .timing import TimingSetting
 from .brand import Brand
 from .device_type import DeviceType
 from .rating import Rating
+from .warranty_period import WarrantyPeriod
 
 
 __all__ = [
@@ -9,4 +10,5 @@ __all__ = [
     'Brand',
     'DeviceType',
     'Rating',
+    'WarrantyPeriod',
 ]

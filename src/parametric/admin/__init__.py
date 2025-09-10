@@ -2,6 +2,7 @@ from .rating import RatingAdmin
 from .device_type import DeviceTypeAdmin
 from .brand import BrandAdmin
 from .timing import TimingSettingAdmin
+from .warranty_period import WarrantyPeriodAdmin
 
 
 __all__ = [
@@ -9,4 +10,5 @@ __all__ = [
     'DeviceTypeAdmin',
     'BrandAdmin',
     'TimingSettingAdmin',
+    'WarrantyPeriodAdmin',
 ]

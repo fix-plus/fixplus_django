@@ -137,6 +137,11 @@ UNFOLD = {
                             "icon": "schedule",
                             "link": reverse_lazy("admin:parametric_timingsetting_changelist"),
                         },
+                        {
+                            "title": _("Warranty Periods"),
+                            "icon": "license",
+                            "link": reverse_lazy("admin:parametric_warrantyperiod_changelist"),
+                        },
                     ],
                 },
                 {
