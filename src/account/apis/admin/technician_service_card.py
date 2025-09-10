@@ -1,12 +1,10 @@
 from drf_spectacular.utils import extend_schema
-from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from src.common.mixins import IsSuperAdminOrAdminMixin
 from src.common.pagination import LimitOffsetPagination, get_paginated_response_context
 from src.account.selectors.technician_service_card import search_technician_service_card, get_technician_service_card
-from src.account.serializers.technician_service_card import InputTechnicianServiceCardParamsSerializer, OutputTechnicianServiceCardSerializer, \
+from src.account.serializers.admin.technician_service_card import InputTechnicianServiceCardParamsSerializer, OutputTechnicianServiceCardSerializer, \
     InputTechnicianServiceCardSerializer, InputUpdateTechnicianServiceCardSerializer
 from src.account.services.technician_service_card import create_technician_service_card, update_technician_service_card, delete_technician_service_card
 

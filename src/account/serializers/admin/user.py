@@ -1,13 +1,10 @@
-# users/serializers/users.py
 import re
 
 from rest_framework import serializers
-from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 
 from src.account.models import UserRegistryRequest
-from src.authentication.models import User
-from src.account.serializers.profile import OutPutProfileSerializer, InputUpdateProfileSerializer
+from src.account.serializers.shared.profile import OutPutProfileSerializer, InputUpdateProfileSerializer
 
 class InputUserParamsSerializer(serializers.Serializer):
     mobile = serializers.CharField(required=False, default=None)

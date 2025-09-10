@@ -3,7 +3,7 @@ import re
 from rest_framework import serializers
 from django.utils.translation import gettext_lazy as _
 
-from src.account.serializers.profile import OutPutProfileSerializer
+from src.account.serializers.shared.profile import OutPutProfileSerializer
 from src.customer.serializers.customer import OutPutCustomerSerializer, OutPutPublicCustomerSerializer, \
     InputCustomerSerializer
 from src.geo.serializers.address import OutPutAddressSerializer

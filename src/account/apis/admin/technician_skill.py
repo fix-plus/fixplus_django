@@ -1,13 +1,10 @@
 from drf_spectacular.utils import extend_schema
-from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.utils.translation import gettext_lazy as _
 
 from src.common.mixins import IsSuperAdminOrAdminMixin
 from src.common.pagination import LimitOffsetPagination, get_paginated_response_context
 from src.account.selectors.technician_skill import search_technician_skill, get_technician_skill
-from src.account.serializers.technician_skill import InputTechnicianSkillParamsSerializer, OutputTechnicianSkillSerializer, \
+from src.account.serializers.admin.technician_skill import InputTechnicianSkillParamsSerializer, OutputTechnicianSkillSerializer, \
     InputTechnicianSkillSerializer, InputUpdateTechnicianSkillSerializer
 from src.account.services.technician_skill import create_technician_skill, update_technician_skill, delete_technician_skill
 

@@ -2,11 +2,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema
 
+from src.account.serializers.admin.user import InputUserParamsSerializer, OutPutUserSerializer, InputUserSerializer
 from src.common.apis import BasePermissionAPIView
 from src.common.mixins import IsSuperAdminMixin
 from src.common.pagination import LimitOffsetPagination, get_paginated_response_context
 from src.authentication.selectors.auth import search_user_list, get_user
-from src.account.serializers.user import OutPutUserSerializer, InputUserSerializer, InputUserParamsSerializer
 from src.authentication.services.auth import update_user
 
 

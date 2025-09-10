@@ -3,7 +3,7 @@ import re
 from rest_framework import serializers
 from django.utils.translation import gettext_lazy as _
 
-from src.account.serializers.contact_number import OutPutContactNumberSerializer, InputContactNumbersSerializer
+from src.account.serializers.shared.contact_number import OutPutContactNumberSerializer, InputContactNumbersSerializer
 from src.communication.selectors.customer_pin_message import get_latest_customer_pin_message
 from src.communication.serializers.pin_message import PinMessageSerializer
 from src.customer.models import Customer

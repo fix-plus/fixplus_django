@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from src.common.mixins import IsSuperAdminOrAdminMixin
 from src.common.pagination import LimitOffsetPagination, get_paginated_response_context
 from src.account.selectors.technician_service_zone import search_technician_service_zone, get_technician_service_zone
-from src.account.serializers.technician_service_zone import InputTechnicianServiceZoneParamsSerializer, OutputTechnicianServiceZoneSerializer, \
+from src.account.serializers.admin.technician_service_zone import InputTechnicianServiceZoneParamsSerializer, OutputTechnicianServiceZoneSerializer, \
     InputTechnicianServiceZoneSerializer, InputUpdateTechnicianServiceZoneSerializer
 from src.account.services.technician_service_zone import create_technician_service_zone, update_technician_service_zone, delete_technician_service_zone
 

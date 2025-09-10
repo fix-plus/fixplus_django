@@ -3,11 +3,10 @@ import re
 from rest_framework import serializers
 from django.utils.translation import gettext_lazy as _
 
-from src.account.serializers.contact_number import OutPutContactNumberSerializer
-from src.account.serializers.technician_service_zone import OutputTechnicianServiceZoneSerializer
+from src.account.serializers.shared.contact_number import OutPutContactNumberSerializer
+from src.account.serializers.admin.technician_service_zone import OutputTechnicianServiceZoneSerializer
 from src.authentication.models.user import User
 from src.account.models import Profile
-from src.account.serializers.profile import OutPutNumbersSerializer
 from src.communication.selectors.admin_pin_message_of_technician import get_latest_admin_pin_message_of_technician
 from src.communication.serializers.admin_pin_message_of_technician import OutputAdminPinMessageOfTechnicianSerializer
 from src.geo.serializers.address import OutPutAddressSerializer

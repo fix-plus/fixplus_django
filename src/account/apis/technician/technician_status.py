@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from src.account.serializers.technician_status import OutputTechnicianStatusSerializer, InputTechnicianStatusSerializer
+from src.account.serializers.technician.technician_status import OutputTechnicianStatusSerializer, InputTechnicianStatusSerializer
 from src.account.services.technician_status import create_technician_status
 from src.common.mixins import IsVerifiedMobileMixin
 

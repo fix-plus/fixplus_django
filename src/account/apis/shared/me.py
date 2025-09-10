@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 
 from src.common.mixins import IsVerifiedMobileMixin
 from src.account.selectors.profile import get_profile
-from src.account.serializers.profile import OutPutProfileSerializer, InputUpdateProfileSerializer
+from src.account.serializers.shared.profile import OutPutProfileSerializer, InputUpdateProfileSerializer
 from src.account.services.profile import update_profile
 
 
