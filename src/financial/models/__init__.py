@@ -1,8 +1,8 @@
 from .internal_wallet import InternalWallet
-from .service_invoice import ServiceInvoice
+from src.financial.models.customer_invoice import CustomerInvoice
 
 
 __all__ = [
     'InternalWallet',
-    'ServiceInvoice',
+    'CustomerInvoice',
 ]

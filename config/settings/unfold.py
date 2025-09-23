@@ -113,7 +113,7 @@ UNFOLD = {
                     ],
                 },
                 {
-                    "title": _("Parametrics"),
+                    "title": _("Parametric"),
                     "separator": True,  # Top border
                     "collapsible": True,  # Collapsible group of links
                     "items": [
@@ -171,6 +171,11 @@ UNFOLD = {
                             "icon": "money_bag",
                             "link": reverse_lazy("admin:financial_internalwallet_changelist"),
                         },
+                        {
+                            "title": _("Customer Invoices"),
+                            "icon": "receipt_long",
+                            "link": reverse_lazy("admin:financial_customerinvoice_changelist"),
+                        },
                     ],
                 },
                 {
@@ -204,6 +209,11 @@ UNFOLD = {
                             "title": _("Service Histories"),
                             "icon": "history",
                             "link": reverse_lazy("admin:service_servicehistory_changelist"),
+                        },
+                        {
+                            "title": _("Completed Service Items"),
+                            "icon": "check_circle",
+                            "link": reverse_lazy("admin:service_completedserviceitem_changelist"),
                         }
                     ],
                 },

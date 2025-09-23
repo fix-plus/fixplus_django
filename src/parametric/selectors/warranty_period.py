@@ -14,3 +14,10 @@ def search_warranty_period_list(
         queryset = queryset.filter(duration=duration)
 
     return queryset
+
+
+def get_warranty_period(*, id: str) -> WarrantyPeriod:
+    try:
+        return WarrantyPeriod.objects.get(id=id)
+    except WarrantyPeriod.DoesNotExist:
+        return None

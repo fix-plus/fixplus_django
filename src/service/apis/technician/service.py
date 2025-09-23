@@ -1,10 +1,12 @@
 from drf_spectacular.utils import extend_schema
+from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from src.common.mixins import IsTechnicianMixin
 from src.common.pagination import LimitOffsetPagination, get_paginated_response_context
-from src.service.selectors.service import search_service_list
+from src.service.selectors.service import search_service_list, get_service
 from src.service.serializers.shared.service import OutPutServiceSerializer, InputServiceParamsSerializer
+from src.service.serializers.technician.service import OutPutTechnicianServiceDetailSerializer
 
 
 class TechnicianServiceListApi(IsTechnicianMixin, APIView):
@@ -35,3 +37,19 @@ class TechnicianServiceListApi(IsTechnicianMixin, APIView):
             request=request,
             view=self,
         )
+
+
+class TechnicianServiceDetailApi(IsTechnicianMixin, APIView):
+    @extend_schema(
+        summary="Get Service Detail",
+        responses=OutPutTechnicianServiceDetailSerializer)
+    def get(self, request, service_id):
+        user = request.user
+
+        # Queryset
+        queryset = get_service(
+            id=service_id,
+        )
+
+        # Response
+        return Response(OutPutTechnicianServiceDetailSerializer(queryset, context={'request': request}).data)

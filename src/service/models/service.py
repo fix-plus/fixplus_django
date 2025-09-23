@@ -6,6 +6,7 @@ from jedi.inference.flow_analysis import Status
 from src.authentication.models import User
 from src.common.models import BaseModel
 from src.customer.models import Customer
+from src.media.models.customer_signature import UploadCustomerSignatureMedia
 from src.parametric.models import DeviceType, Brand
 from src.geo.models.address import Address
 
@@ -15,15 +16,19 @@ class Service(BaseModel):
         WAITING = 'WAITING', 'Waiting'
         ASSIGNED = 'ASSIGNED', 'Assigned'
         ACCEPTED = 'ACCEPTED', 'Accepted'
-        REFERRED_TO_SHOP = 'REFERRED_TO_SHOP', 'Referred To Shop'
-        INVOICING = 'INVOICING', 'Invoicing'
+        CUSTOMER_INVOICING = 'CUSTOMER_INVOICING', 'Customer Invoicing'
+        CUSTOMER_PAYMENT = 'CUSTOMER_PAYMENT', 'Customer Payment'
+        CUSTOMER_SIGNATURE = 'CUSTOMER_SIGNATURE', 'Customer Signature'
+        IGNORED_SYSTEM_FEE_INVOICING = 'IGNORED_SYSTEM_FEE_INVOICING', 'Ignored System Fee Invoicing'
+        SYSTEM_FEE_INVOICING = 'SYSTEM_FEE_INVOICING', 'System Fee Invoicing'
+        SYSTEM_FEE_PAYMENT = 'SYSTEM_FEE_PAYMENT', 'System Fee Payment'
         COMPLETED = 'COMPLETED', 'Completed'
         REJECTED = 'REJECTED', 'Rejected'
         EXPIRED = 'EXPIRED', 'Expired'
         CANCELED = 'CANCELED', 'Canceled'
 
     # Core
-    status = models.CharField(max_length=20, choices=Status.choices, default=Status.WAITING)
+    status = models.CharField(max_length=30, choices=Status.choices, default=Status.WAITING)
     customer = models.ForeignKey(Customer, null=False, blank=False, related_name="services", on_delete=models.CASCADE)
     device_type = models.ForeignKey(DeviceType, null=False, blank=False, on_delete=models.CASCADE, related_name="services")
     brand = models.ForeignKey(Brand, null=False, blank=False, on_delete=models.CASCADE, related_name="services")
@@ -37,6 +42,19 @@ class Service(BaseModel):
 
     # Accepted
     estimate_arrival_at = models.DateTimeField(null=True, blank=True)
+
+    # Customer Signature
+    customer_signature = models.ForeignKey(UploadCustomerSignatureMedia, null=True, blank=True, on_delete=models.SET_NULL, related_name="services")
+
+    # System Fee Invoicing
+    other_completed_service_description = models.TextField(blank=True, null=True)
+
+    # Rejected
+    reject_reason = models.TextField(blank=True, null=True)
+
+    # Expired
+    expired_reason = models.TextField(blank=True, null=True)
+
 
     def __str__(self):
         return f"{self.customer.full_name} : {self.brand}-{self.device_type}"
