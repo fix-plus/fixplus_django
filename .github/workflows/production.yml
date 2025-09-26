@@ -94,6 +94,7 @@ jobs:
           EMAIL_HOST_PASSWORD="${{ secrets.EMAIL_HOST_PASSWORD }}" \
           SMS_API_KEY="${{ secrets.SMS_API_KEY }}" \
           NESHAN_SERVICE_API_KEY="${{ secrets.NESHAN_SERVICE_API_KEY }}" \
+          ZARINPAL_MERCHANT_CODE="${{ secrets.ZARINPAL_MERCHANT_CODE }}" \
           docker compose up -d --force-recreate --no-build
     
           echo "------------- docker prune old image -------------"
