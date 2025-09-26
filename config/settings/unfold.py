@@ -261,6 +261,23 @@ UNFOLD = {
                         },
                     ],
                 },
+                {
+                    "title": _("Payments"),
+                    "separator": True,  # Top border
+                    "collapsible": True,  # Collapsible group of links
+                    "items": [
+                        {
+                            "title": _("Online Payments"),
+                            "icon": "payment",
+                            "link": reverse_lazy("admin:azbankgateways_bank_changelist"),
+                        },
+                        {
+                            "title": _("Customer Payments"),
+                            "icon": "account_balance_wallet",
+                            "link": reverse_lazy("admin:payment_customerpayment_changelist"),
+                        },
+                    ],
+                },
             ],
         },
 }

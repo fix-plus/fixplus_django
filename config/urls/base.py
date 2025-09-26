@@ -1,3 +1,4 @@
+from azbankgateways.urls import az_bank_gateways_urls
 from django.conf.urls.i18n import i18n_patterns
 from django.utils.translation import gettext_lazy as _
 from django.contrib import admin
@@ -24,9 +25,11 @@ urlpatterns = [
     path("", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
     path("redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
     path('robots.txt', robots_txt),
+    path('bankgateways/', az_bank_gateways_urls()),
 
     path('admin/', include('config.urls.admin')),
     path('technician/', include('config.urls.technician')),
+    path('customer/', include('config.urls.customer')),
     path('shared/', include('config.urls.shared')),
 ]
 

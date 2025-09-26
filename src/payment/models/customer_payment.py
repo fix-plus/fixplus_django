@@ -1,17 +1,21 @@
+from azbankgateways.models import Bank, PaymentStatus
 from django.db import models
-from django.db.models import Sum
 
+from src.authentication.models import User
 from src.common.models import BaseModel
-from src.payment.models import ChequePay, CashPay, CardToCardPay, OnlinePay
 from src.service.models import Service
 
 
 class CustomerPayment(BaseModel):
     service = models.ForeignKey(Service, on_delete=models.PROTECT, null=False, blank=False, related_name='customer_payments')
-    cheque_pay = models.ForeignKey(ChequePay, blank=True, null=True, on_delete=models.PROTECT)
-    cash_pay = models.ForeignKey(CashPay, blank=True, null=True, on_delete=models.PROTECT)
-    card_to_card_pay = models.ForeignKey(CardToCardPay, blank=True, null=True, on_delete=models.PROTECT)
-    online_pay = models.ForeignKey(OnlinePay, blank=True, null=True, on_delete=models.PROTECT)
+    technician = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='customer_payments')
+
+    cheque_amount = models.PositiveBigIntegerField(null=True, blank=True)
+    cash_amount = models.PositiveBigIntegerField(null=True, blank=True)
+    card_to_card_amount = models.PositiveBigIntegerField(null=True, blank=True)
+    online_amount = models.PositiveBigIntegerField(null=True, blank=True)
+    online_bank = models.ForeignKey(Bank, on_delete=models.SET_NULL, null=True, blank=True, related_name='customer_payments')
+    online_phone_number = models.CharField(max_length=15, null=True, blank=True)
 
     class Meta:
         ordering = ('-created_at',)
@@ -20,10 +24,6 @@ class CustomerPayment(BaseModel):
         return f'{self.service}'
 
     def total_pays(self):
-        total_cheque = self.cheque_pay.filter(is_paid=True).aggregate(Sum('amount'))['amount__sum'] or 0
-        total_cash = self.cash_pay.filter(is_paid=True).aggregate(Sum('amount'))['amount__sum'] or 0
-        total_card_to_card = self.card_to_card_pay.filter(is_paid=True).aggregate(Sum('amount'))['amount__sum'] or 0
-        total_online = self.online_pay.filter(is_paid=True).aggregate(Sum('amount'))['amount__sum'] or 0
-
-        total = (total_cheque + total_cash + total_card_to_card + total_online)
+        online_amount = self.online_amount or 0 if self.online_bank.status == PaymentStatus.COMPLETE else 0
+        total = (self.cash_amount or 0 + self.cheque_amount or 0 + self.card_to_card_amount or 0 + online_amount)
         return total

@@ -43,6 +43,7 @@ THIRD_PARTY_APPS = [
     'drf_spectacular',
     'django_extensions',
     'easy_thumbnails',
+    'azbankgateways',
 ]
 
 INSTALLED_APPS = [
@@ -217,3 +218,4 @@ from config.settings.swagger import *  # noqa
 from config.settings.thumbnails import *  # noqa
 from config.settings.language import *  # noqa
 from config.settings.unfold import *  # noqa
+from config.settings.bank_gateway import *  # noqa

@@ -37,3 +37,5 @@ ipython==8.14.0
 whitenoise==6.9.0
 
 geopy==2.4.1
+
+az-iranian-bank-gateways==2.1.1
