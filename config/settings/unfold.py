@@ -214,7 +214,12 @@ UNFOLD = {
                             "title": _("Completed Service Items"),
                             "icon": "check_circle",
                             "link": reverse_lazy("admin:service_completedserviceitem_changelist"),
-                        }
+                        },
+                        {
+                            "title": _("Customer Service Signatures"),
+                            "icon": "signature",
+                            "link": reverse_lazy("admin:service_customerservicesignature_changelist"),
+                        },
                     ],
                 },
                 {

@@ -9,7 +9,7 @@ from src.media.validators import FileSizeValidator, ImageSizeValidator
 
 class InputParamsUploadSerializer(serializers.Serializer):
     method = serializers.ChoiceField(
-        choices=['identify_document', 'service_card'],
+        choices=['identify_document', 'service_card', 'customer_signature'],
     )
 
 

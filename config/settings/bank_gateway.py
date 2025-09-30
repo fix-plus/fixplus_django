@@ -5,7 +5,7 @@ AZ_IRANIAN_BANK_GATEWAYS = {
     'GATEWAYS': {
         'ZARINPAL': {
             'MERCHANT_CODE': env('ZARINPAL_MERCHANT_CODE'),
-            'SANDBOX': 0,  # Set to 0 for production
+            'SANDBOX': 1,  # Set to 0 for production
         },
     },
     'DEFAULT': 'ZARINPAL',

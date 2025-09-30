@@ -3,26 +3,50 @@ from rest_framework.response import Response
 from rest_framework import status
 from drf_spectacular.utils import extend_schema
 from src.common.mixins import IsTechnicianMixin
-from src.payment.serializers.customer_online_payment import (
-    InputInitiateCustomerOnlinePaymentSerializer,
-)
-from src.payment.services.online_payment import initiate_customer_online_payment
+from src.payment.serializers.customer_payment import InputCustomerPaymentSerializer, OutputCustomerPaymentSerializer, \
+    InputVerifyCustomerPaymentSerializer
+from src.payment.services.customer_payment import create_customer_payment, verify_customer_payment_with_online
+from src.service.selectors.service import get_service
 
 
-class InitiateCustomerOnlinePaymentApi(IsTechnicianMixin, APIView):
+class CreateCustomerPaymentApi(IsTechnicianMixin, APIView):
     @extend_schema(
-        summary="Initiate Customer Online Payment",
+        summary="Create Customer Payment",
+        request=InputCustomerPaymentSerializer,
+        responses=OutputCustomerPaymentSerializer,
     )
     def post(self, request):
-        serializer = InputInitiateCustomerOnlinePaymentSerializer(data=request.data)
+        serializer = InputCustomerPaymentSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = request.user
+        service = get_service(id=serializer.validated_data.get("service_id"))
 
-        result = initiate_customer_online_payment(
+        result = create_customer_payment(
             technician=user,
             request=request,
+            service=service,
             **serializer.validated_data,
         )
 
-        return Response(result, status=status.HTTP_200_OK)
+        return Response(OutputCustomerPaymentSerializer(result).data, status=status.HTTP_200_OK)
+
+
+class VerifyCustomerPaymentApi(IsTechnicianMixin, APIView):
+    @extend_schema(
+        summary="Verify Customer Payment",
+        request=InputVerifyCustomerPaymentSerializer,
+        responses=OutputCustomerPaymentSerializer,
+    )
+    def post(self, request):
+        serializer = InputVerifyCustomerPaymentSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = request.user
+        service = get_service(id=serializer.validated_data.get("service_id"))
+
+        result = verify_customer_payment_with_online(
+            technician=user,
+            service=service,
+        )
+
+        return Response(OutputCustomerPaymentSerializer(result).data, status=status.HTTP_200_OK)
 

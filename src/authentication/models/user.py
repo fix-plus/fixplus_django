@@ -57,6 +57,7 @@ class UserManager(BUM):
 
 class User(AbstractUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    identity_code = models.IntegerField(unique=True, null=True, blank=True)
     username = None
     mobile = models.CharField(
         max_length=20,
@@ -110,6 +111,15 @@ class User(AbstractUser, PermissionsMixin):
         # Ensure a Profile exists for this account
         from src.account.models import Profile
         Profile.objects.get_or_create(user=self)
+
+        # Initialize identity_code if not set
+        if not self.identity_code:
+            last_user = User.objects.all().order_by('identity_code').last()
+            if last_user and last_user.identity_code:
+                self.identity_code = last_user.identity_code + 1
+            else:
+                self.identity_code = 1011
+            super().save(update_fields=['identity_code'])
 
     def update_last_online(self):
         self.last_online = timezone.now()

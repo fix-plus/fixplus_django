@@ -2,6 +2,8 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 from django.core.exceptions import ImproperlyConfigured
+from jdatetime import datetime as jdatetime
+from django.utils import timezone
 
 from rest_framework import serializers
 
@@ -73,3 +75,21 @@ def check_all_int(input_str):
         if not char.isdigit():
             return False
     return True
+
+
+def to_jalali_date_string(gregorian_date, format_string='%Y/%m/%d'):
+    """
+    تبدیل تاریخ میلادی به شمسی با رعایت تایم‌زون
+    :param gregorian_date: تاریخ میلادی (datetime یا date)
+    :param format_string: فرمت خروجی رشته (مثل '1404/07/08')
+    :return: رشته تاریخ شمسی
+    """
+    if not gregorian_date:
+        return ''
+    local_date = timezone.localtime(gregorian_date) if hasattr(gregorian_date, 'tzinfo') else gregorian_date
+    jalali_date = jdatetime.fromgregorian(
+        year=local_date.year,
+        month=local_date.month,
+        day=local_date.day
+    )
+    return jalali_date.strftime(format_string)

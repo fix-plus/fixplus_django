@@ -1,5 +1,7 @@
 from django.db.models import Q, Count, QuerySet
+from django.utils.translation import gettext_lazy as _
 
+from src.common.custom_exception import CustomAPIException
 from src.service.models import Service
 
 
@@ -60,4 +62,7 @@ def search_service_list(
 
 
 def get_service(*, id:str) -> Service:
-    return  Service.objects.get(id=id)
+    try:
+        return  Service.objects.get(id=id)
+    except Service.DoesNotExist:
+        raise CustomAPIException(_("Service does not exist."))

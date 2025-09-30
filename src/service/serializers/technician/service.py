@@ -9,6 +9,7 @@ from src.financial.serializers.shared.customer_invoice import OutPutCustomerInvo
 from src.geo.serializers.address import OutPutAddressSerializer
 from src.parametric.serializers.brand import OutPutBrandNameParametricSerializer
 from src.parametric.serializers.device import OutPutDeviceTypeParametricSerializer
+from src.payment.serializers.customer_payment import OutputCustomerPaymentSerializer
 from src.service.models import Service, ServiceHistory
 from src.service.serializers.shared.completed_service_item import OutPutCompletedServiceItemSerializer
 
@@ -22,6 +23,7 @@ class OutPutTechnicianServiceDetailSerializer(serializers.ModelSerializer):
     created_by = serializers.SerializerMethodField()
     assigned_by = serializers.SerializerMethodField()
     customer_invoice = serializers.SerializerMethodField()
+    customer_payment = serializers.SerializerMethodField()
     assigned_at = serializers.SerializerMethodField()
     accepted_at = serializers.SerializerMethodField()
 
@@ -44,6 +46,7 @@ class OutPutTechnicianServiceDetailSerializer(serializers.ModelSerializer):
                        'status',
                        'customer',
                        'customer_invoice',
+                       'customer_payment',
                        'assigned_by',
                        'assigned_at',
                        'deadline_accepting_at',
@@ -108,3 +111,7 @@ class OutPutTechnicianServiceDetailSerializer(serializers.ModelSerializer):
             "completed_service_items": OutPutCompletedServiceItemSerializer(completed_service_items, context={'request':request}, many=True).data,
             **customer_invoice_response,
         }
+
+    def get_customer_payment(self, obj):
+        queryset = obj.customer_payments.filter(technician=obj.technician).last()
+        return OutputCustomerPaymentSerializer(queryset).data
