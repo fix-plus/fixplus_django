@@ -176,6 +176,11 @@ UNFOLD = {
                             "icon": "receipt_long",
                             "link": reverse_lazy("admin:financial_customerinvoice_changelist"),
                         },
+                        {
+                            "title": _("Invoice Deduction Items"),
+                            "icon": "remove_circle",
+                            "link": reverse_lazy("admin:financial_invoicedeductionitem_changelist"),
+                        },
                     ],
                 },
                 {

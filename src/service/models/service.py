@@ -20,7 +20,6 @@ class Service(BaseModel):
         CUSTOMER_PAYMENT = 'CUSTOMER_PAYMENT', 'Customer Payment'
         CUSTOMER_SIGNATURE = 'CUSTOMER_SIGNATURE', 'Customer Signature'
         IGNORED_SYSTEM_FEE_INVOICING = 'IGNORED_SYSTEM_FEE_INVOICING', 'Ignored System Fee Invoicing'
-        SYSTEM_FEE_INVOICING = 'SYSTEM_FEE_INVOICING', 'System Fee Invoicing'
         SYSTEM_FEE_PAYMENT = 'SYSTEM_FEE_PAYMENT', 'System Fee Payment'
         COMPLETED = 'COMPLETED', 'Completed'
         REJECTED = 'REJECTED', 'Rejected'
@@ -47,7 +46,7 @@ class Service(BaseModel):
     customer_signature = models.ForeignKey(UploadCustomerSignatureMedia, null=True, blank=True, on_delete=models.SET_NULL, related_name="services")
 
     # System Fee Invoicing
-    other_completed_service_description = models.TextField(blank=True, null=True)
+    other_invoice_deduction_description = models.TextField(blank=True, null=True)
 
     # Rejected
     reject_reason = models.TextField(blank=True, null=True)
