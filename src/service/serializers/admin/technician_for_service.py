@@ -77,7 +77,10 @@ class OutPutTechnicianForServiceSerializer(serializers.ModelSerializer):
         return self.OutPutProfileSerializer(obj.profile, context=self.context).data
 
     def get_latest_location(self, obj):
-        queryset = obj.location_trackers.latest('created_at')
+        try:
+            queryset = obj.location_trackers.latest('created_at')
+        except obj.location_trackers.model.DoesNotExist:
+            return None
         return OutputUserLocationTrackerSerializer(queryset).data
 
 
