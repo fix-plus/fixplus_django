@@ -17,8 +17,8 @@ def generate_invoice_pdf(*, invoice_id, request=None):
     """
     Generate PDF invoice for CustomerInvoice.
     Each service has its own folder.
-    If a file for this invoice already exists, reuse the same hash (replace file).
-    Otherwise generate a new hash filename.
+    The filename will be in the format 'فاکتور_شماره_{identify_code}_مشتری_{full_name}.pdf'.
+    If a file already exists, it will be replaced.
     """
     invoice = CustomerInvoice.objects.get(id=invoice_id)
     service = invoice.service
@@ -61,6 +61,7 @@ def generate_invoice_pdf(*, invoice_id, request=None):
             'description': ''
         })
 
+    # Prepare data for the template
     data = {
         'header_image': brand.header_image,
         'logo_image': brand.logo_image,
@@ -70,9 +71,11 @@ def generate_invoice_pdf(*, invoice_id, request=None):
         'right_text2': brand.right_text2,
         'invoice_number': invoice.identify_code,
         'date': to_jalali_date_string(invoice.created_at, '%Y/%m/%d'),
-        'customer_name': ('آقای ' if service.customer.gender == Customer.Gender.MALE else 'خانم ') + service.customer.full_name if hasattr(service.customer, 'full_name') else '',
+        'customer_name': ('آقای ' if service.customer.gender == Customer.Gender.MALE else 'خانم ') +
+                         service.customer.full_name if hasattr(service.customer, 'full_name') else '',
         'address': service.address.address if hasattr(service.address, 'address') else service.address.__str__(),
-        'phone': service.customer.contact_numbers.filter(is_primary=True).first().number.replace('+98', '0') if service.customer else '',
+        'phone': service.customer.contact_numbers.filter(is_primary=True).first().number.replace('+98', '0')
+                 if service.customer else '',
         'items': items,
         'subtotal': invoice.get_total_invoice_amount() * 10,
         'discount': invoice.discount_amount * 10,
@@ -89,15 +92,18 @@ def generate_invoice_pdf(*, invoice_id, request=None):
     data['total_str'] = f"{data['total']:,}"
     data["font_path"] = Path(settings.BASE_DIR, "src/templates/Koodak.ttf").as_uri()
 
-    # مسیر فولدر سرویس
+    # Define the service folder path
     service_folder = Path(settings.MEDIA_ROOT) / "invoices" / "service" / str(service.id)
     os.makedirs(service_folder, exist_ok=True)
 
-    # ساخت هش جدید برای فایل
-    hash_input = f"{invoice_id}_{datetime.now().timestamp()}"
-    file_hash = hashlib.sha256(hash_input.encode()).hexdigest()[:16]
-    filename = f"{invoice.id}_{file_hash}.pdf"
+    # Generate filename based on invoice identify_code and customer full_name
+    customer_name = service.customer.full_name.replace(' ', '_') if service.customer.full_name else 'unknown'
+    filename = f"فاکتور_شماره_{invoice.identify_code}_مشتری_{customer_name}.pdf"
     pdf_full_path = service_folder / filename
+
+    # If file already exists, remove it to replace with the new one
+    if pdf_full_path.exists():
+        os.remove(pdf_full_path)
 
     # Generate PDF
     env = Environment(loader=FileSystemLoader('src/templates/'))
@@ -107,11 +113,11 @@ def generate_invoice_pdf(*, invoice_id, request=None):
     base_url = request.build_absolute_uri('/') if request and hasattr(request, 'build_absolute_uri') else "http://127.0.0.1:8000/"
     HTML(string=html_content, base_url=base_url).write_pdf(str(pdf_full_path))
 
-    # ذخیره مسیر نسبی فایل در pdf_file_path
+    # Save the relative path to the database
     relative_path = str(pdf_full_path.relative_to(settings.MEDIA_ROOT))
     invoice.pdf_output = relative_path
     invoice.save()
 
-    # مسیر نسبی برای استفاده در URL
+    # Return the URL for the PDF
     file_url = settings.MEDIA_URL + relative_path
     return file_url
