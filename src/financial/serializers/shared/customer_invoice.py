@@ -9,3 +9,4 @@ class OutPutCustomerInvoiceSerializer(serializers.Serializer):
     discount_amount = serializers.IntegerField()
     wage_cost = serializers.IntegerField()
     deadheading_cost = serializers.IntegerField()
+    pdf_output = serializers.FileField()

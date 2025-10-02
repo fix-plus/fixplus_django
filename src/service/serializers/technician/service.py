@@ -24,6 +24,8 @@ class OutPutTechnicianServiceDetailSerializer(serializers.ModelSerializer):
     assigned_by = serializers.SerializerMethodField()
     customer_invoice = serializers.SerializerMethodField()
     customer_payment = serializers.SerializerMethodField()
+    invoice_deduction = serializers.SerializerMethodField()
+    final_calculation = serializers.SerializerMethodField()
     assigned_at = serializers.SerializerMethodField()
     accepted_at = serializers.SerializerMethodField()
 
@@ -47,6 +49,9 @@ class OutPutTechnicianServiceDetailSerializer(serializers.ModelSerializer):
                        'customer',
                        'customer_invoice',
                        'customer_payment',
+                       'invoice_deduction',
+                       'other_invoice_deduction_description',
+                       'final_calculation',
                        'assigned_by',
                        'assigned_at',
                        'deadline_accepting_at',
@@ -105,7 +110,7 @@ class OutPutTechnicianServiceDetailSerializer(serializers.ModelSerializer):
     def get_customer_invoice(self, obj):
         request = self.context.get('request')
         completed_service_items = obj.completed_service_items
-        customer_invoice_response = OutPutCustomerInvoiceSerializer(obj.customer_invoice).data
+        customer_invoice_response = OutPutCustomerInvoiceSerializer(obj.customer_invoice, context={'request': request}).data
 
         return {
             "completed_service_items": OutPutCompletedServiceItemSerializer(completed_service_items, context={'request':request}, many=True).data,
@@ -115,3 +120,14 @@ class OutPutTechnicianServiceDetailSerializer(serializers.ModelSerializer):
     def get_customer_payment(self, obj):
         queryset = obj.customer_payments.filter(technician=obj.technician).last()
         return OutputCustomerPaymentSerializer(queryset).data
+
+    def get_invoice_deduction(self, obj):
+        queryset = obj.invoice_deduction_items
+        return OutPutCompletedServiceItemSerializer(queryset, many=True).data
+
+    def get_final_calculation(self, obj):
+        return {
+            "total_customer_pay": obj.customer_invoice.get_payable_amount(),
+            "total_deduction": obj.customer_invoice.get_total_invoice_deduction_amount(),
+            "system_fee": obj.customer_invoice.get_system_fee(),
+        }

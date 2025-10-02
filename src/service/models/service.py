@@ -66,3 +66,15 @@ class Service(BaseModel):
         self.deadline_accepting_at = None
         self.estimate_arrival_at = None
         self.save()
+
+    # def is_in_statuses(self, statuses):
+    #     return self.status in statuses
+
+    # def is_available_invoice_output(self):
+    #     active_statuses = [
+    #         self.Status.CUSTOMER_SIGNATURE,
+    #         self.Status.IGNORED_SYSTEM_FEE_INVOICING,
+    #         self.Status.SYSTEM_FEE_PAYMENT,
+    #         self.Status.COMPLETED,
+    #     ]
+    #     return self.is_in_statuses(active_statuses)

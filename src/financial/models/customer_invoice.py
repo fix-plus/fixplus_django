@@ -7,6 +7,9 @@ from src.parametric.models import WarrantyPeriod
 from src.service.models.service import Service
 
 
+def get_invoice_upload_path(instance, filename):
+    return 'invoices/service/{filename}.{format}'.format( filename=instance.service.id, format='pdf')
+
 
 class CustomerInvoice(BaseModel):
     identify_code = models.IntegerField(unique=True, null=True, blank=True)
@@ -16,6 +19,7 @@ class CustomerInvoice(BaseModel):
     discount_amount = models.PositiveBigIntegerField(null=False, blank=False, default=0)
     wage_cost = models.PositiveBigIntegerField(null=False, blank=False)
     deadheading_cost = models.PositiveBigIntegerField(null=False, blank=False)
+    pdf_output = models.FileField(upload_to=get_invoice_upload_path, null=True, blank=True, max_length=500)
 
     def __str__(self):
         return f"{self.service}"
@@ -46,6 +50,12 @@ class CustomerInvoice(BaseModel):
         from the total invoice amount.
         """
         return self.get_total_invoice_amount() - self.discount_amount
+
+    def get_total_invoice_deduction_amount(self):
+        return sum(item.cost * item.quantity for item in self.service.invoice_deduction_items.all()) if self.service.invoice_deduction_items.exists() else 0
+
+    def get_system_fee(self):
+        return (self.get_payable_amount() - self.get_total_invoice_deduction_amount()) * 0.5
 
     def get_notes(self):
         # Start date in Jalali format
