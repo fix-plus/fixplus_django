@@ -21,6 +21,7 @@ class CustomerInvoiceServiceApi(IsTechnicianMixin, APIView):
 
         # Core
         customer_invoice_service(
+            request=request,
             service_id=service_id,
             technician=request.user,
             **serializer.validated_data,
