@@ -20,6 +20,8 @@ class UserManager(BUM):
             is_active=is_active,
             is_admin=is_admin,
         )
+        # Assign identity_code before saving
+        user.assign_identity_code()
 
         if password is not None:
             user.set_password(password)
@@ -40,6 +42,8 @@ class UserManager(BUM):
             is_admin=True,
             password=password,
         )
+        # Assign identity_code before saving
+        user.assign_identity_code()
 
         user.is_superuser = True
         user.is_verified_mobile = True
@@ -93,6 +97,12 @@ class User(AbstractUser, PermissionsMixin):
         ]
         verbose_name = "User "
 
+    def assign_identity_code(self):
+        """Assign a unique identity_code to the user."""
+        if not self.identity_code:
+            last_user = User.objects.filter(identity_code__isnull=False).order_by('identity_code').last()
+            self.identity_code = last_user.identity_code + 1 if last_user and last_user.identity_code else 1011
+
     def is_staff(self):
         return self.is_admin
 
@@ -105,21 +115,12 @@ class User(AbstractUser, PermissionsMixin):
         }
 
     def save(self, *args, **kwargs):
-        # Call the parent class save method
+        # Assign identity_code before saving
+        self.assign_identity_code()
+        # Save user and create profile
         super().save(*args, **kwargs)
-
-        # Ensure a Profile exists for this account
         from src.account.models import Profile
         Profile.objects.get_or_create(user=self)
-
-        # Initialize identity_code if not set
-        if not self.identity_code:
-            last_user = User.objects.all().order_by('identity_code').last()
-            if last_user and last_user.identity_code:
-                self.identity_code = last_user.identity_code + 1
-            else:
-                self.identity_code = 1011
-            super().save(update_fields=['identity_code'])
 
     def update_last_online(self):
         self.last_online = timezone.now()
